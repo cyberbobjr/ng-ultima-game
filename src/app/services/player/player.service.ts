@@ -13,7 +13,7 @@ export class PlayerService {
 
     constructor(private _tileService: TilesService) {
         this.player = new Entity(new Tile([TILE_PLAYER]));
-        this.player.position = new Position(50, 50);
+        this.player.position = new Position(52, 50);
     }
 
     loadPlayer(): Promise<any> {

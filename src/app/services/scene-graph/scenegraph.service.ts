@@ -77,20 +77,25 @@ export class ScenegraphService {
         for (let y = this.startVisible.row; y <= this.endVisible.row; y++) {
             this.visibleWindow[visibleRowIndex] = [];
             for (let x = this.startVisible.col; x <= this.endVisible.col; x++) {
-                let tile: Array<Tile> = [];
-                tile.push(this.map.getTileAtPosition(new Position(y, x)));
-                let actors = this._getVisiblesEntities(new Position(y, x));
-                if (actors.length > 0) {
-                    for (let actor of actors) {
-                        tile.push(actor.getCurrentTile());
-                    }
-                }
-                this.visibleWindow[visibleRowIndex][visibileColIndex] = tile;
+                let tiles = this._getTilesAtPosition(new Position(x,y));
+                this.visibleWindow[visibleRowIndex][visibileColIndex] = tiles;
                 visibileColIndex++;
             }
             visibleRowIndex++;
             visibileColIndex = 0;
         }
+    }
+
+    private _getTilesAtPosition(position: Position): Array<Tile> {
+        let tiles: Array<Tile> = [];
+        tiles.push(this.map.getTileAtPosition(position));
+        let actors = this._getVisiblesEntities(position);
+        if (actors.length > 0) {
+            for (let actor of actors) {
+                tiles.push(actor.getTile());
+            }
+        }
+        return tiles;
     }
 
     private _getVisiblesEntities(position: Position): Array<Entity> {

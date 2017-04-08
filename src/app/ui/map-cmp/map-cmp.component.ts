@@ -62,7 +62,7 @@ export class MapCmpComponent implements OnInit, AfterViewInit {
     _drawTileAtPosition(position: Position) {
         const tiles = this._scene.getVisiblesTilesAtPositions(position);
         for (let tile of tiles) {
-            this._drawTile(tile.getTile(), position);
+            this._drawTile(tile.getCurrentTile(), position);
         }
     }
 

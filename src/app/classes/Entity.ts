@@ -2,15 +2,14 @@ import {Position} from "./position";
 import {Tile} from "./tile";
 
 export class Entity {
-    tile: Array<Tile> = [];
+    tile: Tile;
     position: Position;
-    tileIndex: number = 0;
 
     constructor(tile: Tile) {
-        this.tile.push(tile);
+        this.tile = tile;
     }
 
-    getCurrentTile(): Tile {
-        return this.tile[this.tileIndex];
+    getTile(): Tile {
+        return this.tile;
     }
 }
