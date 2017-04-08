@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from "@angular/
 import {ScenegraphService} from "../../services/scene-graph/scenegraph.service";
 import {Position} from "../../classes/position";
 import {TilesService} from "../../services/tiles/tiles.service";
+import {Tile} from "../../classes/tile";
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 32;
@@ -30,7 +31,7 @@ export class MapCmpComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         this.initCanvas();
         this._scene.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
-        this._scene.visiblemap$.subscribe((map: number[][]) => {
+        this._scene.visibleWindow$.subscribe((map: [Tile][][]) => {
             this.draw(map);
         });
         this._scene.refresh();
@@ -50,15 +51,22 @@ export class MapCmpComponent implements OnInit, AfterViewInit {
         this.num_tiles_y = this.canvas_height / TILE_HEIGHT;
     }
 
-    draw(map: number[][]) {
+    draw(map: [Tile][][]) {
         for (let rowIndex = 0; rowIndex < map.length; rowIndex++) {
             for (let colIndex = 0; colIndex < map[rowIndex].length; colIndex++) {
-                this._drawTiles(this._scene.getVisibleTileAtPosition(new Position(colIndex, rowIndex)), new Position(colIndex, rowIndex));
+                this._drawTileAtPosition(new Position(colIndex, rowIndex));
             }
         }
     }
 
-    _drawTiles(tileNumber: number, position: Position) {
+    _drawTileAtPosition(position: Position) {
+        const tiles = this._scene.getVisiblesTilesAtPositions(position);
+        for (let tile of tiles) {
+            this._drawTile(tile.getTile(), position);
+        }
+    }
+
+    _drawTile(tileNumber: number, position: Position) {
         const tileImage = this._tiles.getTileAtIndex(tileNumber);
         this.ctx.drawImage(tileImage, position.col * TILE_WIDTH, position.row * TILE_HEIGHT);
     }

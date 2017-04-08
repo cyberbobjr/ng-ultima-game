@@ -8,6 +8,7 @@ import {MapCmpComponent} from "./ui/map-cmp/map-cmp.component";
 import {MapsService} from "./services/maps/maps.service";
 import {TilesService} from "./services/tiles/tiles.service";
 import {ScenegraphService} from "./services/scene-graph/scenegraph.service";
+import {PlayerService} from "./services/player/player.service";
 
 @NgModule({
               declarations: [
@@ -21,7 +22,8 @@ import {ScenegraphService} from "./services/scene-graph/scenegraph.service";
               ],
               providers: [MapsService,
                           TilesService,
-                          ScenegraphService],
+                          ScenegraphService,
+                          PlayerService],
               bootstrap: [AppComponent]
           })
 export class AppModule {
