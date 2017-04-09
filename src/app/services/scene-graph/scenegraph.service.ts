@@ -4,7 +4,6 @@ import {Position} from "../../classes/position";
 import {GameMap} from "../../classes/game_map";
 import {Tile} from "../../classes/tile";
 import {Entity} from "../../classes/entity";
-import {ActorsService} from "../actors/actors.service";
 import {MapsService} from "../maps/maps.service";
 import {RenderableSystem} from "../../systems/renderable.system";
 import {PositionBehavior} from "../../behaviors/position-behavior";
@@ -23,8 +22,7 @@ export class ScenegraphService {
 
     entityCenter: Entity = null;
 
-    constructor(private _actorsService: ActorsService,
-                private _renderableService: RenderableSystem,
+    constructor(private _renderableService: RenderableSystem,
                 private _mapService: MapsService) {
     }
 
