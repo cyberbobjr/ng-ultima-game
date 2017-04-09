@@ -12,4 +12,20 @@ export class Entity {
     getTile(): Tile {
         return this.tile;
     }
+
+    moveUp() {
+        this.position.row--;
+    }
+
+    moveDown() {
+        this.position.row++;
+    }
+
+    moveLeft() {
+        this.position.col--;
+    }
+
+    moveRight() {
+        this.position.col++;
+    }
 }

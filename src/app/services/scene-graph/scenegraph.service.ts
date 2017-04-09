@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
 import {Subject} from "rxjs";
 import {Position} from "../../classes/position";
-import {gameMap} from "../../classes/game_map";
+import {GameMap} from "../../classes/game_map";
 import {Tile} from "../../classes/tile";
-import {Entity} from "../../classes/Entity";
+import {Entity} from "../../classes/entity";
 import {ActorsService} from "../actors/actors.service";
 import {MapsService} from "../maps/maps.service";
 
@@ -11,7 +11,7 @@ import {MapsService} from "../maps/maps.service";
 export class ScenegraphService {
     visibleWindow$: Subject<Array<Tile>[][]> = new Subject();
     visibleWindow: Array<Tile>[][] = [];
-    map: gameMap;
+    map: GameMap;
 
     maxVisiblesCols: number;
     maxVisiblesRows: number;
@@ -29,7 +29,7 @@ export class ScenegraphService {
         this.maxVisiblesRows = maxHeight;
     }
 
-    loadMap(map: gameMap, cameraStartPosition?: Position) {
+    loadMap(map: GameMap, cameraStartPosition?: Position) {
         this.map = map;
         if (cameraStartPosition !== undefined) {
             this.cameraStartPosition = cameraStartPosition;

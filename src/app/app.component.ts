@@ -4,6 +4,7 @@ import {ScenegraphService} from "./services/scene-graph/scenegraph.service";
 import {TilesLoaderService} from "./services/tiles/tiles.service";
 import {PlayerService} from "./services/player/player.service";
 import {ActorsService} from "./services/actors/actors.service";
+import {Hotkey, HotkeysService} from "angular2-hotkeys";
 const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
 
@@ -19,34 +20,66 @@ export class AppComponent implements OnInit {
                 private _playerService: PlayerService,
                 private _mapService: MapsService,
                 private _sceneService: ScenegraphService,
-                private _tileService: TilesLoaderService) {
+                private _tileService: TilesLoaderService,
+                private _hotkeyService: HotkeysService) {
 
     }
 
     ngOnInit() {
-        this.initGame();
+        this.initGame()
+            .then(() => {
+                this.initHotkey();
+                this.isMapReady = true;
+                this.mainLoop();
+            });
     }
 
     initGame() {
-        Promise.all([
-                        this._mapService.loadMap("assets/maps/world.map"),
-                        this._tileService.loadTiles(),
-                        this._playerService.loadPlayer()
-                    ])
-               .then(() => {
-                   console.log("Init game loaded");
-                   this._actorsService.addActor(this._playerService.player);
-                   this._sceneService.loadMap(this._mapService.currentMap);
-                   this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
-                   this._sceneService.setCenterCameraOnEntity(this._playerService.player);
-                   this.isMapReady = true;
-                   this.mainLoop();
-               });
+        return Promise.all([
+                               this._mapService.loadMap("assets/maps/world.map"),
+                               this._tileService.loadTiles(),
+                               this._playerService.loadPlayer()
+                           ])
+                      .then(() => {
+                          console.log("Init game loaded");
+                          this._actorsService.addActor(this._playerService.player);
+                          this._sceneService.loadMap(this._mapService.currentMap);
+                          this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
+                          this._sceneService.setCenterCameraOnEntity(this._playerService.player);
+                      });
     }
 
+    /**
+     * For Testing purpose
+     */
+    initHotkey() {
+        this._hotkeyService.add(new Hotkey("up", (event: KeyboardEvent): boolean => {
+            this._playerService.player.moveUp();
+            this._sceneService.refresh();
+            return false;
+        }));
+        this._hotkeyService.add(new Hotkey("down", (event: KeyboardEvent): boolean => {
+            this._playerService.player.moveDown();
+            this._sceneService.refresh();
+            return false;
+        }));
+        this._hotkeyService.add(new Hotkey("left", (event: KeyboardEvent): boolean => {
+            this._playerService.player.moveLeft();
+            this._sceneService.refresh();
+            return false;
+        }));
+        this._hotkeyService.add(new Hotkey("right", (event: KeyboardEvent): boolean => {
+            this._playerService.player.moveRight();
+            this._sceneService.refresh();
+            return false;
+        }));
+    }
+
+    /**
+     * @TODO : code a tick function instead of refresh sceneService
+     */
     mainLoop() {
-        window.setTimeout(() => {
-            this._playerService.player.position.col++;
+        window.setInterval(() => {
             this._sceneService.refresh();
         }, 3000);
     }

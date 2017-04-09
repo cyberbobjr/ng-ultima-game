@@ -1,12 +1,12 @@
 import {Injectable} from "@angular/core";
 import {Http} from "@angular/http";
-import {gameMap} from "../../classes/game_map";
+import {GameMap} from "../../classes/game_map";
 import {Position} from "../../classes/position";
 import {Tile} from "../../classes/tile";
 
 @Injectable()
 export class MapsService {
-    currentMap: gameMap;
+    currentMap: GameMap;
 
     constructor(private _http: Http) {
     }
@@ -16,7 +16,7 @@ export class MapsService {
             this._http.get(mapFilename)
                 .subscribe((res) => {
                     const mapData = res.json();
-                    this.currentMap = new gameMap("world", mapData);
+                    this.currentMap = new GameMap("world", mapData);
                     resolve(true);
                 });
         });
@@ -26,7 +26,7 @@ export class MapsService {
         return this.currentMap.getTilesAtPosition(position);
     }
 
-    getMap(): gameMap {
+    getMap(): GameMap {
         return this.currentMap;
     }
 }

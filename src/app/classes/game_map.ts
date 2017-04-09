@@ -1,7 +1,7 @@
 import {Tile} from "./tile";
 import {Position} from "./position";
 
-export class gameMap {
+export class GameMap {
     name: string;
     tiles: Tile[][] = [];
 

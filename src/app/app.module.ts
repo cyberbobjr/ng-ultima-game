@@ -10,6 +10,7 @@ import {TilesLoaderService} from "./services/tiles/tiles.service";
 import {ScenegraphService} from "./services/scene-graph/scenegraph.service";
 import {PlayerService} from "./services/player/player.service";
 import {ActorsService} from "./services/actors/actors.service";
+import {HotkeyModule} from "angular2-hotkeys";
 
 @NgModule({
               declarations: [
@@ -19,7 +20,8 @@ import {ActorsService} from "./services/actors/actors.service";
               imports: [
                   BrowserModule,
                   FormsModule,
-                  HttpModule
+                  HttpModule,
+                  HotkeyModule.forRoot()
               ],
               providers: [MapsService,
                           TilesLoaderService,

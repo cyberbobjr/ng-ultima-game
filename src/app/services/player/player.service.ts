@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Entity} from "../../classes/Entity";
+import {Entity} from "../../classes/entity";
 import {Position} from "../../classes/position";
 import {Tile} from "../../classes/tile";
 
