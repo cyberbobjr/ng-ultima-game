@@ -7,6 +7,7 @@ import {EntitiesService} from "./services/entities/entities.service";
 import {KeyboardinputSystem} from "./systems/keyboardinput.system";
 import {Entity} from "./classes/entity";
 import {MovementSystem} from "./systems/movement.system";
+import {RenderableSystem} from "./systems/renderable.system";
 const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
 
@@ -18,12 +19,14 @@ const MAX_HEIGHT = 10;
 export class AppComponent implements OnInit {
     isMapReady: boolean = false;
     gameLoop: any;
+
     @HostListener("document:keyup", ["$event"]) handleKeyboardEvents($event: KeyboardEvent) {
         this.processKeyInput($event);
     }
 
     constructor(private _entitiesService: EntitiesService,
                 private _movementSystem: MovementSystem,
+                private _renderableSystem: RenderableSystem,
                 private _playerService: PlayerService,
                 private _mapService: MapsService,
                 private _sceneService: ScenegraphService,
@@ -36,6 +39,7 @@ export class AppComponent implements OnInit {
         this.initGame()
             .then(() => {
                 this.isMapReady = true;
+                this.mainLoop();
             });
     }
 
@@ -67,8 +71,8 @@ export class AppComponent implements OnInit {
      */
     mainLoop() {
         this.gameLoop = window.setInterval(() => {
-            this._sceneService.refresh();
-        }, 3000);
+            this._renderableSystem.processTick();
+        }, 1000);
     }
 
     stopLoop() {

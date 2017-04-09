@@ -25,4 +25,13 @@ export class RenderableSystem {
         });
         return entities;
     }
+
+    processTick() {
+        this._entities.entities.forEach((entity: Entity) => {
+            if (entity.hasBehavior("renderable")) {
+                let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
+                renderableBehavior.tick();
+            }
+        });
+    }
 }
