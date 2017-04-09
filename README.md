@@ -8,7 +8,7 @@ For the pleausure, i used the Ultima4 tiles and game concept.
 
 You can move on the map with arrow-key, beware that not all of movement was coded, it's just for fun.
 
-[logo]: https://github.com/cyberbobjr/ng-ultima-game/blob/master/docs/ng-ultima-poc.gif?raw=true "screenshot"
+[logo]: https://github.com/cyberbobjr/ng-ultima-game/blob/master/docs/ng-ultima-poc.gif "screenshot"
 
 ## Installation
 Just type ```npm install``` and launch the development server.
