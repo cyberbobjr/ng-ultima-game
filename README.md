@@ -8,6 +8,9 @@ For the pleausure, i used the Ultima4 tiles and game concept.
 
 You can move on the map with arrow-key, beware that not all of movement was coded, it's just for fun.
 
+## Installation
+Just type ```npm install``` and launch the development server.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
