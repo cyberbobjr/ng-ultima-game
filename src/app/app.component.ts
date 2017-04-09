@@ -15,6 +15,7 @@ const MAX_HEIGHT = 10;
            })
 export class AppComponent implements OnInit {
     isMapReady: boolean = false;
+    gameLoop: any;
 
     constructor(private _actorsService: ActorsService,
                 private _playerService: PlayerService,
@@ -73,14 +74,22 @@ export class AppComponent implements OnInit {
             this._sceneService.refresh();
             return false;
         }));
+        this._hotkeyService.add(new Hotkey("esc", (event: KeyboardEvent): boolean => {
+            this.stopLoop();
+            return false;
+        }));
     }
 
     /**
      * @TODO : code a tick function instead of refresh sceneService
      */
     mainLoop() {
-        window.setInterval(() => {
+        this.gameLoop = window.setInterval(() => {
             this._sceneService.refresh();
         }, 3000);
+    }
+
+    stopLoop() {
+        window.clearInterval(this.gameLoop);
     }
 }
