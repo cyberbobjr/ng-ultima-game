@@ -3,6 +3,11 @@ import {Entity} from "../classes/entity";
 import {Injectable} from "@angular/core";
 import {MovableBehavior} from "../behaviors/movable-behavior";
 
+const KEY_UP = "ArrowUp";
+const KEY_DOWN = "ArrowDown";
+const KEY_LEFT = "ArrowLeft";
+const KEY_RIGHT = "ArrowRight";
+
 @Injectable()
 export class KeyboardinputSystem {
 
@@ -16,16 +21,16 @@ export class KeyboardinputSystem {
             if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
                 let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
                 switch (event.code) {
-                    case "ArrowUp" :
+                    case KEY_UP :
                         movableBehavior.moveUp();
                         break;
-                    case "ArrowDown":
+                    case KEY_DOWN:
                         movableBehavior.moveDown();
                         break;
-                    case "ArrowLeft":
+                    case KEY_LEFT:
                         movableBehavior.moveLeft();
                         break;
-                    case "ArrowRight":
+                    case KEY_RIGHT:
                         movableBehavior.moveRight();
                         break;
                 }
