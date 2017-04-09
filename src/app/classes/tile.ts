@@ -1,6 +1,8 @@
 export class Tile {
     tilesArray: Array<number> = [];
     currentTileIndex: number;
+    _walkable: boolean = true;
+    _blockLight: boolean = false;
 
     constructor(tilesArray: Array<number>) {
         this.tilesArray = tilesArray;

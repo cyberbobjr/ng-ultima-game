@@ -11,11 +11,17 @@ import {ScenegraphService} from "./services/scene-graph/scenegraph.service";
 import {PlayerService} from "./services/player/player.service";
 import {ActorsService} from "./services/actors/actors.service";
 import {HotkeyModule} from "angular2-hotkeys";
+import {DescriptionComponent} from "./ui/description/description.component";
+import {EntitiesService} from "./services/entities/entities.service";
+import {RenderableSystem} from "./systems/renderable.system";
+import {KeyboardinputSystem} from "app/systems/keyboardinput.system";
+import {MovementSystem} from "./systems/movement.system";
 
 @NgModule({
               declarations: [
                   AppComponent,
-                  MapCmpComponent
+                  MapCmpComponent,
+                  DescriptionComponent
               ],
               imports: [
                   BrowserModule,
@@ -24,10 +30,14 @@ import {HotkeyModule} from "angular2-hotkeys";
                   HotkeyModule.forRoot()
               ],
               providers: [MapsService,
+                          EntitiesService,
+                          RenderableSystem,
                           TilesLoaderService,
                           ScenegraphService,
                           PlayerService,
-                          ActorsService
+                          ActorsService,
+                          KeyboardinputSystem,
+                          MovementSystem
               ],
               bootstrap: [AppComponent]
           })

@@ -6,6 +6,8 @@ import {Tile} from "../../classes/tile";
 import {Entity} from "../../classes/entity";
 import {ActorsService} from "../actors/actors.service";
 import {MapsService} from "../maps/maps.service";
+import {RenderableSystem} from "../../systems/renderable.system";
+import {PositionBehavior} from "../../behaviors/position-behavior";
 
 @Injectable()
 export class ScenegraphService {
@@ -21,7 +23,9 @@ export class ScenegraphService {
 
     entityCenter: Entity = null;
 
-    constructor(private _actorsService: ActorsService, private _mapService: MapsService) {
+    constructor(private _actorsService: ActorsService,
+                private _renderableService: RenderableSystem,
+                private _mapService: MapsService) {
     }
 
     setMaxVisibleColsAndRows(maxWidth: number, maxHeight: number) {
@@ -90,10 +94,11 @@ export class ScenegraphService {
                 tiles.push(mapTile);
             }
         }
-        let actors = this._actorsService.getActorsAtPosition(position);
-        if (actors.length > 0) {
-            for (let actor of actors) {
-                tiles.push(actor.getTile());
+
+        let entityTiles = this._renderableService.getRenderableTilesAtPosition(position);
+        if (entityTiles.length > 0) {
+            for (let actor of entityTiles) {
+                tiles.push(actor);
             }
         }
         return tiles;
@@ -105,11 +110,16 @@ export class ScenegraphService {
     }
 
     setCenterCameraOnEntity(entity: Entity) {
-        this.entityCenter = entity;
+        if (entity.hasBehavior("position")) {
+            this.entityCenter = entity;
+        } else {
+            throw new Error("Entity don't have position behavior");
+        }
     }
 
     private _centerCameraOnEntity() {
-        let entityPosition = this.entityCenter.position;
+        let positionBahvior = <PositionBehavior>this.entityCenter.getBehavior("position");
+        let entityPosition = positionBahvior.position;
         this.setCameraPosition(entityPosition);
     }
 

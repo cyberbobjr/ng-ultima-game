@@ -2,6 +2,10 @@ import {Injectable} from "@angular/core";
 import {Entity} from "../../classes/entity";
 import {Position} from "../../classes/position";
 import {Tile} from "../../classes/tile";
+import {RenderableBehavior} from "../../behaviors/renderable-behavior";
+import {PositionBehavior} from "../../behaviors/position-behavior";
+import {MovableBehavior} from "../../behaviors/movable-behavior";
+import {KeycontrolBehavior} from "../../behaviors/keycontrol-behavior";
 
 const TILE_PLAYER = 31;
 
@@ -11,13 +15,16 @@ export class PlayerService {
     player: Entity = null;
 
     constructor() {
-        this.player = new Entity(new Tile([TILE_PLAYER]));
-        this.player.position = new Position(52, 50);
     }
 
-    loadPlayer(): Promise<any> {
+    loadPlayer(): Promise<Entity> {
         return new Promise((resolve, reject) => {
-                               resolve(true);
+                               this.player = new Entity();
+                               this.player.addBehavior(new RenderableBehavior(new Tile([TILE_PLAYER])));
+                               this.player.addBehavior(new PositionBehavior(new Position(52, 50)));
+                               this.player.addBehavior(new MovableBehavior());
+                               this.player.addBehavior(new KeycontrolBehavior(this.player));
+                               resolve(this.player);
                            }
         );
     }
