@@ -1,6 +1,8 @@
 import {Injectable} from "@angular/core";
 import {Http} from "@angular/http";
 import {gameMap} from "../../classes/game_map";
+import {Position} from "../../classes/position";
+import {Tile} from "../../classes/tile";
 
 @Injectable()
 export class MapsService {
@@ -9,13 +11,9 @@ export class MapsService {
     constructor(private _http: Http) {
     }
 
-    initService(): Promise<any> {
-        return this.loadWordlMap();
-    }
-
-    loadWordlMap(): Promise<any> {
+    loadMap(mapFilename: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            this._http.get("assets/maps/world.map")
+            this._http.get(mapFilename)
                 .subscribe((res) => {
                     const mapData = res.json();
                     this.currentMap = new gameMap("world", mapData);
@@ -24,8 +22,8 @@ export class MapsService {
         });
     }
 
-    getTileInfoAtXY(x: number, y: number) {
-        return this.currentMap[x][y];
+    getTilesAtPosition(position: Position): Array<Tile> {
+        return this.currentMap.getTilesAtPosition(position);
     }
 
     getMap(): gameMap {

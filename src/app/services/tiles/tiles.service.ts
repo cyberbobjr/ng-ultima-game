@@ -4,7 +4,7 @@ import {Subject} from "rxjs";
 const TILES_COUNT = 256;
 
 @Injectable()
-export class TilesService {
+export class TilesLoaderService {
     tiles: Array<HTMLImageElement> = [];
     numberOfTilesLoaded: number = 0;
     numberOfTilesLoaded$: Subject<number> = new Subject();

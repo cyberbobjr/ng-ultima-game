@@ -38,7 +38,7 @@ export class gameMap {
         return this.height;
     }
 
-    getTileAtPosition(position: Position): Tile {
-        return this.tiles[position.row][position.col];
+    getTilesAtPosition(position: Position): Array<Tile> {
+        return [this.tiles[position.row][position.col]];
     }
 }

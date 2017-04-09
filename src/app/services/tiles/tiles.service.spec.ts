@@ -1,15 +1,15 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { TilesService } from './tiles.service';
+import { TilesLoaderService } from './tiles.service';
 
-describe('TilesService', () => {
+describe('TilesLoaderService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TilesService]
+      providers: [TilesLoaderService]
     });
   });
 
-  it('should ...', inject([TilesService], (service: TilesService) => {
+  it('should ...', inject([TilesLoaderService], (service: TilesLoaderService) => {
     expect(service).toBeTruthy();
   }));
 });

@@ -4,7 +4,8 @@ import {Position} from "../../classes/position";
 import {gameMap} from "../../classes/game_map";
 import {Tile} from "../../classes/tile";
 import {Entity} from "../../classes/Entity";
-import {PlayerService} from "../player/player.service";
+import {ActorsService} from "../actors/actors.service";
+import {MapsService} from "../maps/maps.service";
 
 @Injectable()
 export class ScenegraphService {
@@ -12,16 +13,15 @@ export class ScenegraphService {
     visibleWindow: Array<Tile>[][] = [];
     map: gameMap;
 
-    player: Entity;
-    entities: Array<Entity> = [];
-
     maxVisiblesCols: number;
     maxVisiblesRows: number;
 
-    startVisible: Position = new Position();
-    endVisible: Position = new Position();
+    cameraStartPosition: Position = new Position();
+    cameraEndPosition: Position = new Position();
 
-    constructor(private _playerService: PlayerService) {
+    entityCenter: Entity = null;
+
+    constructor(private _actorsService: ActorsService, private _mapService: MapsService) {
     }
 
     setMaxVisibleColsAndRows(maxWidth: number, maxHeight: number) {
@@ -29,13 +29,11 @@ export class ScenegraphService {
         this.maxVisiblesRows = maxHeight;
     }
 
-    addActor(actor: Entity) {
-        this.entities.push(actor);
-    }
-
-    loadScene(map: gameMap, startPosition: Position) {
+    loadMap(map: gameMap, cameraStartPosition?: Position) {
         this.map = map;
-        this.startVisible = startPosition;
+        if (cameraStartPosition !== undefined) {
+            this.cameraStartPosition = cameraStartPosition;
+        }
     }
 
     getVisiblesTilesAtPositions(position: Position): Array<Tile> {
@@ -45,8 +43,11 @@ export class ScenegraphService {
     refresh() {
         console.log("refresh scene");
         try {
+            if (this.entityCenter !== null) {
+                this._centerCameraOnEntity();
+            }
             this._computeVisibleWindow();
-            this._setVisibleWindow();
+            this._copyTilesToVisibleWindow();
             this._refreshVisibleWindow();
         } catch (error) {
             console.log(error);
@@ -55,30 +56,25 @@ export class ScenegraphService {
 
     private _computeVisibleWindow() {
         console.log("_computeVisibleWindow scene");
-        this.endVisible.col = this.startVisible.col + this.maxVisiblesCols + 1;
-        this.endVisible.row = this.startVisible.row + this.maxVisiblesRows + 1;
+        this.cameraEndPosition.col = this.cameraStartPosition.col + this.maxVisiblesCols + 1;
+        this.cameraEndPosition.row = this.cameraStartPosition.row + this.maxVisiblesRows + 1;
 
-        if (this.endVisible.col > this.map.getWidthMap()) {
-            this.endVisible.col = this.map.getWidthMap();
+        if (this.cameraEndPosition.col > this.map.getWidthMap()) {
+            this.cameraEndPosition.col = this.map.getWidthMap();
         }
-        if (this.endVisible.row > this.map.getHeightMap()) {
-            this.endVisible.row = this.map.getHeightMap();
+        if (this.cameraEndPosition.row > this.map.getHeightMap()) {
+            this.cameraEndPosition.row = this.map.getHeightMap();
         }
     }
 
-    private _setVisibleWindow() {
-        console.log("_setVisibleWindow scene");
-        this._setMapToVisibleWindow();
-    }
-
-    private _setMapToVisibleWindow() {
+    private _copyTilesToVisibleWindow() {
+        console.log("_copyTilesToVisibleWindow scene");
         let visibileColIndex = 0;
         let visibleRowIndex = 0;
-        for (let y = this.startVisible.row; y <= this.endVisible.row; y++) {
+        for (let y = this.cameraStartPosition.row; y <= this.cameraEndPosition.row; y++) {
             this.visibleWindow[visibleRowIndex] = [];
-            for (let x = this.startVisible.col; x <= this.endVisible.col; x++) {
-                let tiles = this._getTilesAtPosition(new Position(x,y));
-                this.visibleWindow[visibleRowIndex][visibileColIndex] = tiles;
+            for (let x = this.cameraStartPosition.col; x <= this.cameraEndPosition.col; x++) {
+                this.visibleWindow[visibleRowIndex][visibileColIndex] = this._getTilesAtPosition(new Position(x, y));
                 visibileColIndex++;
             }
             visibleRowIndex++;
@@ -88,8 +84,13 @@ export class ScenegraphService {
 
     private _getTilesAtPosition(position: Position): Array<Tile> {
         let tiles: Array<Tile> = [];
-        tiles.push(this.map.getTileAtPosition(position));
-        let actors = this._getVisiblesEntities(position);
+        let mapTiles = this._mapService.getTilesAtPosition(position);
+        if (mapTiles.length > 0) {
+            for (let mapTile of mapTiles) {
+                tiles.push(mapTile);
+            }
+        }
+        let actors = this._actorsService.getActorsAtPosition(position);
         if (actors.length > 0) {
             for (let actor of actors) {
                 tiles.push(actor.getTile());
@@ -98,14 +99,28 @@ export class ScenegraphService {
         return tiles;
     }
 
-    private _getVisiblesEntities(position: Position): Array<Entity> {
-        return this.entities.filter((entity: Entity) => {
-            return (entity.position.col === position.col && entity.position.row === position.row);
-        });
-    }
-
     private _refreshVisibleWindow() {
         console.log("_refreshVisibleWindow");
         this.visibleWindow$.next(this.visibleWindow);
+    }
+
+    setCenterCameraOnEntity(entity: Entity) {
+        this.entityCenter = entity;
+    }
+
+    private _centerCameraOnEntity() {
+        let entityPosition = this.entityCenter.position;
+        this.setCameraPosition(entityPosition);
+    }
+
+    setCameraPosition(cameraPosition: Position) {
+        this.cameraStartPosition.col = cameraPosition.col - (this.maxVisiblesCols / 2);
+        this.cameraStartPosition.row = cameraPosition.row - (this.maxVisiblesRows / 2);
+        if (this.cameraStartPosition.col < 0) {
+            this.cameraStartPosition.col = 0;
+        }
+        if (this.cameraStartPosition.row < 0) {
+            this.cameraStartPosition.row = 0;
+        }
     }
 }

@@ -1,13 +1,11 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {ScenegraphService} from "../../services/scene-graph/scenegraph.service";
 import {Position} from "../../classes/position";
-import {TilesService} from "../../services/tiles/tiles.service";
+import {TilesLoaderService} from "../../services/tiles/tiles.service";
 import {Tile} from "../../classes/tile";
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 32;
-const MAX_WIDTH = 9;
-const MAX_HEIGHT = 9;
 
 @Component({
                selector: "app-map-cmp",
@@ -22,7 +20,7 @@ export class MapCmpComponent implements OnInit, AfterViewInit {
     canvas_width: number;
     canvas_height: number;
 
-    constructor(private _scene: ScenegraphService, private _tiles: TilesService) {
+    constructor(private _scene: ScenegraphService, private _tiles: TilesLoaderService) {
     }
 
     ngOnInit() {
@@ -30,7 +28,6 @@ export class MapCmpComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.initCanvas();
-        this._scene.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
         this._scene.visibleWindow$.subscribe((map: [Tile][][]) => {
             this.draw(map);
         });

@@ -8,8 +8,11 @@ export class Tile {
     }
 
     getCurrentTile() {
-        this._setNextTile();
         return this.tilesArray[this.currentTileIndex];
+    }
+
+    tick() {
+        this._setNextTile();
     }
 
     private _setNextTile() {
