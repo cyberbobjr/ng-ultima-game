@@ -184,9 +184,9 @@ export class ScenegraphService {
       // Do what you need to for this
       /*      if ((player_data_x != x0) || (player_data_y != y0)) {*/
       if (this._mapService.isTileAtPositionBlockVisible(new Position(x0, y0))) {
-        this.fov_map[y0][x0] = visible;
+        this.fov_map[x0][y0] = visible;
       } else {
-        this.fov_map[y0][x0] = visible;
+        this.fov_map[x0][y0] = visible;
         visible = false;
       }
       /*      }

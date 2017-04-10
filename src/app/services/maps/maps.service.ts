@@ -31,6 +31,6 @@ export class MapsService {
   }
 
   isTileAtPositionBlockVisible(position: Position): boolean {
-    return false;
+    return true;
   }
 }
