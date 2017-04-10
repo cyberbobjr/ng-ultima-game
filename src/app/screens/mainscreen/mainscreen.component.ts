@@ -8,6 +8,12 @@ import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
 import {MapsService} from "app/services/maps/maps.service";
 import {TilesLoaderService} from "../../services/tiles/tiles.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
+import {RenderableBehavior} from "../../behaviors/renderable-behavior";
+import {Tile} from "../../classes/tile";
+import {PositionBehavior} from "../../behaviors/position-behavior";
+import {Position} from "../../classes/position";
+import {MovableBehavior} from "../../behaviors/movable-behavior";
+import {KeycontrolBehavior} from "../../behaviors/keycontrol-behavior";
 
 const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
@@ -20,6 +26,7 @@ const MAX_HEIGHT = 10;
 export class MainscreenComponent implements OnInit {
   isMapReady: boolean = false;
   gameLoop: any;
+
   @HostListener("document:keyup", ["$event"]) handleKeyboardEvents($event: KeyboardEvent) {
     this.processKeyInput($event);
   }
@@ -52,6 +59,12 @@ export class MainscreenComponent implements OnInit {
         this._playerService.loadPlayer()
           .then((player: Entity) => {
             this._entitiesService.addEntity(player);
+            /*let ennemy = new Entity();
+            ennemy.addBehavior(new RenderableBehavior(new Tile([45])));
+            ennemy.addBehavior(new PositionBehavior(new Position(50, 50)));
+            ennemy.addBehavior(new MovableBehavior());
+            ennemy.addBehavior(new KeycontrolBehavior(ennemy));
+            this._entitiesService.addEntity(ennemy);*/
             this._sceneService.loadMap(this._mapService.currentMap);
             this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
             this._sceneService.setCenterCameraOnEntity(player);

@@ -6,27 +6,31 @@ import {Tile} from "../../classes/tile";
 
 @Injectable()
 export class MapsService {
-    currentMap: GameMap;
+  currentMap: GameMap;
 
-    constructor(private _http: Http) {
-    }
+  constructor(private _http: Http) {
+  }
 
-    loadMap(mapFilename: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this._http.get(mapFilename)
-                .subscribe((res) => {
-                    const mapData = res.json();
-                    this.currentMap = new GameMap("world", mapData);
-                    resolve(true);
-                });
+  loadMap(mapFilename: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this._http.get(mapFilename)
+        .subscribe((res) => {
+          const mapData = res.json();
+          this.currentMap = new GameMap("world", mapData);
+          resolve(true);
         });
-    }
+    });
+  }
 
-    getTilesAtPosition(position: Position): Array<Tile> {
-        return this.currentMap.getTilesAtPosition(position);
-    }
+  getTilesAtPosition(position: Position): Array<Tile> {
+    return this.currentMap.getTilesAtPosition(position);
+  }
 
-    getMap(): GameMap {
-        return this.currentMap;
-    }
+  getMap(): GameMap {
+    return this.currentMap;
+  }
+
+  isTileAtPositionBlockVisible(position: Position): boolean {
+    return false;
+  }
 }
