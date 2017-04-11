@@ -2,35 +2,37 @@ import {Injectable} from "@angular/core";
 import {Http} from "@angular/http";
 import {GameMap} from "../../classes/game_map";
 import {Position} from "../../classes/position";
-import {Tile} from "../../classes/tile";
+import {TilesLoaderService} from "../tiles/tiles.service";
+import {ITile} from "../../interfaces/ITile";
 
 @Injectable()
 export class MapsService {
   currentMap: GameMap;
 
-  constructor(private _http: Http) {
+  constructor(private _http: Http, private _tileloader: TilesLoaderService) {
   }
 
   loadMap(mapFilename: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this._http.get(mapFilename)
-        .subscribe((res) => {
-          const mapData = res.json();
-          this.currentMap = new GameMap("world", mapData);
-          resolve(true);
-        });
+          .subscribe((res) => {
+            const mapData = res.json();
+            this.currentMap = new GameMap("world", mapData, this._tileloader);
+            resolve(true);
+          });
     });
   }
 
-  getTilesAtPosition(position: Position): Array<Tile> {
-    return this.currentMap.getTilesAtPosition(position);
+  getTileAtPosition(position: Position): ITile {
+    return this.currentMap.getTileAtPosition(position);
   }
 
   getMap(): GameMap {
     return this.currentMap;
   }
 
-  isTileAtPositionBlockVisible(position: Position): boolean {
-    return true;
+  isTileAtPositionIsOpaque(position: Position): boolean {
+    let tile: ITile = this.getTileAtPosition(position);
+    return this._tileloader.isTileOpaque(tile.name);
   }
 }

@@ -1,42 +1,102 @@
 import {Injectable} from "@angular/core";
 import {Subject} from "rxjs";
-
-const TILES_COUNT = 256;
+import {Http} from "@angular/http";
+import {Tileset} from "../../classes/Tileset";
+import * as _ from "lodash";
+import {ITile} from "../../interfaces/ITile";
+import {ITileset} from "../../interfaces/ITileset";
 
 @Injectable()
 export class TilesLoaderService {
-    tiles: Array<HTMLImageElement> = [];
-    numberOfTilesLoaded: number = 0;
-    numberOfTilesLoaded$: Subject<number> = new Subject();
+  tiles: Array<HTMLImageElement> = [];
+  numberOfTilesLoaded: number = 0;
+  numberOfTilesLoaded$: Subject<number> = new Subject();
+  tileset: Tileset;
+  tilesRules: { name: string };
 
-    constructor() {
-        this.numberOfTilesLoaded$.next(0);
-    }
+  constructor(private _http: Http) {
+    this.numberOfTilesLoaded$.next(0);
+  }
 
-    loadTiles() {
-        for (let i = 0; i < TILES_COUNT; i++) {
-            this.tiles.push(this.loadTile(i));
+  loadTiles(): Promise<any> {
+    this._loadJsonTilesRules();
+    this._parseJsonTileDefiniftion();
+    return new Promise((resolve, reject) => {
+      this.numberOfTilesLoaded$.subscribe((numberOfTilesLoaded: number) => {
+        if (numberOfTilesLoaded === this.tileset.tile.length) {
+          resolve(true);
         }
-        return new Promise((resolve, reject) => {
-            this.numberOfTilesLoaded$.subscribe((numberOfTilesLoaded) => {
-                if (numberOfTilesLoaded === TILES_COUNT) {
-                    resolve(true);
-                }
-            });
+      }, (err) => {
+        reject(err);
+      });
+    });
+  }
+
+  private _loadJsonTilesRules(): Promise<{ name: string }> {
+    return new Promise((resolve, reject) => {
+      this._http.get("assets/tiles_rules.json")
+          .subscribe((res) => {
+            this.tilesRules = (res.json()).tileRules.rule;
+            resolve(this.tilesRules);
+          }, (err) => {
+            reject(err);
+          });
+    });
+  }
+
+  private _parseJsonTileDefiniftion() {
+    this._loadJsonTileDefinition()
+        .then((tileset: ITileset) => {
+          this.tileset = new Tileset(tileset.name, tileset.tile);
+        })
+        .then(() => {
+          return this._loadJsonTilesRules();
+        })
+        .then(() => {
+          this._loadImagesTileset();
         });
-    }
+  }
 
-    private loadTile(index: number) {
-        const img = new Image();
-        img.onload = () => {
-            this.numberOfTilesLoaded++;
-            this.numberOfTilesLoaded$.next(this.numberOfTilesLoaded);
-        };
-        img.src = `assets/tiles/${index}.png`;
-        return img;
+  private _loadImagesTileset() {
+    for (let tile of this.tileset.tile) {
+      tile["image"] = this._loadTileFileByName(tile.name);
     }
+  }
 
-    getTileAtIndex(index: number): HTMLImageElement {
-        return this.tiles[index];
-    }
+  private _loadJsonTileDefinition(): Promise<Tileset> {
+    return new Promise((resolve, reject) => {
+      this._http.get("assets/tiles.json")
+          .subscribe((res) => {
+            let definition = res.json();
+            resolve(definition.tileset);
+          }, (err) => {
+            console.log(err);
+            reject(err);
+          });
+    });
+  }
+
+  private _loadTileFileByName(name: string): HTMLImageElement {
+    const img = new Image();
+    img.onload = () => {
+      this.numberOfTilesLoaded++;
+      this.numberOfTilesLoaded$.next(this.numberOfTilesLoaded);
+    };
+    img.src = `assets/tiles/tile_${name}.png`;
+    return img;
+  }
+
+  getTileAtIndex(index: number): ITile {
+    return this.tileset.tile[index];
+  }
+
+  getTileByName(tileName: string): any {
+    return _.find(this.tileset.tile, {"name": tileName});
+  }
+
+  isTileOpaque(tileName: string): boolean {
+    let tile = _.find(this.tileset.tile, {"name": tileName});
+    return _.has(tile, "opaque");
+  }
+
 }

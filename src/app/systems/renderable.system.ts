@@ -5,15 +5,15 @@ import {EntitiesService} from "../services/entities/entities.service";
 import {PositionBehavior} from "../behaviors/position-behavior";
 import * as _ from "lodash";
 import {RenderableBehavior} from "../behaviors/renderable-behavior";
-import {Tile} from "../classes/tile";
+import {ITile} from "../interfaces/ITile";
 
 @Injectable()
 export class RenderableSystem {
     constructor(private _entities: EntitiesService) {
     }
 
-    getRenderableTilesAtPosition(position: Position): Array<Tile> {
-        let entities: Array<Tile> = [];
+    getRenderableTilesAtPosition(position: Position): Array<ITile> {
+        let entities: Array<ITile> = [];
         this._entities.entities.forEach((entity: Entity) => {
             if (entity.hasBehavior("renderable") && entity.hasBehavior("position")) {
                 let positionBehavior = <PositionBehavior>entity.getBehavior("position");
