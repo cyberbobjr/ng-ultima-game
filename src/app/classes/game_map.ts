@@ -1,5 +1,6 @@
 import {Tile} from "./tile";
 import {Position} from "./position";
+import {TilesLoaderService} from "../services/tiles/tiles.service";
 
 export class GameMap {
     name: string;
@@ -8,7 +9,7 @@ export class GameMap {
     width: number;
     height: number;
 
-    constructor(name: string, mapRawData: number[][]) {
+    constructor(name: string, mapRawData: number[][], private _tilesService: TilesLoaderService) {
         this._convertRawDataToMap(mapRawData);
         this.name = name;
         this.width = mapRawData[0].length;

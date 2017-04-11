@@ -1,0 +1,694 @@
+{
+  "tileset": {
+    "name": "base",
+    "imageName": "tiles",
+    "tile": [
+      {
+        "name": "sea",
+        "rule": "water",
+        "animation": "scroll"
+      },
+      {
+        "name": "water",
+        "rule": "water",
+        "animation": "scroll"
+      },
+      {
+        "name": "shallows",
+        "rule": "shallows",
+        "animation": "scroll"
+      },
+      {
+        "name": "swamp",
+        "rule": "swamp"
+      },
+      {
+        "name": "grass",
+        "rule": "grass"
+      },
+      {
+        "name": "brush",
+        "rule": "brush"
+      },
+      {
+        "name": "forest",
+        "rule": "brush",
+        "opaque": "true"
+      },
+      {
+        "name": "hills",
+        "rule": "hills"
+      },
+      {
+        "name": "mountains",
+        "rule": "mountains",
+        "opaque": "true"
+      },
+      {
+        "name": "dungeon"
+      },
+      {
+        "name": "city",
+        "animation": "cityflag",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "castle",
+        "animation": "castleflag",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "town",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "lcb_west",
+        "rule": "lcb",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "lcb_entrance",
+        "rule": "lcb_entrance",
+        "animation": "lcbflag",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "lcb_east",
+        "rule": "lcb",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "ship",
+        "rule": "ship",
+        "frames": "4",
+        "directions": "wnes",
+        "animation": "shipflag"
+      },
+      {
+        "name": "horse",
+        "rule": "horse",
+        "frames": "2",
+        "directions": "we"
+      },
+      {
+        "name": "dungeon_floor",
+        "rule": "floors"
+      },
+      {
+        "name": "bridge",
+        "usesWaterReplacementTileAsBackground": "true",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "balloon",
+        "rule": "balloon"
+      },
+      {
+        "name": "bridge_pieces",
+        "frames": "2",
+        "usesWaterReplacementTileAsBackground": "true",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "up_ladder",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "down_ladder",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "ruins",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "shrine",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "avatar",
+        "rule": "person"
+      },
+      {
+        "name": "mage",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "bard",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "fighter",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "druid",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "tinker",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "paladin",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "ranger",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "shepherd",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "column",
+        "rule": "solid",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "solids",
+        "rule": "solid_attackover",
+        "frames": "4",
+        "usesReplacementTileAsBackground": "true",
+        "usesWaterReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "shipmast",
+        "rule": "solid"
+      },
+      {
+        "name": "shipwheel",
+        "rule": "solid"
+      },
+      {
+        "name": "rocks",
+        "rule": "solid",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "corpse",
+        "rule": "solid",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "stone_wall",
+        "rule": "walls"
+      },
+      {
+        "name": "locked_door",
+        "rule": "locked_door"
+      },
+      {
+        "name": "door",
+        "rule": "door"
+      },
+      {
+        "name": "chest",
+        "rule": "chest",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "ankh",
+        "rule": "solid",
+        "usesReplacementTileAsBackground": "true",
+        "usesWaterReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "brick_floor",
+        "rule": "floors"
+      },
+      {
+        "name": "wood_floor",
+        "rule": "floors"
+      },
+      {
+        "name": "moongate_opening",
+        "rule": "solid",
+        "frames": "3"
+      },
+      {
+        "name": "moongate"
+      },
+      {
+        "name": "poison_field",
+        "rule": "poison_field",
+        "animation": "scroll",
+        "tiledInDungeon": "true",
+        "usesReplacementTileAsBackground": "true",
+        "usesWaterReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "energy_field",
+        "rule": "energy_field",
+        "animation": "scroll",
+        "tiledInDungeon": "true",
+        "usesReplacementTileAsBackground": "true",
+        "usesWaterReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "fire_field",
+        "rule": "fire_field",
+        "animation": "scroll",
+        "tiledInDungeon": "true",
+        "usesReplacementTileAsBackground": "true",
+        "usesWaterReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "sleep_field",
+        "rule": "sleep_field",
+        "animation": "scroll",
+        "tiledInDungeon": "true",
+        "usesReplacementTileAsBackground": "true",
+        "usesWaterReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "solid",
+        "rule": "solid_attackover"
+      },
+      {
+        "name": "secret_door",
+        "rule": "secret_door",
+        "opaque": "true"
+      },
+      {
+        "name": "altar",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "campfire",
+        "rule": "solid",
+        "animation": "campfire",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "lava",
+        "rule": "lava",
+        "animation": "scroll"
+      },
+      {
+        "name": "miss_flash",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "magic_flash",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "hit_flash",
+        "usesReplacementTileAsBackground": "true"
+      },
+      {
+        "name": "guard",
+        "rule": "person",
+        "frames": "4",
+        "animation": "slow_frame"
+      },
+      {
+        "name": "villager",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "bard_singing",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "jester",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "beggar",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "child",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "bull",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "lord_british",
+        "rule": "person",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "A",
+        "rule": "signs"
+      },
+      {
+        "name": "B",
+        "rule": "signs"
+      },
+      {
+        "name": "C",
+        "rule": "signs"
+      },
+      {
+        "name": "D",
+        "rule": "signs"
+      },
+      {
+        "name": "E",
+        "rule": "signs"
+      },
+      {
+        "name": "F",
+        "rule": "signs"
+      },
+      {
+        "name": "G",
+        "rule": "signs"
+      },
+      {
+        "name": "H",
+        "rule": "signs"
+      },
+      {
+        "name": "I",
+        "rule": "signs"
+      },
+      {
+        "name": "J",
+        "rule": "signs"
+      },
+      {
+        "name": "K",
+        "rule": "signs"
+      },
+      {
+        "name": "L",
+        "rule": "signs"
+      },
+      {
+        "name": "M",
+        "rule": "signs"
+      },
+      {
+        "name": "N",
+        "rule": "signs"
+      },
+      {
+        "name": "O",
+        "rule": "signs"
+      },
+      {
+        "name": "P",
+        "rule": "signs"
+      },
+      {
+        "name": "Q",
+        "rule": "signs"
+      },
+      {
+        "name": "R",
+        "rule": "signs"
+      },
+      {
+        "name": "S",
+        "rule": "signs"
+      },
+      {
+        "name": "T",
+        "rule": "signs"
+      },
+      {
+        "name": "U",
+        "rule": "signs"
+      },
+      {
+        "name": "V",
+        "rule": "signs"
+      },
+      {
+        "name": "W",
+        "rule": "signs"
+      },
+      {
+        "name": "X",
+        "rule": "signs"
+      },
+      {
+        "name": "Y",
+        "rule": "signs"
+      },
+      {
+        "name": "Z",
+        "rule": "signs"
+      },
+      {
+        "name": "space",
+        "rule": "signs"
+      },
+      {
+        "name": "spacers",
+        "rule": "spacers",
+        "frames": "3"
+      },
+      {
+        "name": "black",
+        "rule": "spacers"
+      },
+      {
+        "name": "brick_wall",
+        "rule": "walls",
+        "opaque": "true"
+      },
+      {
+        "name": "pirate_ship",
+        "rule": "monster",
+        "frames": "4",
+        "directions": "wnes",
+        "animation": "pirateflag"
+      },
+      {
+        "name": "nixie",
+        "rule": "monster",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "giant_squid",
+        "rule": "monster",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "sea_serpent",
+        "rule": "monster",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "sea_horse",
+        "rule": "monster",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "whirlpool",
+        "rule": "water",
+        "frames": "2",
+        "animation": "frame"
+      },
+      {
+        "name": "rat",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "bat",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "spider",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "ghost",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "slime",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "troll",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "gremlin",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "mimic",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "reaper",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "insect_swarm",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "gazer",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "phantom",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "orc",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "skeleton",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "rogue",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "python",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "ettin",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "headless",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "cyclops",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "wisp",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "evil_mage",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "liche",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "lava_lizard",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "zorn",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "daemon",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "hydra",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "dragon",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      },
+      {
+        "name": "balron",
+        "rule": "monster",
+        "frames": "4",
+        "animation": "frame"
+      }
+    ]
+  }
+}

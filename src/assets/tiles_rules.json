@@ -1,0 +1,171 @@
+{
+  "tileRules": {
+    "rule": [
+      {
+        "name": "default"
+      },
+      {
+        "name": "water",
+        "cantwalkon": "all",
+        "swimable": "true",
+        "sailable": "true",
+        "onWaterOnlyReplacement": "true"
+      },
+      {
+        "name": "shallows",
+        "cantwalkon": "all",
+        "swimable": "true",
+        "onWaterOnlyReplacement": "true"
+      },
+      {
+        "name": "swamp",
+        "speed": "slow",
+        "effect": "poison"
+      },
+      {
+        "name": "grass",
+        "canlandballoon": "true",
+        "replacement": "true"
+      },
+      {
+        "name": "brush",
+        "speed": "vslow"
+      },
+      {
+        "name": "hills",
+        "speed": "vvslow"
+      },
+      {
+        "name": "mountains",
+        "cantwalkon": "all",
+        "unflyable": "true",
+        "creatureunwalkable": "true"
+      },
+      {
+        "name": "lcb",
+        "cantwalkon": "all",
+        "creatureunwalkable": "true"
+      },
+      {
+        "name": "lcb_entrance",
+        "cantwalkon": "south",
+        "cantwalkoff": "north",
+        "creatureunwalkable": "true"
+      },
+      {
+        "name": "ship",
+        "ship": "true",
+        "creatureunwalkable": "true"
+      },
+      {
+        "name": "horse",
+        "horse": "true",
+        "creatureunwalkable": "true"
+      },
+      {
+        "name": "floors",
+        "replacement": "true"
+      },
+      {
+        "name": "balloon",
+        "balloon": "true",
+        "creatureunwalkable": "true"
+      },
+      {
+        "name": "person",
+        "cantwalkon": "all",
+        "livingthing": "true"
+      },
+      {
+        "name": "solid",
+        "cantwalkon": "all"
+      },
+      {
+        "name": "solid_attackover",
+        "cantwalkon": "all",
+        "canattackover": "true"
+      },
+      {
+        "name": "walls",
+        "cantwalkon": "all",
+        "unflyable": "true"
+      },
+      {
+        "name": "locked_door",
+        "cantwalkon": "all",
+        "lockeddoor": "true"
+      },
+      {
+        "name": "door",
+        "cantwalkon": "all",
+        "door": "true"
+      },
+      {
+        "name": "secret_door",
+        "cantwalkon": "retreat"
+      },
+      {
+        "name": "chest",
+        "chest": "true"
+      },
+      {
+        "name": "poison_field",
+        "effect": "poisonField",
+        "dispel": "true"
+      },
+      {
+        "name": "energy_field",
+        "cantwalkon": "all",
+        "effect": "electricity",
+        "creatureunwalkable": "true",
+        "unflyable": "true",
+        "dispel": "true"
+      },
+      {
+        "name": "fire_field",
+        "speed": "vvslow",
+        "effect": "fire",
+        "dispel": "true"
+      },
+      {
+        "name": "sleep_field",
+        "effect": "sleep",
+        "dispel": "true"
+      },
+      {
+        "name": "lava",
+        "effect": "lava",
+        "replacement": "true"
+      },
+      {
+        "name": "signs",
+        "cantwalkon": "all",
+        "talkover": "true"
+      },
+      {
+        "name": "spacers",
+        "cantwalkon": "all"
+      },
+      {
+        "name": "monster",
+        "cantwalkon": "all",
+        "livingthing": "true"
+      },
+      {
+        "name": "dng_altar",
+        "creatureunwalkable": "true",
+        "unflyable": "true"
+      },
+      {
+        "name": "dng_door",
+        "cantwalkon": "retreat"
+      },
+      {
+        "name": "dng_room",
+        "creatureunwalkable": "true",
+        "cantwalkon": "retreat",
+        "unflyable": "true"
+      }
+    ]
+  }
+}

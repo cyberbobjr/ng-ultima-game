@@ -1,11 +1,12 @@
 export class Tile {
+    tileImage: HTMLImageElement = null;
+    tileRules: string = "";
     tilesArray: Array<number> = [];
     currentTileIndex: number;
-    _walkable: boolean = true;
-    _blockLight: boolean = false;
+    tileName: string;
 
-    constructor(tilesArray: Array<number>) {
-        this.tilesArray = tilesArray;
+    constructor(tileName: string) {
+        this.tileName = tileName;
         this.currentTileIndex = 0;
     }
 
