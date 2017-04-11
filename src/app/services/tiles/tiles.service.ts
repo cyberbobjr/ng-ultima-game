@@ -46,7 +46,7 @@ export class TilesLoaderService {
 
     private _loadJsonTileDefinition(): Promise<Tileset> {
         return new Promise((resolve, reject) => {
-            this._http.get("assets/tiles.json")
+            this._http.get("assets/mapData.json")
                 .subscribe((res) => {
                     let definition = res.json();
                     resolve(definition.tileset);

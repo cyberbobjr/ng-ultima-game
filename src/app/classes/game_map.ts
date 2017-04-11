@@ -1,10 +1,11 @@
 import {Tile} from "./tile";
 import {Position} from "./position";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
+import {ITile} from "../interfaces/ITile";
 
 export class GameMap {
     name: string;
-    tiles: Tile[][] = [];
+    mapData: ITile[][] = [];
 
     width: number;
     height: number;
@@ -20,10 +21,10 @@ export class GameMap {
         let rowIndex: number = 0;
         let colIndex: number = 0;
         for (let rows of rawData) {
-            this.tiles[rowIndex] = [];
+            this.mapData[rowIndex] = [];
             for (let cols of rows) {
                 let tile = new Tile([cols]);
-                this.tiles[rowIndex][colIndex] = tile;
+                this.mapData[rowIndex][colIndex] = tile;
                 colIndex++;
             }
             colIndex = 0;
@@ -40,6 +41,6 @@ export class GameMap {
     }
 
     getTilesAtPosition(position: Position): Array<Tile> {
-        return [this.tiles[position.row][position.col]];
+        return [this.mapData[position.row][position.col]];
     }
 }
