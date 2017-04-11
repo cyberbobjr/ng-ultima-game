@@ -50,7 +50,6 @@ export class ScenegraphService {
   }
 
   refresh() {
-    console.log("refresh scene");
     try {
       if (this.entityCenter !== null) {
         this._centerCameraOnEntity();
@@ -65,7 +64,6 @@ export class ScenegraphService {
   }
 
   private _computeVisibleWindow() {
-    console.log("_computeVisibleWindow scene");
     this.cameraEndPosition.col = this.cameraStartPosition.col + this.maxVisiblesCols + 1;
     this.cameraEndPosition.row = this.cameraStartPosition.row + this.maxVisiblesRows + 1;
 
@@ -136,7 +134,6 @@ export class ScenegraphService {
   }
 
   private _refreshVisibleWindow() {
-    console.log("_refreshVisibleWindow");
     this.visibleWindow$.next(this.visibleWindow);
   }
 
