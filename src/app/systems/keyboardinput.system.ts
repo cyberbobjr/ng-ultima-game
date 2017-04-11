@@ -11,7 +11,7 @@ const KEY_RIGHT = "ArrowRight";
 @Injectable()
 export class KeyboardinputSystem {
 
-    constructor(private _entities: EntitiesService) {
+    constructor(private _entities: EntitiesService ) {
 
     }
 

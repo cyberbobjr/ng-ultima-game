@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "avatar";
+    src: url("/assets/fonts/Avatar.ttf") format("truetype");
+}
+
 .game-background {
     background-color: black;
 }

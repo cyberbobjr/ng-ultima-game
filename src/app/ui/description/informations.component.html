@@ -1,3 +1,5 @@
-<p>
-  description works!
-</p>
+<ul *ngIf="informationsTexts.length > 0">
+    <li *ngFor="let descriptionText of informationsTexts">
+        {{descriptionText}}
+    </li>
+</ul>

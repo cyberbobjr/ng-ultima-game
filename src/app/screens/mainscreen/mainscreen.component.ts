@@ -9,6 +9,7 @@ import {MapsService} from "app/services/maps/maps.service";
 import {TilesLoaderService} from "../../services/tiles/tiles.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
 import {SavestateSystem} from "../../systems/savestate.system";
+import {InformationsService} from "../../services/informations/informations.service";
 const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
 
@@ -33,12 +34,14 @@ export class MainscreenComponent implements OnInit {
                 private _sceneService: ScenegraphService,
                 private _tileService: TilesLoaderService,
                 private _keyboardinputSystem: KeyboardinputSystem,
-                private _savestateSystem: SavestateSystem) {
+                private _savestateSystem: SavestateSystem,
+                private _informationsService: InformationsService) {
     }
 
     ngOnInit() {
         this.initGame()
             .then(() => {
+                this._informationsService.addLogInformation("init game loaded");
                 console.log("Init game loaded");
                 this.isMapReady = true;
                 this.mainLoop();
