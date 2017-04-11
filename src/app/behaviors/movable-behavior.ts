@@ -1,12 +1,12 @@
 import {IBehavior} from "../interfaces/IBehavior";
+import {Position} from "../classes/position";
 
 export class MovableBehavior implements IBehavior {
     name = "movable";
-    directionRow: number = 0;
-    directionCol: number = 0;
+    vector: Position = null;
 
     constructor() {
-
+        this.vector = new Position();
     }
 
     tick(): any {
@@ -14,23 +14,23 @@ export class MovableBehavior implements IBehavior {
     }
 
     moveUp() {
-        this.directionRow = -1;
+        this.vector.row = -1;
     }
 
     moveDown() {
-        this.directionRow = 1;
+        this.vector.row = 1;
     }
 
     moveRight() {
-        this.directionCol = 1;
+        this.vector.col = 1;
     }
 
     moveLeft() {
-        this.directionCol = -1;
+        this.vector.col = -1;
     }
 
     stay() {
-        this.directionCol = 0;
-        this.directionRow = 0;
+        this.vector.row = 0;
+        this.vector.col = 0;
     }
 }

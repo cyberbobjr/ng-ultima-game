@@ -2,45 +2,46 @@ import {IBehavior} from "../interfaces/IBehavior";
 import {Position} from "../classes/position";
 
 export class PositionBehavior implements IBehavior {
-  name = "position";
-  position: Position;
+    name = "position";
+    position: Position;
 
-  constructor(position: Position) {
-    this.position = position;
-  }
-
-  tick(): any {
-    return null;
-  }
-
-  moveTo(colDirection: number, rowDirection: number) {
-    if (colDirection === 1) {
-      this.moveToRight();
+    constructor(position: Position) {
+        this.position = position;
     }
-    if (colDirection === -1) {
-      this.moveToLeft();
+
+    tick(): any {
+        return null;
     }
-    if (rowDirection === 1) {
-      this.moveToDown();
+
+    moveTo(directionVector: Position) {
+        this.position = this.position.addVector(directionVector);
+        /*if (colDirection === 1) {
+         this.moveToRight();
+         }
+         if (colDirection === -1) {
+         this.moveToLeft();
+         }
+         if (rowDirection === 1) {
+         this.moveToDown();
+         }
+         if (rowDirection === -1) {
+         this.moveToUp();
+         }*/
     }
-    if (rowDirection === -1) {
-      this.moveToUp();
+
+    moveToLeft() {
+        this.position.col--;
     }
-  }
 
-  moveToLeft() {
-    this.position.col--;
-  }
+    moveToRight() {
+        this.position.col++;
+    }
 
-  moveToRight() {
-    this.position.col++;
-  }
+    moveToUp() {
+        this.position.row--;
+    }
 
-  moveToUp() {
-    this.position.row--;
-  }
-
-  moveToDown() {
-    this.position.row++;
-  }
+    moveToDown() {
+        this.position.row++;
+    }
 }
