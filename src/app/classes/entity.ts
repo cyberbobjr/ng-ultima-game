@@ -1,6 +1,7 @@
 import {IBehavior} from "../interfaces/IBehavior";
 
 export class Entity {
+    name: string;
     private _behaviors: Map<string, IBehavior> = new Map();
 
     constructor() {
