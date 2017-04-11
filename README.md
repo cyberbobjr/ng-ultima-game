@@ -39,3 +39,8 @@ Availables features :
 - Move your player
 - Display Tiles & Map
 - Hide opaque map tiles
+- Manage blockable tile
+- Add move information
+- GUI Screen ready
+- Save state of player (position on the map)
+- Simili responsive (for the width only)
