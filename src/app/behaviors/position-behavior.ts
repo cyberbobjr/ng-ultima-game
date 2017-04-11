@@ -15,33 +15,5 @@ export class PositionBehavior implements IBehavior {
 
     moveTo(directionVector: Position) {
         this.position = this.position.addVector(directionVector);
-        /*if (colDirection === 1) {
-         this.moveToRight();
-         }
-         if (colDirection === -1) {
-         this.moveToLeft();
-         }
-         if (rowDirection === 1) {
-         this.moveToDown();
-         }
-         if (rowDirection === -1) {
-         this.moveToUp();
-         }*/
-    }
-
-    moveToLeft() {
-        this.position.col--;
-    }
-
-    moveToRight() {
-        this.position.col++;
-    }
-
-    moveToUp() {
-        this.position.row--;
-    }
-
-    moveToDown() {
-        this.position.row++;
     }
 }
