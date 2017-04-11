@@ -3,6 +3,7 @@ import {Subject} from "rxjs";
 import {Http} from "@angular/http";
 import {Tileset} from "../../classes/Tileset";
 import * as _ from "lodash";
+import {ITile} from "../../interfaces/ITile";
 
 const TILES_COUNT = 256;
 
@@ -46,7 +47,7 @@ export class TilesLoaderService {
 
     private _loadJsonTileDefinition(): Promise<Tileset> {
         return new Promise((resolve, reject) => {
-            this._http.get("assets/mapData.json")
+            this._http.get("assets/tiles.json")
                 .subscribe((res) => {
                     let definition = res.json();
                     resolve(definition.tileset);
@@ -90,8 +91,8 @@ export class TilesLoaderService {
         return img;
     }
 
-    getTileAtIndex(index: number): HTMLImageElement {
-        return this.tileset.tile[index]["image"];
+    getTileAtIndex(index: number): ITile {
+        return this.tileset.tile[index];
     }
 
     getTileByName(tileName: string): any {

@@ -2,8 +2,8 @@ import {Injectable} from "@angular/core";
 import {Http} from "@angular/http";
 import {GameMap} from "../../classes/game_map";
 import {Position} from "../../classes/position";
-import {Tile} from "../../classes/tile";
 import {TilesLoaderService} from "../tiles/tiles.service";
+import {ITile} from "../../interfaces/ITile";
 
 @Injectable()
 export class MapsService {
@@ -23,8 +23,8 @@ export class MapsService {
         });
     }
 
-    getTilesAtPosition(position: Position): Array<Tile> {
-        return this.currentMap.getTilesAtPosition(position);
+    getTileAtPosition(position: Position): ITile {
+        return this.currentMap.getTileAtPosition(position);
     }
 
     getMap(): GameMap {

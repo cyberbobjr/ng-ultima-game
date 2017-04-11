@@ -1,46 +1,44 @@
-import {Tile} from "./tile";
 import {Position} from "./position";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
 import {ITile} from "../interfaces/ITile";
 
 export class GameMap {
-    name: string;
-    mapData: ITile[][] = [];
+  name: string;
+  mapData: ITile[][] = [];
 
-    width: number;
-    height: number;
+  width: number;
+  height: number;
 
-    constructor(name: string, mapRawData: number[][], private _tilesService: TilesLoaderService) {
-        this._convertRawDataToMap(mapRawData);
-        this.name = name;
-        this.width = mapRawData[0].length;
-        this.height = mapRawData.length;
+  constructor(name: string, mapRawData: number[][], private _tilesService: TilesLoaderService) {
+    this._convertRawDataToMapData(mapRawData);
+    this.name = name;
+    this.width = mapRawData[0].length;
+    this.height = mapRawData.length;
+  }
+
+  private _convertRawDataToMapData(rawData: number[][]) {
+    let rowIndex: number = 0;
+    let colIndex: number = 0;
+    for (let rows of rawData) {
+      this.mapData[rowIndex] = [];
+      for (let cols of rows) {
+        this.mapData[rowIndex][colIndex] = this._tilesService.getTileAtIndex(cols);
+        colIndex++;
+      }
+      colIndex = 0;
+      rowIndex++;
     }
+  }
 
-    private _convertRawDataToMap(rawData: number[][]) {
-        let rowIndex: number = 0;
-        let colIndex: number = 0;
-        for (let rows of rawData) {
-            this.mapData[rowIndex] = [];
-            for (let cols of rows) {
-                let tile = new Tile([cols]);
-                this.mapData[rowIndex][colIndex] = tile;
-                colIndex++;
-            }
-            colIndex = 0;
-            rowIndex++;
-        }
-    }
+  getWidthMap() {
+    return this.width;
+  }
 
-    getWidthMap() {
-        return this.width;
-    }
+  getHeightMap() {
+    return this.height;
+  }
 
-    getHeightMap() {
-        return this.height;
-    }
-
-    getTilesAtPosition(position: Position): Array<Tile> {
-        return [this.mapData[position.row][position.col]];
-    }
+  getTileAtPosition(position: Position): ITile {
+    return this.mapData[position.row][position.col];
+  }
 }

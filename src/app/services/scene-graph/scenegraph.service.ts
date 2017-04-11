@@ -2,16 +2,16 @@ import {Injectable} from "@angular/core";
 import {Subject} from "rxjs";
 import {Position} from "../../classes/position";
 import {GameMap} from "../../classes/game_map";
-import {Tile} from "../../classes/tile";
 import {Entity} from "../../classes/entity";
 import {MapsService} from "../maps/maps.service";
 import {RenderableSystem} from "../../systems/renderable.system";
 import {PositionBehavior} from "../../behaviors/position-behavior";
+import {ITile} from "../../interfaces/ITile";
 
 @Injectable()
 export class ScenegraphService {
-  visibleWindow$: Subject<Array<Tile>[][]> = new Subject();
-  visibleWindow: Array<Tile>[][] = [];
+  visibleWindow$: Subject<Array<ITile>[][]> = new Subject();
+  visibleWindow: Array<ITile>[][] = [];
   fov_map: Array<Array<boolean>> = [[]];
 
   map: GameMap;
@@ -38,14 +38,14 @@ export class ScenegraphService {
     this.maxVisiblesRows = maxHeight;
   }
 
-  loadMap(map: GameMap, cameraStartPosition?: Position) {
+  setMap(map: GameMap, cameraStartPosition?: Position) {
     this.map = map;
     if (cameraStartPosition !== undefined) {
       this.cameraStartPosition = cameraStartPosition;
     }
   }
 
-  getVisiblesTilesAtPositions(position: Position): Array<Tile> {
+  getVisiblesTilesAtPositions(position: Position): Array<ITile> {
     return this.visibleWindow[position.row][position.col];
   }
 
@@ -95,13 +95,11 @@ export class ScenegraphService {
     }
   }
 
-  private _getTilesAtPosition(position: Position): Array<Tile> {
-    let tiles: Array<Tile> = [];
-    let mapTiles = this._mapService.getTilesAtPosition(position);
-    if (mapTiles.length > 0) {
-      for (let mapTile of mapTiles) {
-        tiles.push(mapTile);
-      }
+  private _getTilesAtPosition(position: Position): Array<ITile> {
+    let tiles: Array<ITile> = [];
+    let mapTile = this._mapService.getTileAtPosition(position);
+    if (mapTile) {
+      tiles.push(mapTile);
     }
 
     let entityTiles = this._renderableService.getRenderableTilesAtPosition(position);
