@@ -7,7 +7,7 @@ ng-ultima-game is a proof-of-concept of using Angular framework with :
 - HTML Canvas,
 - Entity-Component-System
 
-For my pleausure, i used the Ultima 4 tiles and game concept.
+For your pleasure, i used the Ultima 4 tiles and game concept.
 Maybe if i have some time i'll be able to code all the game :)
 
 You can move on the map with arrow-key, beware that not all of movements system was coded, it's just for fun.
