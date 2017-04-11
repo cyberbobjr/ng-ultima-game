@@ -1,0 +1,33 @@
+.main-screen {
+    display: inline-flex;
+    flex-direction: row;
+    width: 98%;
+    height: 413px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.moon-viewer {
+    height: 20px;
+}
+
+.map-viewer {
+    width: 401px;
+    background-image: url("/assets/img/map-viewer.png");
+}
+
+.information-viewer {
+    /*padding: 20px;*/
+    flex: 1;
+    background-image: url("/assets/img/information-viewer.png");
+}
+
+.right-bar {
+    width: 20px;
+    background-image: url("/assets/img/right-bar.png");
+}
+
+app-map-cmp {
+    margin-left: 20px;
+}
