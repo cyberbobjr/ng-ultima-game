@@ -44,3 +44,6 @@ Availables features :
 - GUI Screen ready
 - Save state of player (position on the map)
 - Simili responsive (for the width only)
+
+## Licence
+This project is under GNU GENERAL PUBLIC LICENS, see licence.txt for details
