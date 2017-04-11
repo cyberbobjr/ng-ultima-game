@@ -3,7 +3,7 @@ import {Entity} from "../../classes/entity";
 import {EntitiesService} from "../../services/entities/entities.service";
 import {MovementSystem} from "app/systems/movement.system";
 import {RenderableSystem} from "../../systems/renderable.system";
-import {PlayerService} from "../../services/player/player.service";
+import {EntityService} from "../../services/entity/entity.service";
 import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
 import {MapsService} from "app/services/maps/maps.service";
 import {TilesLoaderService} from "../../services/tiles/tiles.service";
@@ -28,7 +28,7 @@ export class MainscreenComponent implements OnInit {
     constructor(private _entitiesService: EntitiesService,
                 private _movementSystem: MovementSystem,
                 private _renderableSystem: RenderableSystem,
-                private _playerService: PlayerService,
+                private _playerService: EntityService,
                 private _mapService: MapsService,
                 private _sceneService: ScenegraphService,
                 private _tileService: TilesLoaderService,
@@ -51,7 +51,7 @@ export class MainscreenComponent implements OnInit {
                        return this._mapService.loadMap("assets/maps/world.map");
                    })
                    .then(() => {
-                       return this._playerService.loadPlayer();
+                       return this._playerService.createPlayer();
                    })
                    .then((player: Entity) => {
                        this._entitiesService.addEntity(player);

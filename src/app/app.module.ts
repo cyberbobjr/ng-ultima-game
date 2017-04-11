@@ -9,7 +9,7 @@ import {MapCmpComponent} from "./ui/map-cmp/map-cmp.component";
 import {MapsService} from "./services/maps/maps.service";
 import {TilesLoaderService} from "./services/tiles/tiles.service";
 import {ScenegraphService} from "./services/scene-graph/scenegraph.service";
-import {PlayerService} from "./services/player/player.service";
+import {EntityService} from "./services/entity/entity.service";
 import {HotkeyModule} from "angular2-hotkeys";
 import {DescriptionComponent} from "./ui/description/description.component";
 import {EntitiesService} from "./services/entities/entities.service";
@@ -45,7 +45,7 @@ const appRoutes: Routes = [
                           RenderableSystem,
                           TilesLoaderService,
                           ScenegraphService,
-                          PlayerService,
+                          EntityService,
                           KeyboardinputSystem,
                           MovementSystem,
                           SavestateSystem
