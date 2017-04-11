@@ -6,6 +6,7 @@
     margin-top: 10px;
     margin-left: 10px;
     margin-bottom: 10px;
+    position: relative;
 }
 
 .moon-viewer {
@@ -14,6 +15,9 @@
 
 .map-viewer {
     width: 401px;
+    height: 413px;
+    position: absolute;
+    z-index: 1;
     background-image: url("/assets/img/map-viewer.png");
 }
 

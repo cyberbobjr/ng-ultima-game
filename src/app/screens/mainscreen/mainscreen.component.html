@@ -1,10 +1,10 @@
-<div class="main-screen">
+<div *ngIf="isMapReady" class="main-screen">
     <div class="map-viewer">
         <div class="moon-viewer"></div>
-        <app-map-cmp *ngIf="isMapReady"></app-map-cmp>
     </div>
+    <app-map-cmp></app-map-cmp>
     <div class="information-viewer">
-
+        <app-game-informations></app-game-informations>
     </div>
     <div class="right-bar">
 
