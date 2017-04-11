@@ -12,7 +12,7 @@ Maybe if i have some time i'll be able to code all the game :)
 
 You can move on the map with arrow-key, beware that not all of movements system was coded, it's just for fun.
 
-![logo](https://github.com/cyberbobjr/ng-ultima-game/blob/master/docs/ng-ultima-poc.gif "screenshot")
+![logo](https://github.com/cyberbobjr/ng-ultima-game/blob/9b48fee3e44404c69cb3259154019f527d0f4f9c/docs/ng-ultima-poc.gif?raw=true "screenshot")
 
 ## Installation
 Just type ```npm install``` and launch the development server.
