@@ -1,0 +1,56 @@
+.main-screen {
+    display: inline-flex;
+    flex-direction: row;
+    width: 98%;
+    height: 413px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.moon-viewer {
+    height: 20px;
+}
+
+.map-viewer {
+    width: 401px;
+    height: 413px;
+    position: absolute;
+    z-index: 1;
+    background-image: url("/assets/img/map-viewer.png");
+}
+
+.information-viewer {
+    padding: 20px;
+    flex: 1;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    background-image: url("/assets/img/information-viewer.png");
+}
+
+.right-bar {
+    width: 20px;
+    background-image: url("/assets/img/right-bar.png");
+}
+
+app-map-cmp {
+    margin-left: 20px;
+}
+
+.party-viewer {
+    height: 135px;
+}
+
+.gold-viewer {
+    margin-top: 5px;
+    height: 25px;
+}
+
+.description-viewer {
+    z-index: 1;
+    margin-top: 10px;
+    height: auto;
+    flex: 3;
+}

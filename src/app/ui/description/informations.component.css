@@ -1,0 +1,21 @@
+:host {
+    color: white;
+    font-family: "avatar", sans-serif;
+}
+
+ul {
+    -webkit-padding-start: 0px;
+    list-style: none;
+    position: absolute;
+    bottom: 0px;
+}
+
+li {
+    padding-left: 1em;
+    text-indent: -.7em;
+}
+
+li::before {
+    content: "• ";
+    color: blue; /* or whatever color you prefer */
+}
