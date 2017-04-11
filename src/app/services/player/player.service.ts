@@ -19,7 +19,7 @@ export class PlayerService {
         return new Promise((resolve, reject) => {
                                this.player = new Entity();
                                this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));
-                               this.player.addBehavior(new PositionBehavior(new Position(52, 50)));
+                               this.player.addBehavior(new PositionBehavior(new Position(104, 85)));
                                this.player.addBehavior(new MovableBehavior());
                                this.player.addBehavior(new KeycontrolBehavior(this.player));
                                resolve(this.player);

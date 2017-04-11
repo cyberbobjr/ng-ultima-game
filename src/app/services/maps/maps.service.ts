@@ -7,31 +7,32 @@ import {ITile} from "../../interfaces/ITile";
 
 @Injectable()
 export class MapsService {
-    currentMap: GameMap;
+  currentMap: GameMap;
 
-    constructor(private _http: Http, private _tileloader: TilesLoaderService) {
-    }
+  constructor(private _http: Http, private _tileloader: TilesLoaderService) {
+  }
 
-    loadMap(mapFilename: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this._http.get(mapFilename)
-                .subscribe((res) => {
-                    const mapData = res.json();
-                    this.currentMap = new GameMap("world", mapData, this._tileloader);
-                    resolve(true);
-                });
-        });
-    }
+  loadMap(mapFilename: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this._http.get(mapFilename)
+          .subscribe((res) => {
+            const mapData = res.json();
+            this.currentMap = new GameMap("world", mapData, this._tileloader);
+            resolve(true);
+          });
+    });
+  }
 
-    getTileAtPosition(position: Position): ITile {
-        return this.currentMap.getTileAtPosition(position);
-    }
+  getTileAtPosition(position: Position): ITile {
+    return this.currentMap.getTileAtPosition(position);
+  }
 
-    getMap(): GameMap {
-        return this.currentMap;
-    }
+  getMap(): GameMap {
+    return this.currentMap;
+  }
 
-    isTileAtPositionBlockVisible(position: Position): boolean {
-        return true;
-    }
+  isTileAtPositionIsOpaque(position: Position): boolean {
+    let tile: ITile = this.getTileAtPosition(position);
+    return this._tileloader.isTileOpaque(tile.name);
+  }
 }

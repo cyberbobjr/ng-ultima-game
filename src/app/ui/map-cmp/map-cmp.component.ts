@@ -51,7 +51,7 @@ export class MapCmpComponent implements OnInit, AfterViewInit {
   draw(map: [ITile][][]) {
     for (let rowIndex = 0; rowIndex < map.length; rowIndex++) {
       for (let colIndex = 0; colIndex < map[rowIndex].length; colIndex++) {
-        this._drawTileAtPosition(new Position(colIndex, rowIndex));
+        this._drawTileAtPosition(new Position(rowIndex, colIndex));
       }
     }
   }
@@ -73,6 +73,6 @@ export class MapCmpComponent implements OnInit, AfterViewInit {
 
   _drawBlackTileAtPosition(position: Position) {
     this.ctx.fillStyle = "rgb(0,0,0)";
-    this.ctx.fillRect(position.col, position.row, position.col + TILE_WIDTH, position.row + TILE_HEIGHT);
+    this.ctx.fillRect(position.col * TILE_WIDTH, position.row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
   }
 }

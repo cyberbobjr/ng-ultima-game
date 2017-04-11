@@ -83,16 +83,17 @@ export class ScenegraphService {
     for (let y = this.cameraStartPosition.row; y <= this.cameraEndPosition.row; y++) {
       this.visibleWindow[visibleRowIndex] = [];
       for (let x = this.cameraStartPosition.col; x <= this.cameraEndPosition.col; x++) {
-        if (this.fov_map[x][y]) {
-          this.visibleWindow[visibleRowIndex][visibileColIndex] = this._getTilesAtPosition(new Position(x, y));
-        } else {
-          this.visibleWindow[visibleRowIndex][visibileColIndex] = [];
-        }
+        this.visibleWindow[visibleRowIndex][visibileColIndex] =
+          this._isMapVisibleAtPosition(new Position(y, x)) ? this._getTilesAtPosition(new Position(y, x)) : [];
         visibileColIndex++;
       }
       visibleRowIndex++;
       visibileColIndex = 0;
     }
+  }
+
+  private _isMapVisibleAtPosition(position: Position) {
+    return this.fov_map[position.row][position.col];
   }
 
   private _getTilesAtPosition(position: Position): Array<ITile> {
@@ -126,7 +127,7 @@ export class ScenegraphService {
     let visibleRowIndex = 0;
     for (let y = this.cameraStartPosition.row; y <= this.cameraEndPosition.row; y++) {
       for (let x = this.cameraStartPosition.col; x <= this.cameraEndPosition.col; x++) {
-        this._calcStraightLine(playerPosition, new Position(x, y));
+        this._calcStraightLine(playerPosition, new Position(y, x));
         visibileColIndex++;
       }
       visibleRowIndex++;
@@ -164,8 +165,6 @@ export class ScenegraphService {
     }
   }
 
-// x0,y0 = player coord
-// x1,y1 = destination point
   private _calcStraightLine(playerPostion: Position, targetPosition: Position) {
     let x0 = playerPostion.col;
     let y0 = playerPostion.row;
@@ -179,18 +178,16 @@ export class ScenegraphService {
     let sy = (y0 < y1) ? 1 : -1;
     let err = dx - dy;
     while (true) {
-      // Do what you need to for this
-      /*      if ((player_data_x != x0) || (player_data_y != y0)) {*/
-      if (this._mapService.isTileAtPositionBlockVisible(new Position(x0, y0))) {
-        this.fov_map[x0][y0] = visible;
+      if ((playerPostion.row === y0) && (playerPostion.col === x0)) {
+        this.fov_map[y0][x0] = true;
       } else {
-        this.fov_map[x0][y0] = visible;
-        visible = false;
+        if (this._mapService.isTileAtPositionIsOpaque(new Position(y0, x0))) {
+          this.fov_map[y0][x0] = visible;
+          visible = false;
+        } else {
+          this.fov_map[y0][x0] = visible;
+        }
       }
-      /*      }
-       else {
-       fov_map[y0][x0] = true;
-       }*/
 
       if ((x0 === x1) && (y0 === y1)) {
         break;
@@ -205,6 +202,6 @@ export class ScenegraphService {
         err += dx;
         y0 += sy;
       }
-    }    // Define differences and error check
+    }
   }
 }
