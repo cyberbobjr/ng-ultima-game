@@ -2,16 +2,31 @@ import {EntitiesService} from "../services/entities/entities.service";
 import {Entity} from "../classes/entity";
 import {Injectable} from "@angular/core";
 import {MovableBehavior} from "../behaviors/movable-behavior";
+import {PositionBehavior} from "../behaviors/position-behavior";
+import {Position} from "../classes/position";
+import {MapsService} from "../services/maps/maps.service";
+import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
+import {GameMap} from "../classes/game_map";
+import {IMap} from "../interfaces/IMap";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
 const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
+const KEY_E = "KeyE";
+
+/**
+ * m[tileType.village] = { entryPos: new Pos(1, 15), name: "village" };
+ m[tileType.town] = { entryPos: new Pos(1, 15), name: "towne" };
+ m[tileType.castle] =  m[tileType.LBCastleCenter] = { entryPos: new Pos(15, 30), name: "castle" };
+ */
 
 @Injectable()
 export class KeyboardinputSystem {
 
-    constructor(private _entities: EntitiesService ) {
+    constructor(private _entities: EntitiesService,
+                private _mapsService: MapsService,
+                private _sceneService: ScenegraphService) {
 
     }
 
@@ -19,23 +34,60 @@ export class KeyboardinputSystem {
         let entities: Array<Entity> = [];
         this._entities.entities.forEach((entity: Entity) => {
             if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
-                let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
-                switch (event.code) {
-                    case KEY_UP :
-                        movableBehavior.moveUp();
-                        break;
-                    case KEY_DOWN:
-                        movableBehavior.moveDown();
-                        break;
-                    case KEY_LEFT:
-                        movableBehavior.moveLeft();
-                        break;
-                    case KEY_RIGHT:
-                        movableBehavior.moveRight();
-                        break;
-                }
+                this._processKeybordInputMovement(event, entity);
             }
         });
         return entities;
+    }
+
+    _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
+        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
+        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+        console.log(event.code);
+        switch (event.code) {
+            case KEY_UP :
+                movableBehavior.moveUp();
+                break;
+            case KEY_DOWN:
+                movableBehavior.moveDown();
+                break;
+            case KEY_LEFT:
+                movableBehavior.moveLeft();
+                break;
+            case KEY_RIGHT:
+                movableBehavior.moveRight();
+                break;
+            case KEY_E:
+                this._processEnterLocation(entity, positionBehavior.position);
+                break;
+
+        }
+    }
+
+    _isPositionIsPortal(position: Position): boolean {
+        return this._mapsService.isPositionIsPortal(position);
+    }
+
+    _getMapIdFromPosition(position: Position): IMap {
+        return <IMap>this._mapsService.getPositionPortalMapId(position);
+    }
+
+    _changeMapForEntity(entity: Entity, mapId: number) {
+        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+        this._mapsService.loadMapByMapId(mapId)
+            .then((map: GameMap) => {
+                this._sceneService.setMap(map);
+                positionBehavior.position.mapId = mapId;
+                positionBehavior.position.col = 1;
+                positionBehavior.position.row = 15;
+            });
+    }
+
+    _processEnterLocation(entity: Entity, position: Position) {
+        if (this._isPositionIsPortal(position)) {
+            let metaData: IMap = this._getMapIdFromPosition(position);
+            console.log(metaData);
+            this._changeMapForEntity(entity, metaData.id);
+        }
     }
 }

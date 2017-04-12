@@ -67,4 +67,20 @@ export class MapsService {
                 return jsonValue;
             });
     }
+
+    isPositionIsPortal(position: Position) {
+        let metaData: IMap = this.getMapMetadataByMapId(position.mapId);
+        if (_.has(metaData, "portal") && _.isNumber(this.getPositionPortalMapId(position))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    getPositionPortalMapId(position: Position): any {
+        let metaData: any = this.getMapMetadataByMapId(position.mapId);
+        return _.find(metaData.portal, (portal: any) => {
+            return (portal.x === position.col && portal.y === position.row);
+        });
+    }
 }
