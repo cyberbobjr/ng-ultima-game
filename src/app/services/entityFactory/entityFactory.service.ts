@@ -17,7 +17,7 @@ export class EntityFactoryService {
     constructor(private _tileloaderService: TilesLoaderService) {
     }
 
-    createPlayer(): Promise<Entity> {
+    createOrLoadPlayer(): Promise<Entity> {
         return new Promise((resolve, reject) => {
                                this.player = new Entity("Avatar");
                                this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));

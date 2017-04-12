@@ -6,242 +6,291 @@
       {
         "name": "sea",
         "rule": "water",
-        "animation": "scroll"
+        "animation": "scroll",
+        "id": 0
       },
       {
         "name": "water",
         "rule": "water",
-        "animation": "scroll"
+        "animation": "scroll",
+        "id": 1
       },
       {
         "name": "shallows",
         "rule": "shallows",
-        "animation": "scroll"
+        "animation": "scroll",
+        "id": 2
       },
       {
         "name": "swamp",
-        "rule": "swamp"
+        "rule": "swamp",
+        "id": 3
       },
       {
         "name": "grass",
-        "rule": "grass"
+        "rule": "grass",
+        "id": 4
       },
       {
         "name": "brush",
-        "rule": "brush"
+        "rule": "brush",
+        "id": 5
       },
       {
         "name": "forest",
         "rule": "brush",
-        "opaque": "true"
+        "opaque": "true",
+        "id": 6
       },
       {
         "name": "hills",
-        "rule": "hills"
+        "rule": "hills",
+        "id": 7
       },
       {
         "name": "mountains",
         "rule": "mountains",
-        "opaque": "true"
+        "opaque": "true",
+        "id": 8
       },
       {
-        "name": "dungeon"
+        "name": "dungeon",
+        "id": 9
       },
       {
         "name": "city",
         "animation": "cityflag",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 10
       },
       {
         "name": "castle",
         "animation": "castleflag",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 11
       },
       {
         "name": "town",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 12
       },
       {
         "name": "lcb_west",
         "rule": "lcb",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 13
       },
       {
         "name": "lcb_entrance",
         "rule": "lcb_entrance",
         "animation": "lcbflag",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 14
       },
       {
         "name": "lcb_east",
         "rule": "lcb",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 15
       },
       {
         "name": "ship",
         "rule": "ship",
         "frames": "4",
         "directions": "wnes",
-        "animation": "shipflag"
+        "animation": "shipflag",
+        "id": 16
       },
       {
         "name": "horse",
         "rule": "horse",
         "frames": "2",
-        "directions": "we"
+        "directions": "we",
+        "id": 20
       },
       {
         "name": "dungeon_floor",
-        "rule": "floors"
+        "rule": "floors",
+        "id": 22
       },
       {
         "name": "bridge",
         "usesWaterReplacementTileAsBackground": "true",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 23
       },
       {
         "name": "balloon",
-        "rule": "balloon"
+        "rule": "balloon",
+        "id": 24
       },
       {
         "name": "bridge_pieces",
         "frames": "2",
         "usesWaterReplacementTileAsBackground": "true",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 25
       },
       {
         "name": "up_ladder",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 27
       },
       {
         "name": "down_ladder",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 28
       },
       {
         "name": "ruins",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 29
       },
       {
         "name": "shrine",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 30
       },
       {
         "name": "avatar",
-        "rule": "person"
+        "rule": "person",
+        "id": 31
       },
       {
         "name": "mage",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 32
       },
       {
         "name": "bard",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 34
       },
       {
         "name": "fighter",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 36
       },
       {
         "name": "druid",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 38
       },
       {
         "name": "tinker",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 40
       },
       {
         "name": "paladin",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 42
       },
       {
         "name": "ranger",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 44
       },
       {
         "name": "shepherd",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 46
       },
       {
         "name": "column",
         "rule": "solid",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 48
       },
       {
         "name": "solids",
         "rule": "solid_attackover",
         "frames": "4",
         "usesReplacementTileAsBackground": "true",
-        "usesWaterReplacementTileAsBackground": "true"
+        "usesWaterReplacementTileAsBackground": "true",
+        "id": 49
       },
       {
         "name": "shipmast",
-        "rule": "solid"
+        "rule": "solid",
+        "id": 53
       },
       {
         "name": "shipwheel",
-        "rule": "solid"
+        "rule": "solid",
+        "id": 54
       },
       {
         "name": "rocks",
         "rule": "solid",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 55
       },
       {
         "name": "corpse",
         "rule": "solid",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 56
       },
       {
         "name": "stone_wall",
-        "rule": "walls"
+        "rule": "walls",
+        "id": 57
       },
       {
         "name": "locked_door",
-        "rule": "locked_door"
+        "rule": "locked_door",
+        "id": 58
       },
       {
         "name": "door",
-        "rule": "door"
+        "rule": "door",
+        "id": 59
       },
       {
         "name": "chest",
         "rule": "chest",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 60
       },
       {
         "name": "ankh",
         "rule": "solid",
         "usesReplacementTileAsBackground": "true",
-        "usesWaterReplacementTileAsBackground": "true"
+        "usesWaterReplacementTileAsBackground": "true",
+        "id": 61
       },
       {
         "name": "brick_floor",
-        "rule": "floors"
+        "rule": "floors",
+        "id": 62
       },
       {
         "name": "wood_floor",
-        "rule": "floors"
+        "rule": "floors",
+        "id": 63
       },
       {
         "name": "moongate_opening",
         "rule": "solid",
-        "frames": "3"
+        "frames": "3",
+        "id": 64
       },
       {
         "name": "moongate"
@@ -252,7 +301,8 @@
         "animation": "scroll",
         "tiledInDungeon": "true",
         "usesReplacementTileAsBackground": "true",
-        "usesWaterReplacementTileAsBackground": "true"
+        "usesWaterReplacementTileAsBackground": "true",
+        "id": 68
       },
       {
         "name": "energy_field",
@@ -260,7 +310,8 @@
         "animation": "scroll",
         "tiledInDungeon": "true",
         "usesReplacementTileAsBackground": "true",
-        "usesWaterReplacementTileAsBackground": "true"
+        "usesWaterReplacementTileAsBackground": "true",
+        "id": 69
       },
       {
         "name": "fire_field",
@@ -268,7 +319,8 @@
         "animation": "scroll",
         "tiledInDungeon": "true",
         "usesReplacementTileAsBackground": "true",
-        "usesWaterReplacementTileAsBackground": "true"
+        "usesWaterReplacementTileAsBackground": "true",
+        "id": 70
       },
       {
         "name": "sleep_field",
@@ -276,418 +328,499 @@
         "animation": "scroll",
         "tiledInDungeon": "true",
         "usesReplacementTileAsBackground": "true",
-        "usesWaterReplacementTileAsBackground": "true"
+        "usesWaterReplacementTileAsBackground": "true",
+        "id": 71
       },
       {
         "name": "solid",
-        "rule": "solid_attackover"
+        "rule": "solid_attackover",
+        "id": 72
       },
       {
         "name": "secret_door",
         "rule": "secret_door",
-        "opaque": "true"
+        "opaque": "true",
+        "id": 73
       },
       {
         "name": "altar",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 74
       },
       {
         "name": "campfire",
         "rule": "solid",
         "animation": "campfire",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 75
       },
       {
         "name": "lava",
         "rule": "lava",
-        "animation": "scroll"
+        "animation": "scroll",
+        "id": 76
       },
       {
         "name": "miss_flash",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 77
       },
       {
         "name": "magic_flash",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 78
       },
       {
         "name": "hit_flash",
-        "usesReplacementTileAsBackground": "true"
+        "usesReplacementTileAsBackground": "true",
+        "id": 79
       },
       {
         "name": "guard",
         "rule": "person",
         "frames": "4",
-        "animation": "slow_frame"
+        "animation": "slow_frame",
+        "id": 80
       },
       {
         "name": "villager",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 82
       },
       {
         "name": "bard_singing",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 84
       },
       {
         "name": "jester",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 86
       },
       {
         "name": "beggar",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 88
       },
       {
         "name": "child",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 90
       },
       {
         "name": "bull",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 92
       },
       {
         "name": "lord_british",
         "rule": "person",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 94
       },
       {
         "name": "A",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 96
       },
       {
         "name": "B",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 97
       },
       {
         "name": "C",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 98
       },
       {
         "name": "D",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 99
       },
       {
         "name": "E",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 100
       },
       {
         "name": "F",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 101
       },
       {
         "name": "G",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 102
       },
       {
         "name": "H",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 103
       },
       {
         "name": "I",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 104
       },
       {
         "name": "J",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 105
       },
       {
         "name": "K",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 106
       },
       {
         "name": "L",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 107
       },
       {
         "name": "M",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 108
       },
       {
         "name": "N",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 109
       },
       {
         "name": "O",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 110
       },
       {
         "name": "P",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 111
       },
       {
         "name": "Q",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 112
       },
       {
         "name": "R",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 113
       },
       {
         "name": "S",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 114
       },
       {
         "name": "T",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 115
       },
       {
         "name": "U",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 116
       },
       {
         "name": "V",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 117
       },
       {
         "name": "W",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 118
       },
       {
         "name": "X",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 119
       },
       {
         "name": "Y",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 120
       },
       {
         "name": "Z",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 121
       },
       {
         "name": "space",
-        "rule": "signs"
+        "rule": "signs",
+        "id": 122
       },
       {
         "name": "spacers",
         "rule": "spacers",
-        "frames": "3"
+        "frames": "3",
+        "id": 123
       },
       {
         "name": "black",
-        "rule": "spacers"
+        "rule": "spacers",
+        "id": 126
       },
       {
         "name": "brick_wall",
         "rule": "walls",
-        "opaque": "true"
+        "opaque": "true",
+        "id": 127
       },
       {
         "name": "pirate_ship",
         "rule": "monster",
         "frames": "4",
         "directions": "wnes",
-        "animation": "pirateflag"
+        "animation": "pirateflag",
+        "id": 128
       },
       {
         "name": "nixie",
         "rule": "monster",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 132
       },
       {
         "name": "giant_squid",
         "rule": "monster",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 134
       },
       {
         "name": "sea_serpent",
         "rule": "monster",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 136
       },
       {
         "name": "sea_horse",
         "rule": "monster",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 138
       },
       {
         "name": "whirlpool",
         "rule": "water",
         "frames": "2",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 140
       },
       {
         "name": "rat",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 144
       },
       {
         "name": "bat",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 148
       },
       {
         "name": "spider",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 152
       },
       {
         "name": "ghost",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 156
       },
       {
         "name": "slime",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 160
       },
       {
         "name": "troll",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 164
       },
       {
         "name": "gremlin",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 168
       },
       {
         "name": "mimic",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 172
       },
       {
         "name": "reaper",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 176
       },
       {
         "name": "insect_swarm",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 180
       },
       {
         "name": "gazer",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 184
       },
       {
         "name": "phantom",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 188
       },
       {
         "name": "orc",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 192
       },
       {
         "name": "skeleton",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 196
       },
       {
         "name": "rogue",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 200
       },
       {
         "name": "python",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 204
       },
       {
         "name": "ettin",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 208
       },
       {
         "name": "headless",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 212
       },
       {
         "name": "cyclops",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 216
       },
       {
         "name": "wisp",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 220
       },
       {
         "name": "evil_mage",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 224
       },
       {
         "name": "liche",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 228
       },
       {
         "name": "lava_lizard",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 232
       },
       {
         "name": "zorn",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 236
       },
       {
         "name": "daemon",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 240
       },
       {
         "name": "hydra",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 244
       },
       {
         "name": "dragon",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 248
       },
       {
         "name": "balron",
         "rule": "monster",
         "frames": "4",
-        "animation": "frame"
+        "animation": "frame",
+        "id": 252
       }
     ]
   }

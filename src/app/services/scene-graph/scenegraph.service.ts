@@ -54,16 +54,16 @@ export class ScenegraphService {
       if (this.entityCenter !== null) {
         this._centerCameraOnEntity();
       }
-      this._computeVisibleWindow();
+      this._computeViewport();
       this._computeFov();
-      this._copyTilesToVisibleWindow();
-      this._refreshVisibleWindow();
+      this._copyTilesToViewport();
+      this._refreshViewport();
     } catch (error) {
       console.log(error);
     }
   }
 
-  private _computeVisibleWindow() {
+  private _computeViewport() {
     this.cameraEndPosition.col = this.cameraStartPosition.col + this.maxVisiblesCols + 1;
     this.cameraEndPosition.row = this.cameraStartPosition.row + this.maxVisiblesRows + 1;
 
@@ -75,7 +75,7 @@ export class ScenegraphService {
     }
   }
 
-  private _copyTilesToVisibleWindow() {
+  private _copyTilesToViewport() {
     let visibileColIndex = 0;
     let visibleRowIndex = 0;
     for (let y = this.cameraStartPosition.row; y <= this.cameraEndPosition.row; y++) {
@@ -133,7 +133,7 @@ export class ScenegraphService {
     }
   }
 
-  private _refreshVisibleWindow() {
+  private _refreshViewport() {
     this.visibleWindow$.next(this.visibleWindow);
   }
 

@@ -1,5 +1,5 @@
 import {BrowserModule} from "@angular/platform-browser";
-import {NgModule} from "@angular/core";
+import {APP_INITIALIZER, NgModule} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {RouterModule, Routes} from "@angular/router";
@@ -21,13 +21,18 @@ import {SavestateSystem} from "./systems/savestate.system";
 import {DescriptionsService} from "./services/informations/descriptions.service";
 import {KeyboardinputSystem} from "./systems/keyboardinput.system";
 import {PartyService} from "./services/party/party.service";
-import { PartyComponent } from './ui/party/party.component';
-import { SubpartyComponent } from './ui/subparty/subparty.component';
+import {PartyComponent} from "./ui/party/party.component";
+import {SubpartyComponent} from "./ui/subparty/subparty.component";
+import {ConfigService} from "./services/config/config.service";
 
 const appRoutes: Routes = [
     {path: "", component: StartscreenComponent},
     {path: "main", component: MainscreenComponent}
 ];
+
+export function useFactory(service: ConfigService) {
+    return () => service.loadConfig();
+}
 
 @NgModule({
               declarations: [
@@ -46,17 +51,25 @@ const appRoutes: Routes = [
                   HotkeyModule.forRoot(),
                   RouterModule.forRoot(appRoutes)
               ],
-              providers: [MapsService,
-                          EntitiesService,
-                          RenderableSystem,
-                          TilesLoaderService,
-                          ScenegraphService,
-                          EntityFactoryService,
-                          KeyboardinputSystem,
-                          MovementSystem,
-                          SavestateSystem,
-                          DescriptionsService,
-                          PartyService
+              providers: [
+                  {
+                      provide: APP_INITIALIZER,
+                      useFactory: useFactory,
+                      deps: [ConfigService],
+                      multi: true
+                  },
+                  ConfigService,
+                  MapsService,
+                  EntitiesService,
+                  RenderableSystem,
+                  TilesLoaderService,
+                  ScenegraphService,
+                  EntityFactoryService,
+                  KeyboardinputSystem,
+                  MovementSystem,
+                  SavestateSystem,
+                  DescriptionsService,
+                  PartyService
               ],
               bootstrap: [AppComponent]
           })

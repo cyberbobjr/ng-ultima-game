@@ -6,11 +6,12 @@ import {RenderableSystem} from "../../systems/renderable.system";
 import {EntityFactoryService} from "../../services/entityFactory/entityFactory.service";
 import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
 import {MapsService} from "app/services/maps/maps.service";
-import {TilesLoaderService} from "../../services/tiles/tiles.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
 import {SavestateSystem} from "../../systems/savestate.system";
 import {DescriptionsService} from "../../services/informations/descriptions.service";
 import {PartyService} from "../../services/party/party.service";
+import {ActivatedRoute} from "@angular/router";
+import {GameMap} from "../../classes/game_map";
 const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
 
@@ -27,13 +28,13 @@ export class MainscreenComponent implements OnInit {
         this.processKeyInput($event);
     }
 
-    constructor(private _entitiesService: EntitiesService,
+    constructor(private route: ActivatedRoute,
+                private _entitiesService: EntitiesService,
                 private _movementSystem: MovementSystem,
                 private _renderableSystem: RenderableSystem,
                 private _playerService: EntityFactoryService,
                 private _mapService: MapsService,
                 private _sceneService: ScenegraphService,
-                private _tileService: TilesLoaderService,
                 private _keyboardinputSystem: KeyboardinputSystem,
                 private _savestateSystem: SavestateSystem,
                 private _informationsService: DescriptionsService,
@@ -44,26 +45,23 @@ export class MainscreenComponent implements OnInit {
         this.initGame()
             .then(() => {
                 this._informationsService.addLogInformation("init game loaded");
-                console.log("Init game loaded");
                 this.isMapReady = true;
                 this.mainLoop();
             });
     }
 
     initGame() {
-        return this._tileService.loadTiles()
-                   .then(() => {
-                       return this._mapService.loadMap("assets/maps/world.map");
-                   })
-                   .then(() => {
-                       return this._playerService.createPlayer();
-                   })
+        return this._playerService.createOrLoadPlayer()
                    .then((player: Entity) => {
+                       let positionPlayer = this._entitiesService.getPositionOfEntity(player);
                        this._entitiesService.addEntity(player);
                        this._partyService.addMember(player);
-                       this._sceneService.setMap(this._mapService.currentMap);
-                       this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
                        this._sceneService.setCenterCameraOnEntity(player);
+                       return this._mapService.loadMapByMapId(positionPlayer.mapId);
+                   })
+                   .then((currentMap: GameMap) => {
+                       this._sceneService.setMap(currentMap);
+                       this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
                        return true;
                    });
     }
@@ -72,7 +70,6 @@ export class MainscreenComponent implements OnInit {
         this._keyboardinputSystem.processKeyboardInput($event);
         this._movementSystem.processMovementsBehavior();
         this._sceneService.refresh();
-        this._savestateSystem.processTick();
     }
 
     /**

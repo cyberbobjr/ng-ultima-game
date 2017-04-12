@@ -1,4 +1,5 @@
 export class Position {
+    mapId: number = 0;
     row: number;
     col: number;
 
