@@ -20,7 +20,6 @@ export class SubpartyComponent implements OnInit {
     }
 
     private _extractHealthPoint(): number {
-        console.log(this.partymember);
         if (this.partymember.hasBehavior("health")) {
             let healthBehavior = <HealthBehavior>this.partymember.getBehavior("health");
             return healthBehavior.getHealth();

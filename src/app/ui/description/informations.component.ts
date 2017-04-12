@@ -20,7 +20,7 @@ export class InformationsComponent implements OnInit {
     }
 
     private _purgeInformationsTexts() {
-        if (this.informationsTexts.length > 10) {
+        if (this.informationsTexts.length > 9) {
             this.informationsTexts.shift();
         }
     }
