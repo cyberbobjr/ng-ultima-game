@@ -5,21 +5,24 @@ import {HttpModule} from "@angular/http";
 import {RouterModule, Routes} from "@angular/router";
 
 import {AppComponent} from "./app.component";
-import {MapCmpComponent} from "./ui/map-cmp/map-cmp.component";
+import {MapComponent} from "./ui/map-cmp/map.component";
 import {MapsService} from "./services/maps/maps.service";
 import {TilesLoaderService} from "./services/tiles/tiles.service";
 import {ScenegraphService} from "./services/scene-graph/scenegraph.service";
-import {EntityService} from "./services/entity/entity.service";
+import {EntityFactoryService} from "./services/entityFactory/entityFactory.service";
 import {HotkeyModule} from "angular2-hotkeys";
 import {InformationsComponent} from "./ui/description/informations.component";
 import {EntitiesService} from "./services/entities/entities.service";
 import {RenderableSystem} from "./systems/renderable.system";
-import {KeyboardinputSystem} from "app/systems/keyboardinput.system";
 import {MovementSystem} from "./systems/movement.system";
 import {MainscreenComponent} from "./screens/mainscreen/mainscreen.component";
 import {StartscreenComponent} from "./screens/startscreen/startscreen.component";
 import {SavestateSystem} from "./systems/savestate.system";
-import {InformationsService} from "./services/informations/informations.service";
+import {DescriptionsService} from "./services/informations/descriptions.service";
+import {KeyboardinputSystem} from "./systems/keyboardinput.system";
+import {PartyService} from "./services/party/party.service";
+import { PartyComponent } from './ui/party/party.component';
+import { SubpartyComponent } from './ui/subparty/subparty.component';
 
 const appRoutes: Routes = [
     {path: "", component: StartscreenComponent},
@@ -29,10 +32,12 @@ const appRoutes: Routes = [
 @NgModule({
               declarations: [
                   AppComponent,
-                  MapCmpComponent,
+                  MapComponent,
                   InformationsComponent,
                   MainscreenComponent,
-                  StartscreenComponent
+                  StartscreenComponent,
+                  PartyComponent,
+                  SubpartyComponent
               ],
               imports: [
                   BrowserModule,
@@ -46,11 +51,12 @@ const appRoutes: Routes = [
                           RenderableSystem,
                           TilesLoaderService,
                           ScenegraphService,
-                          EntityService,
+                          EntityFactoryService,
                           KeyboardinputSystem,
                           MovementSystem,
                           SavestateSystem,
-                          InformationsService
+                          DescriptionsService,
+                          PartyService
               ],
               bootstrap: [AppComponent]
           })

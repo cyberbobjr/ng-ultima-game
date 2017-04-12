@@ -3,13 +3,14 @@ import {Entity} from "../../classes/entity";
 import {EntitiesService} from "../../services/entities/entities.service";
 import {MovementSystem} from "app/systems/movement.system";
 import {RenderableSystem} from "../../systems/renderable.system";
-import {EntityService} from "../../services/entity/entity.service";
+import {EntityFactoryService} from "../../services/entityFactory/entityFactory.service";
 import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
 import {MapsService} from "app/services/maps/maps.service";
 import {TilesLoaderService} from "../../services/tiles/tiles.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
 import {SavestateSystem} from "../../systems/savestate.system";
-import {InformationsService} from "../../services/informations/informations.service";
+import {DescriptionsService} from "../../services/informations/descriptions.service";
+import {PartyService} from "../../services/party/party.service";
 const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
 
@@ -29,13 +30,14 @@ export class MainscreenComponent implements OnInit {
     constructor(private _entitiesService: EntitiesService,
                 private _movementSystem: MovementSystem,
                 private _renderableSystem: RenderableSystem,
-                private _playerService: EntityService,
+                private _playerService: EntityFactoryService,
                 private _mapService: MapsService,
                 private _sceneService: ScenegraphService,
                 private _tileService: TilesLoaderService,
                 private _keyboardinputSystem: KeyboardinputSystem,
                 private _savestateSystem: SavestateSystem,
-                private _informationsService: InformationsService) {
+                private _informationsService: DescriptionsService,
+                private _partyService: PartyService) {
     }
 
     ngOnInit() {
@@ -58,6 +60,7 @@ export class MainscreenComponent implements OnInit {
                    })
                    .then((player: Entity) => {
                        this._entitiesService.addEntity(player);
+                       this._partyService.addMember(player);
                        this._sceneService.setMap(this._mapService.currentMap);
                        this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
                        this._sceneService.setCenterCameraOnEntity(player);

@@ -1,22 +1,28 @@
 import {IBehavior} from "../interfaces/IBehavior";
 
 export class HealthBehavior implements IBehavior {
-  name = "health";
-  health: number = 0;
+    name = "health";
+    _currentHealth: number = 0;
+    _maxHealth: number;
 
-  constructor() {
+    constructor(health: number) {
+        this._maxHealth = health;
+        this._currentHealth = health;
+    }
 
-  }
+    tick() {
 
-  tick() {
+    }
 
-  }
+    takeDamages(numberOfDamage: number) {
+        this._currentHealth -= numberOfDamage;
+    }
 
-  takeDamages() {
+    restoreHealth(restoreNumber: number) {
+        this._currentHealth += restoreNumber;
+    }
 
-  }
-
-  restoreHealth() {
-
-  }
+    getHealth(): number {
+        return this._currentHealth;
+    }
 }

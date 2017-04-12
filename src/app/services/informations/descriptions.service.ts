@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
-import {ReplaySubject, Subject} from "rxjs";
+import {Subject} from "rxjs";
 
 @Injectable()
-export class InformationsService {
+export class DescriptionsService {
     informationsText$: Subject<string> = new Subject();
 
     constructor() {

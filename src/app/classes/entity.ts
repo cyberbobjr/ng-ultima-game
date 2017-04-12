@@ -4,7 +4,10 @@ export class Entity {
     name: string;
     private _behaviors: Map<string, IBehavior> = new Map();
 
-    constructor() {
+    constructor(entityName?: string) {
+        if (entityName) {
+            this.name = entityName;
+        }
     }
 
     addBehavior(behavior: IBehavior) {

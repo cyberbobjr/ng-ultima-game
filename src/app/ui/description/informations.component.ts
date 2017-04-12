@@ -1,5 +1,5 @@
-import {Component, OnInit} from "@angular/core";
-import {InformationsService} from "../../services/informations/informations.service";
+import {Component, NgZone, OnInit} from "@angular/core";
+import {DescriptionsService} from "../../services/informations/descriptions.service";
 
 @Component({
                selector: "app-game-informations",
@@ -9,7 +9,7 @@ import {InformationsService} from "../../services/informations/informations.serv
 export class InformationsComponent implements OnInit {
     informationsTexts: Array<string> = [];
 
-    constructor(private _informationsService: InformationsService) {
+    constructor(private _informationsService: DescriptionsService) {
         this._informationsService.informationsText$.subscribe((information: string) => {
             this.informationsTexts.push(information);
             this._purgeInformationsTexts();

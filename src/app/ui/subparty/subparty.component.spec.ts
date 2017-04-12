@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MapComponent } from './map.component';
+import { SubpartyComponent } from './subparty.component';
 
-describe('MapComponent', () => {
-  let component: MapComponent;
-  let fixture: ComponentFixture<MapComponent>;
+describe('SubpartyComponent', () => {
+  let component: SubpartyComponent;
+  let fixture: ComponentFixture<SubpartyComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [MapComponent ]
+      declarations: [ SubpartyComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MapComponent);
+    fixture = TestBed.createComponent(SubpartyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

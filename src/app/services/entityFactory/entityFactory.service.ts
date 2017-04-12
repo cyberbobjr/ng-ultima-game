@@ -7,9 +7,10 @@ import {MovableBehavior} from "../../behaviors/movable-behavior";
 import {KeycontrolBehavior} from "../../behaviors/keycontrol-behavior";
 import {TilesLoaderService} from "../tiles/tiles.service";
 import {SavestateBehavior} from "../../behaviors/savestate-behavior";
+import {HealthBehavior} from "../../behaviors/health-behavior";
 
 @Injectable()
-export class EntityService {
+export class EntityFactoryService {
 
     player: Entity = null;
 
@@ -18,9 +19,10 @@ export class EntityService {
 
     createPlayer(): Promise<Entity> {
         return new Promise((resolve, reject) => {
-                               this.player = new Entity();
+                               this.player = new Entity("Avatar");
                                this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));
                                this.player.addBehavior(new PositionBehavior(this._getEntityPosition("player")));
+                               this.player.addBehavior(new HealthBehavior(100));
                                this.player.addBehavior(new MovableBehavior());
                                this.player.addBehavior(new SavestateBehavior("player"));
                                this.player.addBehavior(new KeycontrolBehavior());

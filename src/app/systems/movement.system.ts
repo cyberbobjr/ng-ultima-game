@@ -5,13 +5,13 @@ import {MovableBehavior} from "../behaviors/movable-behavior";
 import {PositionBehavior} from "../behaviors/position-behavior";
 import {Position} from "../classes/position";
 import {MapsService} from "../services/maps/maps.service";
-import {InformationsService} from "../services/informations/informations.service";
+import {DescriptionsService} from "../services/informations/descriptions.service";
 
 @Injectable()
 export class MovementSystem {
     constructor(private _entities: EntitiesService,
                 private _mapService: MapsService,
-                private _informationsService: InformationsService) {
+                private _informationsService: DescriptionsService) {
     }
 
     processMovementsBehavior() {
