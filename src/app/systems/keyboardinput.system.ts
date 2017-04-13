@@ -8,6 +8,7 @@ import {MapsService} from "../services/maps/maps.service";
 import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
 import {GameMap} from "../classes/game_map";
 import {IMap} from "../interfaces/IMap";
+import {DescriptionsService} from "../services/informations/descriptions.service";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
@@ -26,8 +27,8 @@ export class KeyboardinputSystem {
 
   constructor(private _entities: EntitiesService,
               private _mapsService: MapsService,
-              private _sceneService: ScenegraphService) {
-
+              private _sceneService: ScenegraphService,
+              private _descriptionService: DescriptionsService) {
   }
 
   processKeyboardInput(event: KeyboardEvent) {
@@ -74,12 +75,15 @@ export class KeyboardinputSystem {
           positionBehavior.setNewPosition(new Position(15, 1, mapId));
           this._sceneService.setMap(map);
           this._sceneService.refresh();
+          console.log(entity);
         });
   }
 
   _processEnterLocation(entity: Entity, position: Position) {
     let mapId = this._getMapIdFromPosition(position);
     if (mapId) {
+      let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(<number>mapId);
+      this._descriptionService.addTextToInformation(`Enter in ${mapMetaData.city.name}`);
       this._changeMapForEntity(entity, <number>mapId);
     }
   }
