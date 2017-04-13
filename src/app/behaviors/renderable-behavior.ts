@@ -2,19 +2,19 @@ import {IBehavior} from "../interfaces/IBehavior";
 import {ITile} from "../interfaces/ITile";
 
 export class RenderableBehavior implements IBehavior {
-  name = "renderable";
-  tile: ITile;
+    name = "renderable";
+    tile: ITile;
 
-  constructor(tile: ITile) {
-    this.tile = tile;
-  }
+    constructor(tile: ITile) {
+        this.tile = tile;
+    }
 
-  tick(): any {
-    //@TODO : implement tick Tile Rule
-    return null;
-  }
+    tick(): any {
+        //@TODO : implement tick Tile Rule
+        return null;
+    }
 
-  getTile(): ITile {
-    return this.tile;
-  }
+    getTile(): ITile {
+        return this.tile;
+    }
 }

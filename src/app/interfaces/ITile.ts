@@ -1,5 +1,7 @@
 export interface ITile {
-    name: string;
-    rule: string;
-    image: HTMLImageElement;
+  name: string;
+  rule: string;
+  id: number;
+  frames?: string;
+  image: HTMLImageElement;
 }

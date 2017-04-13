@@ -47,3 +47,4 @@ Availables features :
 
 ## Licence
 This project is under GNU GENERAL PUBLIC LICENS, see licence.txt for details
+Some assets comes from XU4 - https://sourceforge.net/projects/xu4/

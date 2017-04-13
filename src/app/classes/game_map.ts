@@ -1,17 +1,18 @@
 import {Position} from "./position";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
 import {ITile} from "../interfaces/ITile";
+import {IMap} from "../interfaces/IMap";
 
 export class GameMap {
-  name: string;
+  mapMetaData: IMap = null;
   mapData: ITile[][] = [];
 
   width: number;
   height: number;
 
-  constructor(name: string, mapRawData: number[][], private _tilesService: TilesLoaderService) {
+  constructor(mapMetaData: IMap, mapRawData: number[][], private _tilesService: TilesLoaderService) {
     this._convertRawDataToMapData(mapRawData);
-    this.name = name;
+    this.mapMetaData = mapMetaData;
     this.width = mapRawData[0].length;
     this.height = mapRawData.length;
   }
@@ -22,7 +23,7 @@ export class GameMap {
     for (let rows of rawData) {
       this.mapData[rowIndex] = [];
       for (let cols of rows) {
-        this.mapData[rowIndex][colIndex] = this._tilesService.getTileAtIndex(cols);
+        this.mapData[rowIndex][colIndex] = this._tilesService.tileset.getTileAtIndex(cols);
         colIndex++;
       }
       colIndex = 0;
@@ -31,11 +32,11 @@ export class GameMap {
   }
 
   getWidthMap() {
-    return this.width;
+    return this.width - 1;
   }
 
   getHeightMap() {
-    return this.height;
+    return this.height - 1;
   }
 
   getTileAtPosition(position: Position): ITile {

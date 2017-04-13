@@ -6,6 +6,7 @@ import {PositionBehavior} from "../behaviors/position-behavior";
 import {Position} from "../classes/position";
 import {MapsService} from "../services/maps/maps.service";
 import {DescriptionsService} from "../services/informations/descriptions.service";
+import {IMap} from "../interfaces/IMap";
 
 @Injectable()
 export class MovementSystem {
@@ -29,8 +30,7 @@ export class MovementSystem {
         let positionBehavior = <PositionBehavior>entity.getBehavior("position");
         let destinationPosition = this._getEntityDestinationPosition(positionBehavior, movableBehavior);
         if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
-            positionBehavior.moveTo(movableBehavior.vector);
-            this._displayMoveInformation(movableBehavior.vector);
+            this._processWalkableMovement(positionBehavior, movableBehavior, destinationPosition);
         } else {
             this._informationsService.addTextToInformation("Blocked!");
         }
@@ -39,6 +39,12 @@ export class MovementSystem {
 
     private _getEntityDestinationPosition(currentEntityPosition: PositionBehavior, entityDirection: MovableBehavior): Position {
         return currentEntityPosition.position.addVector(entityDirection.vector);
+    }
+
+    private _processWalkableMovement(positionBehavior: PositionBehavior, movableBehavior: MovableBehavior, destinationPosition: Position) {
+        positionBehavior.moveTo(movableBehavior.vector);
+        this._displayMoveInformation(movableBehavior.vector);
+        console.log(this._isLeaveCity(destinationPosition));
     }
 
     private _displayMoveInformation(vector: Position) {
@@ -56,5 +62,17 @@ export class MovementSystem {
             direction = "North";
         }
         this._informationsService.addTextToInformation(direction);
+    }
+
+    private _isLeaveCity(position: Position): boolean {
+        if (position.mapId !== 0) {
+            let mapMetaData = this._mapService.getMapMetadataByMapId(position.mapId);
+            return (mapMetaData.borderbehavior === "exit" && this._isPositionInBorder(position, mapMetaData));
+        }
+        return false;
+    }
+
+    private _isPositionInBorder(position: Position, mapMetaData: IMap): boolean {
+        return (position.row === 0 || position.col === 0 || position.row === mapMetaData.height || position.col === mapMetaData.width);
     }
 }

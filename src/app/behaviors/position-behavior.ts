@@ -16,4 +16,8 @@ export class PositionBehavior implements IBehavior {
     moveTo(directionVector: Position) {
         this.position = this.position.addVector(directionVector);
     }
+
+    setNewPosition(position: Position) {
+        this.position = position;
+    }
 }
