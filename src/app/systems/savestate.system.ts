@@ -14,7 +14,6 @@ export class SavestateSystem {
       if (entity.hasBehavior("savestate") && entity.hasBehavior("position")) {
         let positionBehavior = <PositionBehavior>entity.getBehavior("position");
         let savestateBehavior = <SavestateBehavior>entity.getBehavior("savestate");
-        console.log(positionBehavior.position);
         savestateBehavior.storeKeyValue("position", positionBehavior.position);
       }
     });

@@ -13,7 +13,6 @@ export class Tileset implements ITileset {
     this.name = name;
     this.tile = tile;
     this._buildTileIndex();
-    console.log(this._internalTilesIndices);
   }
 
   private _buildTileIndex() {

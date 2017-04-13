@@ -16,73 +16,73 @@ const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
 
 @Component({
-  selector: "app-mainscreen",
-  templateUrl: "./mainscreen.component.html",
-  styleUrls: ["./mainscreen.component.css"]
-})
+               selector: "app-mainscreen",
+               templateUrl: "./mainscreen.component.html",
+               styleUrls: ["./mainscreen.component.css"]
+           })
 export class MainscreenComponent implements OnInit {
-  isMapReady: boolean = false;
-  gameLoop: any;
+    isMapReady: boolean = false;
+    gameLoop: any;
 
-  @HostListener("document:keyup", ["$event"]) handleKeyboardEvents($event: KeyboardEvent) {
-    this.processKeyInput($event);
-  }
+    @HostListener("document:keyup", ["$event"]) handleKeyboardEvents($event: KeyboardEvent) {
+        this.processKeyInput($event);
+    }
 
-  constructor(private route: ActivatedRoute,
-              private _entitiesService: EntitiesService,
-              private _movementSystem: MovementSystem,
-              private _renderableSystem: RenderableSystem,
-              private _playerService: EntityFactoryService,
-              private _mapService: MapsService,
-              private _sceneService: ScenegraphService,
-              private _keyboardinputSystem: KeyboardinputSystem,
-              private _savestateSystem: SavestateSystem,
-              private _informationsService: DescriptionsService,
-              private _partyService: PartyService) {
-  }
+    constructor(private route: ActivatedRoute,
+                private _entitiesService: EntitiesService,
+                private _movementSystem: MovementSystem,
+                private _renderableSystem: RenderableSystem,
+                private _playerService: EntityFactoryService,
+                private _mapService: MapsService,
+                private _sceneService: ScenegraphService,
+                private _keyboardinputSystem: KeyboardinputSystem,
+                private _savestateSystem: SavestateSystem,
+                private _informationsService: DescriptionsService,
+                private _partyService: PartyService) {
+    }
 
-  ngOnInit() {
-    this.initGame()
-        .then(() => {
-          this._informationsService.addLogInformation("init game loaded");
-          this.isMapReady = true;
-          this.mainLoop();
-        });
-  }
+    ngOnInit() {
+        this.initGame()
+            .then(() => {
+                this._informationsService.addLogInformation("init game loaded");
+                this.isMapReady = true;
+                this.mainLoop();
+            });
+    }
 
-  initGame() {
-    return this._playerService.createOrLoadPlayer()
-               .then((player: Entity) => {
-                 let positionPlayer = this._entitiesService.getPositionOfEntity(player);
-                 this._entitiesService.addEntity(player);
-                 this._partyService.addMember(player);
-                 this._sceneService.setCenterCameraOnEntity(player);
-                 return this._mapService.loadMapByMapId(positionPlayer.mapId);
-               })
-               .then((currentMap: GameMap) => {
-                 this._sceneService.setMap(currentMap);
-                 this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
-                 return true;
-               });
-  }
+    initGame() {
+        return this._playerService.createOrLoadPlayer()
+                   .then((player: Entity) => {
+                       this._entitiesService.addEntity(player);
+                       this._partyService.addMember(player);
+                       this._sceneService.setCenterCameraOnEntity(player);
+                       this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
+                       let positionPlayer = this._entitiesService.getPositionOfEntity(player);
+                       return this._mapService.loadMapByMapId(positionPlayer.mapId);
+                   })
+                   .then((currentMap: GameMap) => {
+                       this._sceneService.setMap(currentMap);
+                       return true;
+                   });
+    }
 
-  processKeyInput($event: KeyboardEvent) {
-    this._keyboardinputSystem.processKeyboardInput($event);
-    this._movementSystem.processMovementsBehavior();
-    this._sceneService.refresh();
-  }
+    processKeyInput($event: KeyboardEvent) {
+        this._keyboardinputSystem.processKeyboardInput($event);
+        this._movementSystem.processMovementsBehavior();
+        this._sceneService.refresh();
+    }
 
-  /**
-   * @TODO : code a tick function instead of refresh sceneService
-   */
-  mainLoop() {
-    this.gameLoop = window.setInterval(() => {
-      this._renderableSystem.processTick();
-      this._savestateSystem.processTick();
-    }, 3000);
-  }
+    /**
+     * @TODO : code a tick function instead of refresh sceneService
+     */
+    mainLoop() {
+        this.gameLoop = window.setInterval(() => {
+            this._renderableSystem.processTick();
+            this._savestateSystem.processTick();
+        }, 3000);
+    }
 
-  stopLoop() {
-    window.clearInterval(this.gameLoop);
-  }
+    stopLoop() {
+        window.clearInterval(this.gameLoop);
+    }
 }
