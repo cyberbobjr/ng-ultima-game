@@ -82,7 +82,7 @@ export class KeyboardinputSystem {
         let mapId = this._getMapIdFromPosition(position);
         if (mapId) {
             let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(<number>mapId);
-            this._descriptionService.addTextToInformation(`Enter in ${mapMetaData.city.name}`);
+            this._descriptionService.addTextToInformation(`Enter in ${mapMetaData.city.name}!`);
             this._changeMapForEntity(entity, <number>mapId);
         }
     }
