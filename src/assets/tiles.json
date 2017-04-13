@@ -293,7 +293,8 @@
         "id": 64
       },
       {
-        "name": "moongate"
+        "name": "moongate",
+        "id": 67
       },
       {
         "name": "poison_field",

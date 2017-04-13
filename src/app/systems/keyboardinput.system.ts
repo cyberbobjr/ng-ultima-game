@@ -24,70 +24,63 @@ const KEY_E = "KeyE";
 @Injectable()
 export class KeyboardinputSystem {
 
-    constructor(private _entities: EntitiesService,
-                private _mapsService: MapsService,
-                private _sceneService: ScenegraphService) {
+  constructor(private _entities: EntitiesService,
+              private _mapsService: MapsService,
+              private _sceneService: ScenegraphService) {
+
+  }
+
+  processKeyboardInput(event: KeyboardEvent) {
+    let entities: Array<Entity> = [];
+    this._entities.entities.forEach((entity: Entity) => {
+      if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
+        this._processKeybordInputMovement(event, entity);
+      }
+    });
+    return entities;
+  }
+
+  _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
+    let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
+    let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+    switch (event.code) {
+      case KEY_UP :
+        movableBehavior.moveUp();
+        break;
+      case KEY_DOWN:
+        movableBehavior.moveDown();
+        break;
+      case KEY_LEFT:
+        movableBehavior.moveLeft();
+        break;
+      case KEY_RIGHT:
+        movableBehavior.moveRight();
+        break;
+      case KEY_E:
+        this._processEnterLocation(entity, positionBehavior.position);
+        break;
 
     }
+  }
 
-    processKeyboardInput(event: KeyboardEvent) {
-        let entities: Array<Entity> = [];
-        this._entities.entities.forEach((entity: Entity) => {
-            if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
-                this._processKeybordInputMovement(event, entity);
-            }
+  _getMapIdFromPosition(position: Position): number | boolean {
+    return this._mapsService.getPortalMapIpForPosition(position);
+  }
+
+  _changeMapForEntity(entity: Entity, mapId: number) {
+    let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+    this._mapsService.loadMapByMapId(mapId)
+        .then((map: GameMap) => {
+          positionBehavior.setNewPosition(new Position(15, 1, mapId));
+          this._sceneService.setMap(map);
+          this._sceneService.refresh();
         });
-        return entities;
-    }
+  }
 
-    _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
-        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        console.log(event.code);
-        switch (event.code) {
-            case KEY_UP :
-                movableBehavior.moveUp();
-                break;
-            case KEY_DOWN:
-                movableBehavior.moveDown();
-                break;
-            case KEY_LEFT:
-                movableBehavior.moveLeft();
-                break;
-            case KEY_RIGHT:
-                movableBehavior.moveRight();
-                break;
-            case KEY_E:
-                this._processEnterLocation(entity, positionBehavior.position);
-                break;
-
-        }
+  _processEnterLocation(entity: Entity, position: Position) {
+    let mapId = this._getMapIdFromPosition(position);
+    if (mapId) {
+      this._changeMapForEntity(entity, <number>mapId);
     }
-
-    _isPositionIsPortal(position: Position): boolean {
-        return this._mapsService.isPositionIsPortal(position);
-    }
-
-    _getMapIdFromPosition(position: Position): IMap {
-        return <IMap>this._mapsService.getPositionPortalMapId(position);
-    }
-
-    _changeMapForEntity(entity: Entity, mapId: number) {
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        this._mapsService.loadMapByMapId(mapId)
-            .then((map: GameMap) => {
-                this._sceneService.setMap(map);
-                positionBehavior.position.mapId = mapId;
-                positionBehavior.position.col = 1;
-                positionBehavior.position.row = 15;
-            });
-    }
-
-    _processEnterLocation(entity: Entity, position: Position) {
-        if (this._isPositionIsPortal(position)) {
-            let metaData: IMap = this._getMapIdFromPosition(position);
-            console.log(metaData);
-            this._changeMapForEntity(entity, metaData.id);
-        }
-    }
+  }
 }

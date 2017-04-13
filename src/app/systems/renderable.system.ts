@@ -9,29 +9,29 @@ import {ITile} from "../interfaces/ITile";
 
 @Injectable()
 export class RenderableSystem {
-    constructor(private _entities: EntitiesService) {
-    }
+  constructor(private _entities: EntitiesService) {
+  }
 
-    getRenderableTilesAtPosition(position: Position): Array<ITile> {
-        let entities: Array<ITile> = [];
-        this._entities.entities.forEach((entity: Entity) => {
-            if (entity.hasBehavior("renderable") && entity.hasBehavior("position")) {
-                let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-                if (_.isEqual(positionBehavior.position, position)) {
-                    let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
-                    entities.push(renderableBehavior.getTile());
-                }
-            }
-        });
-        return entities;
-    }
+  getRenderableTilesAtPosition(position: Position): Array<ITile> {
+    let entities: Array<ITile> = [];
+    this._entities.entities.forEach((entity: Entity) => {
+      if (entity.hasBehavior("renderable") && entity.hasBehavior("position")) {
+        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+        if (_.isEqual(positionBehavior.position, position)) {
+          let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
+          entities.push(renderableBehavior.getTile());
+        }
+      }
+    });
+    return entities;
+  }
 
-    processTick() {
-        this._entities.entities.forEach((entity: Entity) => {
-            if (entity.hasBehavior("renderable")) {
-                let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
-                renderableBehavior.tick();
-            }
-        });
-    }
+  processTick() {
+    this._entities.entities.forEach((entity: Entity) => {
+      if (entity.hasBehavior("renderable")) {
+        let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
+        renderableBehavior.tick();
+      }
+    });
+  }
 }

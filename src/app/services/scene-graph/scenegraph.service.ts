@@ -69,9 +69,11 @@ export class ScenegraphService {
 
     if (this.cameraEndPosition.col > this.map.getWidthMap()) {
       this.cameraEndPosition.col = this.map.getWidthMap();
+      this.cameraStartPosition.col = this.cameraEndPosition.col - this.maxVisiblesCols;
     }
     if (this.cameraEndPosition.row > this.map.getHeightMap()) {
       this.cameraEndPosition.row = this.map.getHeightMap();
+      this.cameraStartPosition.row = this.cameraEndPosition.row - this.maxVisiblesRows;
     }
   }
 
