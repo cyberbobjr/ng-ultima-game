@@ -87,8 +87,8 @@ export class TilesLoaderService {
         return img;
     }
 
-    getTileAtIndex(index: number): ITile {
-        return _.find(this.tileset.tile, {"id": index});
+    getTileById(id: number): ITile {
+        return _.find(this.tileset.tile, {"id": id});
     }
 
     getTileByName(tileName: string): ITile {
