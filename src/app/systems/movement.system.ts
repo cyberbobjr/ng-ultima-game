@@ -62,7 +62,7 @@ export class MovementSystem {
     private _processWalkableMovement(entity: Entity, destinationPosition: Position) {
         let tile: ITile = this._mapService.getTileAtPosition(destinationPosition);
         let speed = this._tilesService.getTileSpeed(tile.name);
-        if (this._canMove(speed)) {
+        if ((speed === 1) || this._slowMove(speed)) {
             let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
             let positionBehavior = <PositionBehavior>entity.getBehavior("position");
             positionBehavior.moveTo(movableBehavior.vector);
@@ -72,7 +72,7 @@ export class MovementSystem {
         }
     }
 
-    private _canMove(speedTile: number): boolean {
+    private _slowMove(speedTile: number): boolean {
         return (Math.floor(Math.random() * speedTile) + 1 === 1);
     }
 
