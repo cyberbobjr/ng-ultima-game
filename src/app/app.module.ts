@@ -26,8 +26,8 @@ import {SubpartyComponent} from "./ui/subparty/subparty.component";
 import {ConfigService} from "./services/config/config.service";
 
 const appRoutes: Routes = [
-    {path: "", component: StartscreenComponent},
-    {path: "main", component: MainscreenComponent}
+    {path: "main", component: StartscreenComponent},
+    {path: "", component: MainscreenComponent}
 ];
 
 export function useFactory(service: ConfigService) {

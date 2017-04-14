@@ -7,12 +7,15 @@ import {Position} from "../classes/position";
 import {MapsService} from "../services/maps/maps.service";
 import {DescriptionsService} from "../services/informations/descriptions.service";
 import {IMap} from "../interfaces/IMap";
+import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
+import * as _ from "lodash";
 
 @Injectable()
 export class MovementSystem {
     constructor(private _entities: EntitiesService,
                 private _mapService: MapsService,
-                private _informationsService: DescriptionsService) {
+                private _informationsService: DescriptionsService,
+                private _scenesService: ScenegraphService) {
     }
 
     processMovementsBehavior() {
@@ -31,6 +34,13 @@ export class MovementSystem {
         let destinationPosition = this._getEntityDestinationPosition(positionBehavior, movableBehavior);
         if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
             this._processWalkableMovement(positionBehavior, movableBehavior, destinationPosition);
+            if (this._isLeaveCity(destinationPosition)) {
+                let newPosition: Position = this._mapService.getPositionOfCity(destinationPosition.mapId);
+                this._scenesService.setMapForEntity(entity, newPosition)
+                    .then(() => {
+                        this._informationsService.addTextToInformation("Leave the city");
+                    });
+            }
         } else {
             this._informationsService.addTextToInformation("Blocked!");
         }
@@ -44,11 +54,10 @@ export class MovementSystem {
     private _processWalkableMovement(positionBehavior: PositionBehavior, movableBehavior: MovableBehavior, destinationPosition: Position) {
         positionBehavior.moveTo(movableBehavior.vector);
         this._displayMoveInformation(movableBehavior.vector);
-        console.log(this._isLeaveCity(destinationPosition));
     }
 
     private _displayMoveInformation(vector: Position) {
-        let direction: string;
+        let direction: string = "";
         if (vector.col === 1) {
             direction = "East";
         }
@@ -61,7 +70,9 @@ export class MovementSystem {
         if (vector.row === -1) {
             direction = "North";
         }
-        this._informationsService.addTextToInformation(direction);
+        if (!_.isEmpty(direction)) {
+            this._informationsService.addTextToInformation(direction);
+        }
     }
 
     private _isLeaveCity(position: Position): boolean {
@@ -73,6 +84,6 @@ export class MovementSystem {
     }
 
     private _isPositionInBorder(position: Position, mapMetaData: IMap): boolean {
-        return (position.row === 0 || position.col === 0 || position.row === mapMetaData.height || position.col === mapMetaData.width);
+        return (position.row === 0 || position.col === 0 || position.row === mapMetaData.height - 1 || position.col === mapMetaData.width - 1);
     }
 }

@@ -6,8 +6,8 @@ import {PositionBehavior} from "../behaviors/position-behavior";
 import {Position} from "../classes/position";
 import {MapsService} from "../services/maps/maps.service";
 import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
-import {GameMap} from "../classes/game_map";
 import {DescriptionsService} from "../services/informations/descriptions.service";
+import {IPortal} from "../interfaces/IPortal";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
@@ -40,7 +40,7 @@ export class KeyboardinputSystem {
         return entities;
     }
 
-    _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
+    private _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
         let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
         let positionBehavior = <PositionBehavior>entity.getBehavior("position");
         switch (event.code) {
@@ -59,31 +59,18 @@ export class KeyboardinputSystem {
             case KEY_E:
                 this._processEnterLocation(entity, positionBehavior.position);
                 break;
-
         }
     }
 
-    _getMapIdFromPosition(position: Position): number | boolean {
-        return this._mapsService.getPortalMapIpForPosition(position);
-    }
-
-    _changeMapForEntity(entity: Entity, mapId: number) {
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        this._mapsService.loadMapByMapId(mapId)
-            .then((map: GameMap) => {
-                positionBehavior.setNewPosition(new Position(15, 1, mapId));
-                this._sceneService.setMap(map);
-                this._sceneService.refresh();
-                console.log(entity);
-            });
-    }
-
-    _processEnterLocation(entity: Entity, position: Position) {
-        let mapId = this._getMapIdFromPosition(position);
-        if (mapId) {
-            let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(<number>mapId);
+    private _processEnterLocation(entity: Entity, position: Position) {
+        try {
+            let portal: IPortal = this._mapsService.getPortalForPosition(position);
+            let destMapId = parseInt(portal.destmapid,10);
+            this._sceneService.enterInCity(entity, destMapId);
+            let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(destMapId);
             this._descriptionService.addTextToInformation(`Enter in ${mapMetaData.city.name}!`);
-            this._changeMapForEntity(entity, <number>mapId);
+        } catch (error) {
+            this._descriptionService.addTextToInformation("WHAT ???");
         }
     }
 }

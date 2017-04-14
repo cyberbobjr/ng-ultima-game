@@ -75,13 +75,24 @@ export class MapsService {
         });
     }
 
-    getPortalMapIpForPosition(position: Position): number | boolean {
+    getPortalForPosition(position: Position): IPortal {
         let metaData: any = this.getMapMetadataByMapId(position.mapId);
         let portals = metaData.portal;
         let portal = this._getPortalInPosition(portals, position);
         if (portal) {
-            return parseInt(portal.destmapid, 10);
+            return portal;
+        } else {
+            throw new Error("No Portal for this position");
         }
-        return false;
+    }
+
+    getPositionOfCity(mapId: number): Position {
+        let portalInformation = this.getPortalInformation(mapId);
+        return new Position(parseInt(portalInformation.y, 10), parseInt(portalInformation.x, 10), 0);
+    }
+
+    getPortalInformation(mapId: number): IPortal {
+        let metaData: any = this.getMapMetadataByMapId(0);
+        return _.find(metaData.portal, {"destmapid": mapId.toString()});
     }
 }
