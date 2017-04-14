@@ -4,11 +4,13 @@ import {Position} from "../../classes/position";
 import {GameMap} from "../../classes/game_map";
 import {Entity} from "../../classes/entity";
 import {MapsService} from "../maps/maps.service";
-import {RenderableSystem} from "../../systems/renderable.system";
 import {PositionBehavior} from "../../behaviors/position-behavior";
 import {ITile} from "../../interfaces/ITile";
 import * as _ from "lodash";
 import {EntitiesService} from "../entities/entities.service";
+import {IPortal} from "../../interfaces/IPortal";
+const MAX_WIDTH = 10;
+const MAX_HEIGHT = 10;
 
 @Injectable()
 export class ScenegraphService {
@@ -18,17 +20,16 @@ export class ScenegraphService {
 
     map: GameMap;
 
-    maxVisiblesCols: number;
-    maxVisiblesRows: number;
+    maxVisiblesCols: number = MAX_WIDTH;
+    maxVisiblesRows: number = MAX_HEIGHT;
 
     cameraStartPosition: Position = new Position();
     cameraEndPosition: Position = new Position();
 
     entityCenter: Entity = null;
 
-    constructor(private _renderableService: RenderableSystem,
-                private _entitiesService: EntitiesService,
-                private _mapService: MapsService) {
+    constructor(private _entitiesService: EntitiesService,
+                private _mapsService: MapsService) {
         // initiate fov map
         this.fov_map = new Array(256);
         for (let i = 0; i < (256); i++) {
@@ -36,10 +37,6 @@ export class ScenegraphService {
         }
     }
 
-    setMaxVisibleColsAndRows(maxWidth: number, maxHeight: number) {
-        this.maxVisiblesCols = maxWidth;
-        this.maxVisiblesRows = maxHeight;
-    }
 
     setMap(map: GameMap, cameraStartPosition?: Position) {
         this.map = map;
@@ -109,7 +106,7 @@ export class ScenegraphService {
     }
 
     private _getMapTilesAtPosition(position: Position): ITile {
-        return this._mapService.getTileAtPosition(position);
+        return this._mapsService.getTileAtPosition(position);
     }
 
     private _getEntitiesTilesAtPosition(position: Position): Array<ITile> {
@@ -189,7 +186,7 @@ export class ScenegraphService {
             if ((playerPostion.row === y0) && (playerPostion.col === x0)) {
                 this.fov_map[y0][x0] = true;
             } else {
-                if (this._mapService.isTileAtPositionIsOpaque(new Position(y0, x0))) {
+                if (this._mapsService.isTileAtPositionIsOpaque(new Position(y0, x0))) {
                     this.fov_map[y0][x0] = visible;
                     visible = false;
                 } else {
@@ -211,5 +208,21 @@ export class ScenegraphService {
                 y0 += sy;
             }
         }
+    }
+
+    setMapForEntity(entity: Entity, newPosition: Position): Promise<boolean> {
+        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+        return this._mapsService.loadMapByMapId(newPosition.mapId)
+                   .then((map: GameMap) => {
+                       positionBehavior.setNewPosition(newPosition);
+                       this.setMap(map);
+                       this.refresh();
+                       return true;
+                   });
+    }
+
+    enterInCity(entity: Entity, mapId: number) {
+        let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformation(mapId);
+        this.setMapForEntity(entity, new Position(parseInt(portalInformation.starty, 10), parseInt(portalInformation.startx, 10), mapId));
     }
 }

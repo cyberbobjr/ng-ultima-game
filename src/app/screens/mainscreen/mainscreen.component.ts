@@ -11,9 +11,7 @@ import {SavestateSystem} from "../../systems/savestate.system";
 import {DescriptionsService} from "../../services/informations/descriptions.service";
 import {PartyService} from "../../services/party/party.service";
 import {ActivatedRoute} from "@angular/router";
-import {GameMap} from "../../classes/game_map";
-const MAX_WIDTH = 10;
-const MAX_HEIGHT = 10;
+
 
 @Component({
                selector: "app-mainscreen",
@@ -33,7 +31,6 @@ export class MainscreenComponent implements OnInit {
                 private _movementSystem: MovementSystem,
                 private _renderableSystem: RenderableSystem,
                 private _playerService: EntityFactoryService,
-                private _mapService: MapsService,
                 private _sceneService: ScenegraphService,
                 private _keyboardinputSystem: KeyboardinputSystem,
                 private _savestateSystem: SavestateSystem,
@@ -56,13 +53,8 @@ export class MainscreenComponent implements OnInit {
                        this._entitiesService.addEntity(player);
                        this._partyService.addMember(player);
                        this._sceneService.setCenterCameraOnEntity(player);
-                       this._sceneService.setMaxVisibleColsAndRows(MAX_WIDTH, MAX_HEIGHT);
                        let positionPlayer = this._entitiesService.getPositionOfEntity(player);
-                       return this._mapService.loadMapByMapId(positionPlayer.mapId);
-                   })
-                   .then((currentMap: GameMap) => {
-                       this._sceneService.setMap(currentMap);
-                       return true;
+                       return this._sceneService.setMapForEntity(player, positionPlayer);
                    });
     }
 
