@@ -15,12 +15,6 @@ const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
 const KEY_E = "KeyE";
 
-/**
- * m[tileType.village] = { entryPos: new Pos(1, 15), name: "village" };
- m[tileType.town] = { entryPos: new Pos(1, 15), name: "towne" };
- m[tileType.castle] =  m[tileType.LBCastleCenter] = { entryPos: new Pos(15, 30), name: "castle" };
- */
-
 @Injectable()
 export class KeyboardinputSystem {
 
@@ -57,18 +51,18 @@ export class KeyboardinputSystem {
                 movableBehavior.moveRight();
                 break;
             case KEY_E:
-                this._processEnterLocation(entity, positionBehavior.position);
+                this._processEnter(entity, positionBehavior.position);
                 break;
         }
     }
 
-    private _processEnterLocation(entity: Entity, position: Position) {
+    private _processEnter(entity: Entity, position: Position) {
         try {
             let portal: IPortal = this._mapsService.getPortalForPosition(position);
             let destMapId = parseInt(portal.destmapid,10);
             this._sceneService.enterInCity(entity, destMapId);
             let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(destMapId);
-            this._descriptionService.addTextToInformation(`Enter in ${mapMetaData.city.name}!`);
+            this._descriptionService.addTextToInformation(`Enter ${mapMetaData.city.name}!`);
         } catch (error) {
             this._descriptionService.addTextToInformation("WHAT ???");
         }

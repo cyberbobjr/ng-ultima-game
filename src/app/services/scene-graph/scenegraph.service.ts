@@ -6,9 +6,11 @@ import {Entity} from "../../classes/entity";
 import {MapsService} from "../maps/maps.service";
 import {PositionBehavior} from "../../behaviors/position-behavior";
 import {ITile} from "../../interfaces/ITile";
-import * as _ from "lodash";
 import {EntitiesService} from "../entities/entities.service";
 import {IPortal} from "../../interfaces/IPortal";
+import {TilesLoaderService} from "../tiles/tiles.service";
+import * as _ from "lodash";
+
 const MAX_WIDTH = 10;
 const MAX_HEIGHT = 10;
 
@@ -29,6 +31,7 @@ export class ScenegraphService {
     entityCenter: Entity = null;
 
     constructor(private _entitiesService: EntitiesService,
+                private _tilesService: TilesLoaderService,
                 private _mapsService: MapsService) {
         // initiate fov map
         this.fov_map = new Array(256);
@@ -83,9 +86,9 @@ export class ScenegraphService {
         for (let y = this.cameraStartPosition.row; y <= this.cameraEndPosition.row; y++) {
             this.visibleWindow[visibleRowIndex] = [];
             for (let x = this.cameraStartPosition.col; x <= this.cameraEndPosition.col; x++) {
-                let positionToTest = new Position(y, x, this.map.mapMetaData.id);
+                let positionToDraw = new Position(y, x, this.map.mapMetaData.id);
                 this.visibleWindow[visibleRowIndex][visibileColIndex] =
-                    this._isMapVisibleAtPosition(positionToTest) ? this._getTilesAtPosition(positionToTest) : [];
+                    this._isMapVisibleAtPosition(positionToDraw) ? this._getTilesAtPosition(positionToDraw) : [];
                 visibileColIndex++;
             }
             visibleRowIndex++;
@@ -99,14 +102,15 @@ export class ScenegraphService {
 
     private _getTilesAtPosition(position: Position): Array<ITile> {
         let tiles: Array<ITile> = [];
-        tiles.push(this._getMapTilesAtPosition(position));
 
+        tiles.push(this._getMapTileAtPosition(position));
         tiles = _.concat(tiles, this._getEntitiesTilesAtPosition(position));
         return tiles;
     }
 
-    private _getMapTilesAtPosition(position: Position): ITile {
-        return this._mapsService.getTileAtPosition(position);
+    private _getMapTileAtPosition(position: Position): ITile {
+        let tileIndex: number = this._mapsService.getTileIndexAtPosition(position);
+        return this._tilesService.getTileByIndex(tileIndex);
     }
 
     private _getEntitiesTilesAtPosition(position: Position): Array<ITile> {
