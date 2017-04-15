@@ -60,7 +60,7 @@ export class TilesLoaderService {
     private _loadImagesTileset() {
         for (let tile of this.tileset.tile) {
             let tileImage: HTMLImageElement = this._loadTileFileByName(tile.name);
-            this.tileset.setImageForTileById(tileImage,tile.id);
+            this.tileset.setImageForTileById(tileImage, tile.id);
         }
     }
 

@@ -5,7 +5,6 @@ import {MovementSystem} from "app/systems/movement.system";
 import {RenderableSystem} from "../../systems/renderable.system";
 import {EntityFactoryService} from "../../services/entityFactory/entityFactory.service";
 import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
-import {MapsService} from "app/services/maps/maps.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
 import {SavestateSystem} from "../../systems/savestate.system";
 import {DescriptionsService} from "../../services/informations/descriptions.service";
@@ -21,6 +20,7 @@ import {ActivatedRoute} from "@angular/router";
 export class MainscreenComponent implements OnInit {
     isMapReady: boolean = false;
     gameLoop: any;
+    renderLoop: any;
 
     @HostListener("document:keyup", ["$event"]) handleKeyboardEvents($event: KeyboardEvent) {
         this.processKeyInput($event);
@@ -69,9 +69,13 @@ export class MainscreenComponent implements OnInit {
      */
     mainLoop() {
         this.gameLoop = window.setInterval(() => {
-            this._renderableSystem.processTick();
             this._savestateSystem.processTick();
-        }, 3000);
+        }, 5000);
+
+        this.renderLoop = window.setInterval(() => {
+            this._renderableSystem.processTick();
+            this._sceneService.refresh();
+        }, 250);
     }
 
     stopLoop() {

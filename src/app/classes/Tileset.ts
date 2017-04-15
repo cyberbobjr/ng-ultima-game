@@ -40,11 +40,11 @@ export class Tileset implements ITileset {
                 tile.image = image;
             }
         });
-    }
-
-    getHtmlImageElementAtIndex(index: number): HTMLImageElement {
-        let tile: ITile = this.getTileAtIndex(index);
-        return tile.image;
+        _.map(this.tile, (tile) => {
+            if (tile.id === tileId) {
+                tile.image = image;
+            }
+        });
     }
 
     getTileAtIndex(index: number): ITile {

@@ -15,12 +15,6 @@ const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
 const KEY_E = "KeyE";
 
-/**
- * m[tileType.village] = { entryPos: new Pos(1, 15), name: "village" };
- m[tileType.town] = { entryPos: new Pos(1, 15), name: "towne" };
- m[tileType.castle] =  m[tileType.LBCastleCenter] = { entryPos: new Pos(15, 30), name: "castle" };
- */
-
 @Injectable()
 export class KeyboardinputSystem {
 

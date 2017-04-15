@@ -154,6 +154,8 @@
       {
         "name": "avatar",
         "rule": "person",
+        "frames": "2",
+        "animation": "frame",
         "id": 31
       },
       {
