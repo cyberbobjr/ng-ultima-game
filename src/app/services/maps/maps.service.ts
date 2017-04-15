@@ -25,12 +25,13 @@ export class MapsService {
             });
     }
 
-    getTileAtPosition(position: Position): ITile {
-        return this.currentMap.getTileAtPosition(position);
+    getTileIndexAtPosition(position: Position): number {
+        return this.currentMap.getTileIndexAtPosition(position);
     }
 
     isTileAtPositionIsOpaque(position: Position): boolean {
-        let tile: ITile = this.getTileAtPosition(position);
+        let tileIndex: number = this.getTileIndexAtPosition(position);
+        let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
         if (!tile || !tile.name) {
             console.log("erreur " + JSON.stringify(position));
             console.log("tile " + tile);
@@ -39,7 +40,8 @@ export class MapsService {
     }
 
     isTileAtPositionIsWalkable(position: Position): boolean {
-        let tile: ITile = this.getTileAtPosition(position);
+        let tileIndex: number = this.getTileIndexAtPosition(position);
+        let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
         return this._tileloader.isTileWalkable(tile.name);
     }
 
@@ -47,7 +49,7 @@ export class MapsService {
         let mapMetaData: IMap = this.getMapMetadataByMapId(mapId);
         return this.loadMapByFilename(mapMetaData.fname)
                    .then((mapData: any) => {
-                       this.currentMap = new GameMap(mapMetaData, mapData, this._tileloader);
+                       this.currentMap = new GameMap(mapMetaData, mapData);
                        return this.currentMap;
                    });
     }

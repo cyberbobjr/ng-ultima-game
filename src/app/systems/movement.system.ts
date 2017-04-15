@@ -60,7 +60,8 @@ export class MovementSystem {
     }
 
     private _processWalkableMovement(entity: Entity, destinationPosition: Position) {
-        let tile: ITile = this._mapService.getTileAtPosition(destinationPosition);
+        let tileIndex: number = this._mapService.getTileIndexAtPosition(destinationPosition);
+        let tile: ITile = this._tilesService.getTileByIndex(tileIndex);
         let speed = this._tilesService.getTileSpeed(tile.name);
         if ((speed === 1) || this._slowMove(speed)) {
             let movableBehavior = <MovableBehavior>entity.getBehavior("movable");

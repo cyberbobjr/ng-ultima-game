@@ -6,7 +6,7 @@ export class Tileset implements ITileset {
     name: string;
     tile: Array<ITile>;
 
-    _internalTilesIndices: Map<number, number> = new Map();
+    _internalTilesIndices: Map<number, ITile> = new Map();
 
     constructor(name: string, tile: Array<ITile>) {
         this.name = name;
@@ -21,24 +21,33 @@ export class Tileset implements ITileset {
                 let frameCounter = parseInt(<string>tile.frames, 10);
                 currentIndex = tile.id;
                 for (let i = 0; i < frameCounter; i++) {
-                    this._internalTilesIndices.set(tile.id + i, tile.id);
+                    let cloneTile = _.clone(tile);
+                    cloneTile.currentFrame = i;
+                    this._internalTilesIndices.set(currentIndex, cloneTile);
                     currentIndex++;
                 }
             } else {
-                this._internalTilesIndices.set(currentIndex, tile.id);
+                tile.currentFrame = 0;
+                this._internalTilesIndices.set(currentIndex, tile);
                 currentIndex++;
             }
         });
-        console.log(this._internalTilesIndices);
+    }
+
+    setImageForTileById(image: HTMLImageElement, tileId: number) {
+        this._internalTilesIndices.forEach((tile: ITile, key: number) => {
+            if (tile.id === tileId) {
+                tile.image = image;
+            }
+        });
     }
 
     getHtmlImageElementAtIndex(index: number): HTMLImageElement {
-        let tile = this.getTileAtIndex(index);
+        let tile: ITile = this.getTileAtIndex(index);
         return tile.image;
     }
 
     getTileAtIndex(index: number): ITile {
-        let tileId: number = this._internalTilesIndices.get(index);
-        return _.find(this.tile, {"id": tileId});
+        return this._internalTilesIndices.get(index);
     }
 }

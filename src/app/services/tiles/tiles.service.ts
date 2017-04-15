@@ -8,7 +8,6 @@ import * as _ from "lodash";
 
 @Injectable()
 export class TilesLoaderService {
-    tiles: Array<HTMLImageElement> = [];
     numberOfTilesLoaded: number = 0;
     numberOfTilesLoaded$: Subject<number> = new Subject();
     tileset: Tileset;
@@ -60,8 +59,19 @@ export class TilesLoaderService {
 
     private _loadImagesTileset() {
         for (let tile of this.tileset.tile) {
-            tile["image"] = this._loadTileFileByName(tile.name);
+            let tileImage: HTMLImageElement = this._loadTileFileByName(tile.name);
+            this.tileset.setImageForTileById(tileImage,tile.id);
         }
+    }
+
+    private _loadTileFileByName(name: string): HTMLImageElement {
+        const img = new Image();
+        img.onload = () => {
+            this.numberOfTilesLoaded++;
+            this.numberOfTilesLoaded$.next(this.numberOfTilesLoaded);
+        };
+        img.src = `assets/tiles/tile_${name}.png`;
+        return img;
     }
 
     private _loadJsonTileDefinition(): Promise<Tileset> {
@@ -77,18 +87,8 @@ export class TilesLoaderService {
         });
     }
 
-    private _loadTileFileByName(name: string): HTMLImageElement {
-        const img = new Image();
-        img.onload = () => {
-            this.numberOfTilesLoaded++;
-            this.numberOfTilesLoaded$.next(this.numberOfTilesLoaded);
-        };
-        img.src = `assets/tiles/tile_${name}.png`;
-        return img;
-    }
-
-    getTileById(id: number): ITile {
-        return _.find(this.tileset.tile, {"id": id});
+    getTileByIndex(index: number): ITile {
+        return this.tileset.getTileAtIndex(index);
     }
 
     getTileByName(tileName: string): ITile {
