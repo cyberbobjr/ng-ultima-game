@@ -6,13 +6,14 @@ import {ITile} from "../../interfaces/ITile";
 import {IMap} from "../../interfaces/IMap";
 import * as _ from "lodash";
 import {IPortal} from "../../interfaces/IPortal";
+import {EntitiesService} from "../entities/entities.service";
 
 @Injectable()
 export class MapsService {
     currentMap: GameMap;
     maps: Array<IMap> = [];
 
-    constructor(private _tileloader: TilesLoaderService) {
+    constructor(private _tileloader: TilesLoaderService, private _entitiesService: EntitiesService) {
     }
 
     loadMapByFilename(mapFilename: string): Promise<number[][]> {
@@ -50,6 +51,10 @@ export class MapsService {
         return this.loadMapByFilename(mapMetaData.fname)
                    .then((mapData: any) => {
                        this.currentMap = new GameMap(mapMetaData, mapData);
+                       console.log(mapMetaData);
+                       return this._entitiesService.loadAllEntitiesForMap(mapMetaData);
+                   })
+                   .then(() => {
                        return this.currentMap;
                    });
     }

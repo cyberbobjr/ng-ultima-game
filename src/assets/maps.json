@@ -460,7 +460,7 @@
           ],
           "name": "Britannia",
           "type": "castle",
-          "tlkfname": "lcb.tlk"
+          "tlkfname": "lcb.json"
         },
         "portal": [
           {
@@ -527,7 +527,7 @@
           },
           "name": "Britannia",
           "type": "castle",
-          "tlkfname": "lcb.tlk"
+          "tlkfname": "lcb.json"
         },
         "portal": [
           {
@@ -573,7 +573,7 @@
           },
           "name": "Lycaeum",
           "type": "castle",
-          "tlkfname": "lycaeum.tlk"
+          "tlkfname": "lycaeum.json"
         },
         "label": [
           {
@@ -607,7 +607,7 @@
           },
           "name": "Empath Abbey",
           "type": "castle",
-          "tlkfname": "empath.tlk"
+          "tlkfname": "empath.json"
         },
         "label": {
           "name": "mysticarmor",
@@ -634,7 +634,7 @@
           },
           "name": "Serpents Hold",
           "type": "castle",
-          "tlkfname": "serpent.tlk"
+          "tlkfname": "serpent.json"
         },
         "label": {
           "name": "mysticswords",
@@ -679,7 +679,7 @@
           ],
           "name": "Moonglow",
           "type": "towne",
-          "tlkfname": "moonglow.tlk"
+          "tlkfname": "moonglow.json"
         },
         "label": {
           "name": "honestyrune",
@@ -732,7 +732,7 @@
           ],
           "name": "Britain",
           "type": "towne",
-          "tlkfname": "britain.tlk"
+          "tlkfname": "britain.json"
         },
         "label": {
           "name": "compassionrune",
@@ -789,7 +789,7 @@
           ],
           "name": "Jhelom",
           "type": "towne",
-          "tlkfname": "jhelom.tlk"
+          "tlkfname": "jhelom.json"
         },
         "label": {
           "name": "valorrune",
@@ -826,7 +826,7 @@
           ],
           "name": "Yew",
           "type": "towne",
-          "tlkfname": "yew.tlk"
+          "tlkfname": "yew.json"
         },
         "label": {
           "name": "justicerune",
@@ -863,7 +863,7 @@
           ],
           "name": "Minoc",
           "type": "towne",
-          "tlkfname": "minoc.tlk"
+          "tlkfname": "minoc.json"
         },
         "label": {
           "name": "sacrificerune",
@@ -908,7 +908,7 @@
           ],
           "name": "Trinsic",
           "type": "towne",
-          "tlkfname": "trinsic.tlk"
+          "tlkfname": "trinsic.json"
         },
         "label": {
           "name": "honorrune",
@@ -953,7 +953,7 @@
           ],
           "name": "Skara Brae",
           "type": "towne",
-          "tlkfname": "skara.tlk"
+          "tlkfname": "skara.json"
         },
         "id": "11",
         "type": "city",
@@ -975,7 +975,7 @@
           },
           "name": "Magincia",
           "type": "ruins",
-          "tlkfname": "magincia.tlk"
+          "tlkfname": "magincia.json"
         },
         "id": "12",
         "type": "city",
@@ -1019,7 +1019,7 @@
           ],
           "name": "Paws",
           "type": "village",
-          "tlkfname": "paws.tlk"
+          "tlkfname": "paws.json"
         },
         "label": {
           "name": "humilityrune",
@@ -1064,7 +1064,7 @@
           ],
           "name": "Buccaneers Den",
           "type": "village",
-          "tlkfname": "den.tlk"
+          "tlkfname": "den.json"
         },
         "id": "14",
         "type": "city",
@@ -1100,7 +1100,7 @@
           ],
           "name": "Vesper",
           "type": "village",
-          "tlkfname": "vesper.tlk"
+          "tlkfname": "vesper.json"
         },
         "id": "15",
         "type": "city",
@@ -1122,7 +1122,7 @@
           },
           "name": "Cove",
           "type": "village",
-          "tlkfname": "cove.tlk"
+          "tlkfname": "cove.json"
         },
         "label": {
           "name": "candle",
