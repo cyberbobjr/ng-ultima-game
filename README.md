@@ -44,7 +44,16 @@ Availables features :
 - GUI Screen ready
 - Save state of player (position on the map)
 - Simili responsive (for the width only)
+- NPCs visibles
+
+Available Soon : 
+- Conversation
+- Inventory
 
 ## Licence
 This project is under GNU GENERAL PUBLIC LICENS, see licence.txt for details
 Some assets comes from XU4 - https://sourceforge.net/projects/xu4/
+
+## Long roadmap feature
+In the end of the end, the game will be more a "tile game engine" which you can modify all options as you want.
+Maybe with a quest system ??
