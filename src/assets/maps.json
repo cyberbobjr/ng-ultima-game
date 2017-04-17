@@ -460,7 +460,7 @@
           ],
           "name": "Britannia",
           "type": "castle",
-          "tlkfname": "lcb.json"
+          "tlkfname": "lcb_1.json"
         },
         "portal": [
           {
@@ -527,7 +527,7 @@
           },
           "name": "Britannia",
           "type": "castle",
-          "tlkfname": "lcb.json"
+          "tlkfname": "lcb_2.json"
         },
         "portal": [
           {

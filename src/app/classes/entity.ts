@@ -1,4 +1,6 @@
 import {IBehavior} from "../interfaces/IBehavior";
+import {PositionBehavior} from "../behaviors/position-behavior";
+import {Position} from "../classes/position";
 
 export class Entity {
     name: string;
@@ -24,5 +26,10 @@ export class Entity {
 
     getBehavior(behaviorName: string): IBehavior {
         return this._behaviors.get(behaviorName);
+    }
+
+    getPosition(): Position {
+        let positionBehavior = <PositionBehavior>this.getBehavior("position");
+        return positionBehavior.position;
     }
 }

@@ -50,10 +50,10 @@ export class MainscreenComponent implements OnInit {
     initGame() {
         return this._playerService.createOrLoadPlayer()
                    .then((player: Entity) => {
-                       this._entitiesService.addEntity(player);
+                       let positionPlayer = player.getPosition();
+                       this._entitiesService.addPlayer(player);
                        this._partyService.addMember(player);
                        this._sceneService.setCenterCameraOnEntity(player);
-                       let positionPlayer = this._entitiesService.getPositionOfEntity(player);
                        return this._sceneService.setMapForEntity(player, positionPlayer);
                    });
     }

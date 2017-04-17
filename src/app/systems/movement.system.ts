@@ -49,7 +49,7 @@ export class MovementSystem {
     }
 
     private _processLeaveCity(entity: Entity, destinationPosition: Position) {
-        let newPosition: Position = this._mapService.getPositionOfCity(destinationPosition.mapId);
+        let newPosition: Position = this._mapService.getPositionOfPortalId(destinationPosition.mapId);
         this._scenesService.setMapForEntity(entity, newPosition)
             .then(() => {
                 this._descriptionService.addTextToInformation("LEAVING...");

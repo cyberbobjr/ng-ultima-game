@@ -14,7 +14,8 @@ export class MapsService {
     private _currentMap: GameMap;
     maps: Array<IMap> = [];
 
-    constructor(private _tileloader: TilesLoaderService, private _entitiesService: EntitiesService) {
+    constructor(private _tileloader: TilesLoaderService,
+                private _entitiesService: EntitiesService) {
     }
 
     loadMapByFilename(mapFilename: string): Promise<number[][]> {
@@ -51,8 +52,9 @@ export class MapsService {
         let mapMetaData: IMap = this.getMapMetadataByMapId(mapId);
         return this.loadMapByFilename(mapMetaData.fname)
                    .then((mapData: any) => {
+                       let entities: Array<Entity> = this._entitiesService.getEntitiesForMapId(mapId);
                        this._currentMap = new GameMap(mapMetaData, mapData);
-                       return this._entitiesService.loadAllEntitiesForMap(mapMetaData);
+                       this._currentMap.setEntitiesOnMap(entities);
                    })
                    .then(() => {
                        return this._currentMap;
@@ -72,7 +74,7 @@ export class MapsService {
                 this.maps = _.map(jsonValue.maps.map, (map: IMap) => {
                     return map;
                 });
-                return jsonValue;
+                return this.maps;
             });
     }
 
@@ -93,25 +95,25 @@ export class MapsService {
         }
     }
 
-    getPositionOfCity(mapId: number): Position {
-        let portalInformation = this.getPortalInformation(mapId);
+    getPositionOfPortalId(portalId: number): Position {
+        let portalInformation = this.getPortalInformationByPortalId(portalId);
         return new Position(parseInt(portalInformation.y, 10), parseInt(portalInformation.x, 10), 0);
     }
 
-    getPortalInformation(mapId: number): IPortal {
+    getPortalInformationByPortalId(portalId: number): IPortal {
         let metaData: any = this.getMapMetadataByMapId(0);
-        return _.find(metaData.portal, {"destmapid": mapId.toString()});
+        return _.find(metaData.portal, {"destmapid": portalId.toString()});
     }
 
     getCurrentMap(): GameMap {
         return this._currentMap;
     }
 
-    setEntitiesOnMap(entities: Array<Entity>) {
-        this._currentMap.setEntitiesOnMap(entities);
+    getEntitiesOnCurrentMap(): Array<Entity> {
+        return this._entitiesService.getEntitiesForMapId(this._currentMap.mapMetaData.id);
     }
 
-    getEntitiesOnCurrentMap(): Array<Entity> {
-        return this._currentMap.getEntitiesOnMap();
+    getAllMaps(): Array<IMap> {
+        return this.maps;
     }
 }

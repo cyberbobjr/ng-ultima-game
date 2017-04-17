@@ -1,11 +1,10 @@
 [
     {
-        "tlk_id": 0,
-        "tile1": 82,
-        "x_pos1": 9,
-        "y_pos1": 27,
-        "move": 128,
-        "id": 0,
+        "tlk_id": 1,
+        "tile1": 32,
+        "x_pos1": 28,
+        "y_pos1": 24,
+        "move": 0,
         "flag": 6,
         "humility": 0,
         "turningaway": 0,
@@ -25,356 +24,203 @@
         }
     },
     {
-        "tlk_id": 1,
-        "tile1": 32,
-        "x_pos1": 28,
-        "y_pos1": 24,
+        "tlk_id": 16,
+        "tile1": 47,
+        "x_pos1": 15,
+        "y_pos1": 2,
         "move": 0,
-        "id": 1,
-        "flag": 5,
+        "flag": 6,
         "humility": 0,
         "turningaway": 0,
         "talks": {
-            "name": "Juliet",
-            "pronoun": "She",
-            "look": "A fair maiden.",
-            "job": "I can help thee.",
-            "heal": "Fine thanks.",
-            "keyword1": "HELP",
-            "keyword2": "ONE ",
-            "answer1": "Seek ye to know how the eight virtues form into the three principles.",
-            "answer2": "Seek ye to know what one thing the three principles of virtue combine into!",
-            "yesnoquestion": "Know ye this?",
-            "yesanswer": "Now the one!",
-            "noanswer": "Seek it!"
+            "name": "Landri",
+            "pronoun": "He",
+            "look": "A grim shepherd",
+            "job": "I am here to warn thee!",
+            "heal": "I am fine, but thou must go back!",
+            "keyword1": "WARN",
+            "keyword2": "PERI",
+            "answer1": "Ahead lies a perilous place!",
+            "answer2": "Once thou enters thou may not return whence thee came!",
+            "yesnoquestion": "Wilt thou go on?",
+            "yesanswer": "Then thou art doomed!",
+            "noanswer": "That is good."
         }
     },
     {
-        ,
-    "id"
-    :
-    2,
-    "flag"
-    :
-    6,
-    "humility"
-    :
-    0,
-    "turningaway"
-    :
-    0,
-    "talks"
-    :
-    {
-        "name": "Jester Twin",
-        "pronoun": "He",
-        "look": "A dancing jester",
-        "job": "To entertain.",
-        "heal": "Perfectly hoppy!",
-        "keyword1": "JEST",
-        "keyword2": "BARD",
-        "answer1": "A jester needs a good bard!",
-        "answer2": "Our bard is very good.",
-        "yesnoquestion": "Dost thou like the music?",
-        "yesanswer": "Then you should go to Britain for there lives the best!",
-        "noanswer": "A shame, we do!"
-    }
+        "tlk_id": 14,
+        "tile1": 81,
+        "x_pos1": 9,
+        "y_pos1": 4,
+        "move": 1,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A guard",
+            "job": "A guard",
+            "heal": "Excellent",
+            "keyword1": "GUAR",
+            "keyword2": "TREA",
+            "answer1": "We guard the castle and its treasures.",
+            "answer2": "That is not your business.",
+            "yesnoquestion": "Do you mean to steal?",
+            "yesanswer": "I believe you will find that an unfruitful venture.",
+            "noanswer": "Then please leave at once!"
+        }
     },
     {
-        ,
-    "id"
-    :
-    3,
-    "flag"
-    :
-    5,
-    "humility"
-    :
-    1,
-    "turningaway"
-    :
-    0,
-    "talks"
-    :
-    {
-        "name": "a guard",
-        "pronoun": "He",
-        "look": "A burly guard",
-        "job": "I guard the castle and my liege!",
-        "heal": "Great!",
-        "keyword1": "GUAR",
-        "keyword2": "LIEG",
-        "answer1": "A guard must be a valiant warrior!",
-        "answer2": "I serve Lord British!",
-        "yesnoquestion": "Art thou the most valiant warrior?",
-        "yesanswer": "Then thou should be a guard!",
-        "noanswer": "Still flee not from battle!"
-    }
-    },
-    {
-        ,
-    "id"
-    :
-    4,
-    "flag"
-    :
-    6,
-    "humility"
-    :
-    0,
-    "turningaway"
-    :
-    0,
-    "talks"
-    :
-    {
-        "name": "Le Chef",
-        "pronoun": "He",
-        "look": "A person with a white hat.",
-        "job": "I am the chef.",
-        "heal": "Well.. All but my finger, which I cut!",
-        "keyword1": "FOOD",
-        "keyword2": "COOK",
-        "answer1": "Food, glorious food, to cook is my life!",
-        "answer2": "Cooking is a practiced art.",
-        "yesnoquestion": "Do you eat?",
-        "yesanswer": "Then thou should try my soup!",
-        "noanswer": "Then thou must be a spiritualist!"
-    }
-    },
-    {
-        ,
-    "id"
-    :
-    5,
-    "flag"
-    :
-    6,
-    "humility"
-    :
-    0,
-    "turningaway"
-    :
-    50,
-    "talks"
-    :
-    {
-        "name": "a reaper",
-        "pronoun": "It",
-        "look": "A reaper",
-        "job": "I kill adventurers!",
-        "heal": "Not so good, no one to eat in here!",
-        "keyword1": "KILL",
-        "keyword2": "THIN",
-        "answer1": "There is a thing which can kill many!",
-        "answer2": "Knowledge of it is found at Buccaneer's Den!",
-        "yesnoquestion": "Will you seek this thing?",
-        "yesanswer": "It brings great power!",
-        "noanswer": "Then thou must be stupid."
-    }
-    },
-    {
-        ,
-    "id"
-    :
-    6,
-    "flag"
-    :
-    6,
-    "humility"
-    :
-    1,
-    "turningaway"
-    :
-    0,
-    "talks"
-    :
-    {
-        "name": "a nameless prisoner",
-        "pronoun": "He",
-        "look": "A ragged soul.",
-        "job": "I have none.",
-        "heal": "Very poor.",
-        "keyword1": "CRIM",
-        "keyword2": "PRIS",
-        "answer1": "Crime is an evil thing!",
-        "answer2": "Here I pay for my crimes!",
-        "yesnoquestion": "Are you a pirate?",
-        "yesanswer": "You may never complete thy quests, for evil makes not an avatar!",
-        "noanswer": "I hope that this is true!"
-    }
-    },
-    {
-        ,
-    "id"
-    :
-    7,
-    "flag"
-    :
-    6,
-    "humility"
-    :
-    0,
-    "turningaway"
-    :
-    0,
-    "talks"
-    :
-    {
-        "name": "Zorin",
-        "pronoun": "He",
-        "look": "A wise mage",
-        "job": "I am here to help thee.",
-        "heal": "I am old, very old....",
-        "keyword1": "HELP",
-        "keyword2": "CAST",
-        "answer1": "Seek help in the castles!",
-        "answer2": "Seek: the Lycaeum, Empath Abbey, Serpent's Castle!",
-        "yesnoquestion": "Wilt thou go hither?",
-        "yesanswer": "Find therein all named Antos and ask of the bell, book, and candle!",
-        "noanswer": "Alas."
-    }
-    },
-    {
-        ,
-    "id"
-    :
-    8,
-    "flag"
-    :
-    6,
-    "humility"
-    :
-    0,
-    "turningaway"
-    :
-    0,
-    "talks"
-    :
-    {
-        "name": "a guard",
-        "pronoun": "He",
-        "look": "A burly guard",
-        "job": "I guard the castle and all within.",
-        "heal": "Couldn't be better!",
-        "keyword1": "GUAR",
-        "keyword2": "CAST",
-        "answer1": "I guard the castle!",
-        "answer2": "The castle is fair and strong!",
-        "yesnoquestion": "Do you seek Lord British?",
-        "yesanswer": "He is on the upper level in the throne room.",
-        "noanswer": "He will aid you if you are in need!"
-    }
+        "tlk_id": 9,
+        "tile1": 81,
+        "x_pos1": 17,
+        "y_pos1": 17,
+        "move": 0,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
+        }
     },
     {
         "tlk_id": 9,
         "tile1": 80,
         "x_pos1": 13,
-        "y_pos1": 29,
+        "y_pos1": 17,
         "move": 0,
-        "id": 9,
-        "flag": 0,
-        "humility": 0,
-        "turningaway": 0,
-        "talks": {
-            "name": "Water",
-            "pronoun": "It",
-            "look": "Water",
-            "job": "I hold a secret.",
-            "heal": "Fine.",
-            "keyword1": "SECR",
-            "keyword2": "ALTA",
-            "answer1": "To what?",
-            "answer2": "There are three altar rooms which connect the bottom levels of all eight dungeons!",
-            "yesnoquestion": "More?",
-            "yesanswer": "If the correct colors of stones are used in the altars, a key of three parts can be gained!",
-            "noanswer": "Oh."
-        }
-    },
-    {
-        "tlk_id": 10,
-        "tile1": 2,
-        "x_pos1": 21,
-        "y_pos1": 8,
-        "move": 0,
-        "id": 10,
-        "flag": 6,
-        "humility": 1,
-        "turningaway": 0,
-        "talks": {
-            "name": "Shawn",
-            "pronoun": "She",
-            "look": "A shepherdess both strong and beautiful.",
-            "job": "I watch the water.",
-            "heal": "Well.",
-            "keyword1": "WATE",
-            "keyword2": "PEAC",
-            "answer1": "It brings me peace.",
-            "answer2": "I come from a proud city.",
-            "yesnoquestion": "Art thou proud?",
-            "yesanswer": "Hmmm.",
-            "noanswer": "My towne was destroyed for its pride. The ruins lie on an isle at lat-K'J"
-            long-L
-            'L"!"
-        }
-    },
-    {
-        "tlk_id": 11,
-        "tile1": 47,
-        "x_pos1": 21,
-        "y_pos1": 5,
-        "move": 1,
-        "id": 11,
         "flag": 6,
         "humility": 0,
         "turningaway": 0,
         "talks": {
-            "name": "Seesha",
-            "pronoun": "She",
-            "look": "An injured fighter",
-            "job": "I fight for my country.",
-            "heal": "I have a grievous wound.",
-            "keyword1": "WOUN",
-            "keyword2": "COUN",
-            "answer1": "Deep.",
-            "answer2": "Britannia.",
-            "yesnoquestion": "Fight ye for Britannia?",
-            "yesanswer": "Then seek out the smith named Zircon in Minoc for he made the mystic arms, only they will save thee in the abyss!",
-            "noanswer": "Hmm."
-        }
-    },
-    {
-        "tlk_id": 12,
-        "tile1": 56,
-        "x_pos1": 20,
-        "y_pos1": 21,
-        "move": 0,
-        "id": 12,
-        "flag": 5,
-        "humility": 0,
-        "turningaway": 0,
-        "talks": {
-            "name": "Chuckles",
+            "name": "a guard",
             "pronoun": "He",
-            "look": "A bouncing jester",
-            "job": "I am the royal jester",
-            "heal": "Good, thanks.",
-            "keyword1": "JEST",
-            "keyword2": "CLUE",
-            "answer1": "Welcome unto the castle Britannia!",
-            "answer2": "Speak ye unto the waters of the well and ask of altars!",
-            "yesnoquestion": "Hast thou an ankh?",
-            "yesanswer": "Then enter in peace!",
-            "noanswer": "Then why art thou here?"
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
         }
     },
     {
-        "tlk_id": 13,
-        "tile1": 86,
-        "x_pos1": 15,
-        "y_pos1": 23,
+        "tlk_id": 9,
+        "tile1": 80,
+        "x_pos1": 28,
+        "y_pos1": 29,
         "move": 1,
-        "id": 13,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
+        }
+    },
+    {
+        "tlk_id": 15,
+        "tile1": 44,
+        "x_pos1": 22,
+        "y_pos1": 24,
+        "move": 1,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "Sheila",
+            "pronoun": "She",
+            "look": "A solemn ranger",
+            "job": "I search for the inner light.",
+            "heal": "I am well.",
+            "keyword1": "LIGH",
+            "keyword2": "SHRI",
+            "answer1": "Seek inner light in the shrines!",
+            "answer2": "Runes are needed to enter shrines!",
+            "yesnoquestion": "Dost thou know of mantra?",
+            "yesanswer": "Good.",
+            "noanswer": "The mantra are chants needed to focus thy thoughts while meditating."
+        }
+    },
+    {
+        "tlk_id": 14,
+        "tile1": 80,
+        "x_pos1": 7,
+        "y_pos1": 9,
+        "move": 1,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A guard",
+            "job": "A guard",
+            "heal": "Excellent",
+            "keyword1": "GUAR",
+            "keyword2": "TREA",
+            "answer1": "We guard the castle and its treasures.",
+            "answer2": "That is not your business.",
+            "yesnoquestion": "Do you mean to steal?",
+            "yesanswer": "I believe you will find that an unfruitful venture.",
+            "noanswer": "Then please leave at once!"
+        }
+    },
+    {
+        "tlk_id": 14,
+        "tile1": 80,
+        "x_pos1": 7,
+        "y_pos1": 11,
+        "move": 1,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A guard",
+            "job": "A guard",
+            "heal": "Excellent",
+            "keyword1": "GUAR",
+            "keyword2": "TREA",
+            "answer1": "We guard the castle and its treasures.",
+            "answer2": "That is not your business.",
+            "yesnoquestion": "Do you mean to steal?",
+            "yesanswer": "I believe you will find that an unfruitful venture.",
+            "noanswer": "Then please leave at once!"
+        }
+    },
+    {
+        "tlk_id": 14,
+        "tile1": 81,
+        "x_pos1": 11,
+        "y_pos1": 11,
+        "move": 1,
         "flag": 6,
         "humility": 0,
         "turningaway": 0,
@@ -399,48 +245,254 @@
         "x_pos1": 11,
         "y_pos1": 9,
         "move": 1,
-        "id": 14,
         "flag": 6,
         "humility": 0,
         "turningaway": 0,
         "talks": {
-            "name": "Sheila",
-            "pronoun": "She",
-            "look": "A solemn ranger",
-            "job": "I search for the inner light.",
-            "heal": "I am well.",
-            "keyword1": "LIGH",
-            "keyword2": "SHRI",
-            "answer1": "Seek inner light in the shrines!",
-            "answer2": "Runes are needed to enter shrines!",
-            "yesnoquestion": "Dost thou know of mantra?",
-            "yesanswer": "Good.",
-            "noanswer": "The mantra are chants needed to focus thy thoughts while meditating."
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A guard",
+            "job": "A guard",
+            "heal": "Excellent",
+            "keyword1": "GUAR",
+            "keyword2": "TREA",
+            "answer1": "We guard the castle and its treasures.",
+            "answer2": "That is not your business.",
+            "yesnoquestion": "Do you mean to steal?",
+            "yesanswer": "I believe you will find that an unfruitful venture.",
+            "noanswer": "Then please leave at once!"
         }
     },
     {
-        "tlk_id": 15,
-        "tile1": 44,
-        "x_pos1": 22,
-        "y_pos1": 24,
+        "tlk_id": 9,
+        "tile1": 80,
+        "x_pos1": 2,
+        "y_pos1": 2,
         "move": 1,
-        "id": 15,
         "flag": 6,
         "humility": 0,
         "turningaway": 0,
         "talks": {
-            "name": "Landri",
+            "name": "a guard",
             "pronoun": "He",
-            "look": "A grim shepherd",
-            "job": "I am here to warn thee!",
-            "heal": "I am fine, but thou must go back!",
-            "keyword1": "WARN",
-            "keyword2": "PERI",
-            "answer1": "Ahead lies a perilous place!",
-            "answer2": "Once thou enters thou may not return whence thee came!",
-            "yesnoquestion": "Wilt thou go on?",
-            "yesanswer": "Then thou art doomed!",
-            "noanswer": "That is good."
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
+        }
+    },
+    {
+        "tlk_id": 9,
+        "tile1": 81,
+        "x_pos1": 4,
+        "y_pos1": 27,
+        "move": 1,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
+        }
+    },
+    {
+        "tlk_id": 13,
+        "tile1": 86,
+        "x_pos1": 15,
+        "y_pos1": 23,
+        "move": 1,
+        "flag": 5,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "Chuckles",
+            "pronoun": "He",
+            "look": "A bouncing jester",
+            "job": "I am the royal jester",
+            "heal": "Good, thanks.",
+            "keyword1": "JEST",
+            "keyword2": "CLUE",
+            "answer1": "Welcome unto the castle Britannia!",
+            "answer2": "Speak ye unto the waters of the well and ask of altars!",
+            "yesnoquestion": "Hast thou an ankh?",
+            "yesanswer": "Then enter in peace!",
+            "noanswer": "Then why art thou here?"
+        }
+    },
+    {
+        "tlk_id": 12,
+        "tile1": 56,
+        "x_pos1": 20,
+        "y_pos1": 21,
+        "move": 0,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "Seesha",
+            "pronoun": "She",
+            "look": "An injured fighter",
+            "job": "I fight for my country.",
+            "heal": "I have a grievous wound.",
+            "keyword1": "WOUN",
+            "keyword2": "COUN",
+            "answer1": "Deep.",
+            "answer2": "Britannia.",
+            "yesnoquestion": "Fight ye for Britannia?",
+            "yesanswer": "Then seek out the smith named Zircon in Minoc for he made the mystic arms, only they will save thee in the abyss!",
+            "noanswer": "Hmm."
+        }
+    },
+    {
+        "tlk_id": 9,
+        "tile1": 81,
+        "x_pos1": 29,
+        "y_pos1": 5,
+        "move": 1,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
+        }
+    },
+    {
+        "tlk_id": 11,
+        "tile1": 47,
+        "x_pos1": 21,
+        "y_pos1": 5,
+        "move": 1,
+        "flag": 6,
+        "humility": 1,
+        "turningaway": 0,
+        "talks": {
+            "name": "Shawn",
+            "pronoun": "She",
+            "look": "A shepherdess both strong and beautiful.",
+            "job": "I watch the water.",
+            "heal": "Well.",
+            "keyword1": "WATE",
+            "keyword2": "PEAC",
+            "answer1": "It brings me peace.",
+            "answer2": "I come from a proud city.",
+            "yesnoquestion": "Art thou proud?",
+            "yesanswer": "Hmmm.",
+            "noanswer": "My towne was destroyed for its pride. The ruins lie on an isle at lat-K'J\" long-L'L\"!"
+        }
+    },
+    {
+        "tlk_id": 10,
+        "tile1": 2,
+        "x_pos1": 21,
+        "y_pos1": 8,
+        "move": 0,
+        "flag": 0,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "Water",
+            "pronoun": "It",
+            "look": "Water",
+            "job": "I hold a secret.",
+            "heal": "Fine.",
+            "keyword1": "SECR",
+            "keyword2": "ALTA",
+            "answer1": "To what?",
+            "answer2": "There are three altar rooms which connect the bottom levels of all eight dungeons!",
+            "yesnoquestion": "More?",
+            "yesanswer": "If the correct colors of stones are used in the altars, a key of three parts can be gained!",
+            "noanswer": "Oh."
+        }
+    },
+    {
+        "tlk_id": 0,
+        "tile1": 82,
+        "x_pos1": 21,
+        "y_pos1": 27,
+        "move": 128,
+        "role": "vendor"
+    },
+    {
+        "tlk_id": 0,
+        "tile1": 82,
+        "x_pos1": 9,
+        "y_pos1": 27,
+        "move": 128,
+        "role": "vendor"
+    },
+    {
+        "tlk_id": 9,
+        "tile1": 80,
+        "x_pos1": 17,
+        "y_pos1": 29,
+        "move": 0,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
+        }
+    },
+    {
+        "tlk_id": 9,
+        "tile1": 80,
+        "x_pos1": 13,
+        "y_pos1": 29,
+        "move": 0,
+        "flag": 6,
+        "humility": 0,
+        "turningaway": 0,
+        "talks": {
+            "name": "a guard",
+            "pronoun": "He",
+            "look": "A burly guard",
+            "job": "I guard the castle and all within.",
+            "heal": "Couldn't be better!",
+            "keyword1": "GUAR",
+            "keyword2": "CAST",
+            "answer1": "I guard the castle!",
+            "answer2": "The castle is fair and strong!",
+            "yesnoquestion": "Do you seek Lord British?",
+            "yesanswer": "He is on the upper level in the throne room.",
+            "noanswer": "He will aid you if you are in need!"
         }
     }
 ]

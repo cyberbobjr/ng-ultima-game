@@ -45,7 +45,7 @@ export class GameMap {
     }
 
     setEntitiesOnMap(entities: Array<Entity>) {
-
+        this._entitiesOnMap = entities;
     }
 
     getEntitiesOnMap(): Array<Entity> {

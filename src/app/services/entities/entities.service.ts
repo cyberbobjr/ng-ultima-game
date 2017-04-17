@@ -11,23 +11,36 @@ import {EntityFactoryService} from "../entityFactory/entityFactory.service";
 
 @Injectable()
 export class EntitiesService {
-    private _entities: Array<Entity> = [];
+    private _entitiesForAllMaps: Map<number, Array<Entity>> = new Map();
     private _player: Entity;
 
     constructor(private _entityFactory: EntityFactoryService) {
     }
 
-    addEntity(entity: Entity) {
-        this._entities.push(entity);
+    addEntityForMapId(entity: Entity, mapId: number) {
+        let entities: Array<Entity> = this._entitiesForAllMaps.get(mapId);
+        entities.push(entity);
+        this._entitiesForAllMaps.set(mapId, entities);
     }
 
-    getPositionOfEntity(entity: Entity): Position {
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        return positionBehavior.position;
+    private _createMapForMapId(mapId: number) {
+        this._entitiesForAllMaps.set(mapId, []);
+    }
+
+    addPlayer(playerEntity: Entity) {
+        this._player = playerEntity;
+    }
+
+    getEntitiesForMapId(mapId: number): Array<Entity> {
+        let entities: Array<Entity> = this._entitiesForAllMaps.get(mapId);
+        entities = _.concat(entities, this._player);
+        return entities;
     }
 
     getEntitiesAtPosition(position: Position): Array<Entity> {
-        return _.filter(this._entities, (entity: Entity) => {
+        let entities: Array<Entity> = this._entitiesForAllMaps.get(position.mapId);
+        entities = _.concat(entities, this._player);
+        return _.filter(entities, (entity: Entity) => {
             if (entity.hasBehavior("position")) {
                 let positionBehavior = <PositionBehavior>entity.getBehavior("position");
                 return positionBehavior.position.isEqual(position);
@@ -59,24 +72,33 @@ export class EntitiesService {
             });
     }
 
-    loadAllEntitiesForMap(metaData: IMap): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            this._loadTlkFile(metaData["city"]["tlkfname"])
-                .then((talks: Array<ITalk>) => {
-                    this._createNpcsFromTalks(talks, metaData);
-                    resolve(true);
-                });
+    loadAllEntitiesForMaps(maps: Array<IMap>): Promise<boolean> {
+        return _.map(maps, (map: IMap) => {
+            return new Promise((resolve, reject) => {
+                if (map["city"]) {
+                    this._loadTlkFile(map["city"]["tlkfname"])
+                        .then((talks: Array<ITalk>) => {
+                            this._createMapForMapId(map.id);
+                            this._createNpcsFromTalks(talks, map);
+                        });
+                }
+                resolve(true);
+            });
         });
     }
 
     private _createNpcsFromTalks(talks: Array<ITalk>, mapMetaData: IMap) {
         _.map(talks, (talk: ITalk) => {
-            let entity = this._entityFactory.createNpc(new Position(talk.y_pos1, talk.x_pos1, mapMetaData.id), talk.tile1, talk.talks.name);
-            this._entities.push(entity);
+            let name: string = "";
+            let entityPosition: Position = new Position(talk.y_pos1, talk.x_pos1, mapMetaData.id);
+            if (!_.has(talk, "talks")) {
+                name = "vendor";
+            } else {
+                name = talk.talks.name;
+            }
+            let entity = this._entityFactory.createNpc(entityPosition, talk.tile1, name);
+            this.addEntityForMapId(entity, mapMetaData.id);
         });
     }
 
-    setPlayerEntity(player: Entity) {
-        this._player = player;
-    }
 }
