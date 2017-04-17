@@ -17,17 +17,18 @@ export class MovementSystem {
     constructor(private _entities: EntitiesService,
                 private _tilesService: TilesLoaderService,
                 private _mapService: MapsService,
-                private _informationsService: DescriptionsService,
+                private _descriptionService: DescriptionsService,
                 private _scenesService: ScenegraphService) {
     }
 
     processMovementsBehavior() {
         let entities: Array<Entity> = [];
-        this._entities.entities.forEach((entity: Entity) => {
-            if (entity.hasBehavior("movable") && entity.hasBehavior("position")) {
-                this._processEntityMovements(entity);
-            }
-        });
+        this._mapService.getEntitiesOnCurrentMap()
+            .forEach((entity: Entity) => {
+                if (entity.hasBehavior("movable") && entity.hasBehavior("position")) {
+                    this._processEntityMovements(entity);
+                }
+            });
         return entities;
     }
 
@@ -42,7 +43,7 @@ export class MovementSystem {
                 this._processWalkableMovement(entity, destinationPosition);
             }
         } else {
-            this._informationsService.addTextToInformation("Blocked!");
+            this._descriptionService.addTextToInformation("Blocked!");
         }
         movableBehavior.stay();
     }
@@ -51,7 +52,7 @@ export class MovementSystem {
         let newPosition: Position = this._mapService.getPositionOfCity(destinationPosition.mapId);
         this._scenesService.setMapForEntity(entity, newPosition)
             .then(() => {
-                this._informationsService.addTextToInformation("LEAVING...");
+                this._descriptionService.addTextToInformation("LEAVING...");
             });
     }
 
@@ -69,7 +70,7 @@ export class MovementSystem {
             positionBehavior.moveTo(movableBehavior.vector);
             this._displayMoveInformation(movableBehavior.vector);
         } else {
-            this._informationsService.addTextToInformation("Slow progress!");
+            this._descriptionService.addTextToInformation("Slow progress!");
         }
     }
 
@@ -92,7 +93,7 @@ export class MovementSystem {
             direction = "North";
         }
         if (!_.isEmpty(direction)) {
-            this._informationsService.addTextToInformation(direction);
+            this._descriptionService.addTextToInformation(direction);
         }
     }
 
@@ -105,6 +106,7 @@ export class MovementSystem {
     }
 
     private _isPositionInBorder(position: Position, mapMetaData: IMap): boolean {
-        return (position.row === 0 || position.col === 0 || position.row === mapMetaData.height - 1 || position.col === mapMetaData.width - 1);
+        return (position.row === 0 || position.col === 0 || position.row === mapMetaData.height - 1
+                || position.col === mapMetaData.width - 1);
     }
 }

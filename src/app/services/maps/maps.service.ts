@@ -7,10 +7,11 @@ import {IMap} from "../../interfaces/IMap";
 import * as _ from "lodash";
 import {IPortal} from "../../interfaces/IPortal";
 import {EntitiesService} from "../entities/entities.service";
+import {Entity} from "../../classes/entity";
 
 @Injectable()
 export class MapsService {
-    currentMap: GameMap;
+    private _currentMap: GameMap;
     maps: Array<IMap> = [];
 
     constructor(private _tileloader: TilesLoaderService, private _entitiesService: EntitiesService) {
@@ -27,7 +28,7 @@ export class MapsService {
     }
 
     getTileIndexAtPosition(position: Position): number {
-        return this.currentMap.getTileIndexAtPosition(position);
+        return this._currentMap.getTileIndexAtPosition(position);
     }
 
     isTileAtPositionIsOpaque(position: Position): boolean {
@@ -50,12 +51,11 @@ export class MapsService {
         let mapMetaData: IMap = this.getMapMetadataByMapId(mapId);
         return this.loadMapByFilename(mapMetaData.fname)
                    .then((mapData: any) => {
-                       this.currentMap = new GameMap(mapMetaData, mapData);
-                       console.log(mapMetaData);
+                       this._currentMap = new GameMap(mapMetaData, mapData);
                        return this._entitiesService.loadAllEntitiesForMap(mapMetaData);
                    })
                    .then(() => {
-                       return this.currentMap;
+                       return this._currentMap;
                    });
     }
 
@@ -101,5 +101,17 @@ export class MapsService {
     getPortalInformation(mapId: number): IPortal {
         let metaData: any = this.getMapMetadataByMapId(0);
         return _.find(metaData.portal, {"destmapid": mapId.toString()});
+    }
+
+    getCurrentMap(): GameMap {
+        return this._currentMap;
+    }
+
+    setEntitiesOnMap(entities: Array<Entity>) {
+        this._currentMap.setEntitiesOnMap(entities);
+    }
+
+    getEntitiesOnCurrentMap(): Array<Entity> {
+        return this._currentMap.getEntitiesOnMap();
     }
 }

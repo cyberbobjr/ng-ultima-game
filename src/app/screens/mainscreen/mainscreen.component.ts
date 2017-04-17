@@ -80,5 +80,6 @@ export class MainscreenComponent implements OnInit {
 
     stopLoop() {
         window.clearInterval(this.gameLoop);
+        window.clearInterval(this.renderLoop);
     }
 }

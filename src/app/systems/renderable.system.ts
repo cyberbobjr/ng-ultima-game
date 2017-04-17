@@ -1,19 +1,20 @@
 import {Injectable} from "@angular/core";
 import {Entity} from "../classes/entity";
-import {EntitiesService} from "../services/entities/entities.service";
 import {RenderableBehavior} from "../behaviors/renderable-behavior";
+import {MapsService} from "../services/maps/maps.service";
 
 @Injectable()
 export class RenderableSystem {
-    constructor(private _entities: EntitiesService) {
+    constructor(private _mapsService: MapsService) {
     }
 
     processTick() {
-        this._entities.entities.forEach((entity: Entity) => {
-            if (entity.hasBehavior("renderable")) {
-                let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
-                renderableBehavior.tick();
-            }
-        });
+        this._mapsService.getEntitiesOnCurrentMap()
+            .forEach((entity: Entity) => {
+                if (entity.hasBehavior("renderable")) {
+                    let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
+                    renderableBehavior.tick();
+                }
+            });
     }
 }

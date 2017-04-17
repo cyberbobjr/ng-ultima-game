@@ -26,7 +26,7 @@ export class KeyboardinputSystem {
 
     processKeyboardInput(event: KeyboardEvent) {
         let entities: Array<Entity> = [];
-        this._entities.entities.forEach((entity: Entity) => {
+        this._mapsService.getEntitiesOnCurrentMap().forEach((entity: Entity) => {
             if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
                 this._processKeybordInputMovement(event, entity);
             }
@@ -59,10 +59,14 @@ export class KeyboardinputSystem {
     private _processEnter(entity: Entity, position: Position) {
         try {
             let portal: IPortal = this._mapsService.getPortalForPosition(position);
-            let destMapId = parseInt(portal.destmapid,10);
-            this._sceneService.enterInCity(entity, destMapId);
-            let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(destMapId);
-            this._descriptionService.addTextToInformation(`Enter ${mapMetaData.city.name}!`);
+            let destMapId = parseInt(portal.destmapid, 10);
+            let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformation(destMapId);
+            let newPosition = new Position(parseInt(portalInformation.starty, 10), parseInt(portalInformation.startx, 10), destMapId);
+            this._sceneService.setMapForEntity(entity, newPosition)
+                .then(() => {
+                    let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(destMapId);
+                    this._descriptionService.addTextToInformation(`Enter ${mapMetaData.city.name}!`);
+                });
         } catch (error) {
             this._descriptionService.addTextToInformation("WHAT ???");
         }

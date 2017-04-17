@@ -11,13 +11,14 @@ import {EntityFactoryService} from "../entityFactory/entityFactory.service";
 
 @Injectable()
 export class EntitiesService {
-    entities: Array<Entity> = [];
+    private _entities: Array<Entity> = [];
+    private _player: Entity;
 
     constructor(private _entityFactory: EntityFactoryService) {
     }
 
     addEntity(entity: Entity) {
-        this.entities.push(entity);
+        this._entities.push(entity);
     }
 
     getPositionOfEntity(entity: Entity): Position {
@@ -26,7 +27,7 @@ export class EntitiesService {
     }
 
     getEntitiesAtPosition(position: Position): Array<Entity> {
-        return _.filter(this.entities, (entity: Entity) => {
+        return _.filter(this._entities, (entity: Entity) => {
             if (entity.hasBehavior("position")) {
                 let positionBehavior = <PositionBehavior>entity.getBehavior("position");
                 return positionBehavior.position.isEqual(position);
@@ -36,13 +37,11 @@ export class EntitiesService {
     }
 
     getEntitiesTiles(entities: Array<Entity>): Array<ITile> {
-        let entitiesTiles: Array<ITile> = [];
-        entitiesTiles = _.map(entities, (entity: Entity) => {
+        return _.map(entities, (entity: Entity) => {
             if (entity.hasBehavior("renderable")) {
                 return this._getRenderableTile(entity);
             }
         });
-        return entitiesTiles;
     }
 
     private _getRenderableTile(entity: Entity): ITile {
@@ -64,7 +63,6 @@ export class EntitiesService {
         return new Promise((resolve, reject) => {
             this._loadTlkFile(metaData["city"]["tlkfname"])
                 .then((talks: Array<ITalk>) => {
-                    console.log(talks);
                     this._createNpcsFromTalks(talks, metaData);
                     resolve(true);
                 });
@@ -74,7 +72,11 @@ export class EntitiesService {
     private _createNpcsFromTalks(talks: Array<ITalk>, mapMetaData: IMap) {
         _.map(talks, (talk: ITalk) => {
             let entity = this._entityFactory.createNpc(new Position(talk.y_pos1, talk.x_pos1, mapMetaData.id), talk.tile1, talk.talks.name);
-            this.entities.push(entity);
+            this._entities.push(entity);
         });
+    }
+
+    setPlayerEntity(player: Entity) {
+        this._player = player;
     }
 }
