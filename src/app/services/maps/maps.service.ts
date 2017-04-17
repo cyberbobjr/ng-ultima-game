@@ -52,9 +52,7 @@ export class MapsService {
         let mapMetaData: IMap = this.getMapMetadataByMapId(mapId);
         return this.loadMapByFilename(mapMetaData.fname)
                    .then((mapData: any) => {
-                       let entities: Array<Entity> = this._entitiesService.getEntitiesForMapId(mapId);
                        this._currentMap = new GameMap(mapMetaData, mapData);
-                       this._currentMap.setEntitiesOnMap(entities);
                    })
                    .then(() => {
                        return this._currentMap;

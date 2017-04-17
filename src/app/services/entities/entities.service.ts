@@ -18,13 +18,9 @@ export class EntitiesService {
     }
 
     addEntityForMapId(entity: Entity, mapId: number) {
-        let entities: Array<Entity> = this._entitiesForAllMaps.get(mapId);
+        let entities: Array<Entity> = this.getEntitiesForMapId(mapId);
         entities.push(entity);
         this._entitiesForAllMaps.set(mapId, entities);
-    }
-
-    private _createMapForMapId(mapId: number) {
-        this._entitiesForAllMaps.set(mapId, []);
     }
 
     addPlayer(playerEntity: Entity) {
@@ -33,12 +29,15 @@ export class EntitiesService {
 
     getEntitiesForMapId(mapId: number): Array<Entity> {
         let entities: Array<Entity> = this._entitiesForAllMaps.get(mapId);
+        if (!entities) {
+            entities = [];
+        }
         entities = _.concat(entities, this._player);
         return entities;
     }
 
     getEntitiesAtPosition(position: Position): Array<Entity> {
-        let entities: Array<Entity> = this._entitiesForAllMaps.get(position.mapId);
+        let entities: Array<Entity> = this.getEntitiesForMapId(position.mapId);
         entities = _.concat(entities, this._player);
         return _.filter(entities, (entity: Entity) => {
             if (entity.hasBehavior("position")) {
@@ -47,19 +46,6 @@ export class EntitiesService {
             }
             return false;
         });
-    }
-
-    getEntitiesTiles(entities: Array<Entity>): Array<ITile> {
-        return _.map(entities, (entity: Entity) => {
-            if (entity.hasBehavior("renderable")) {
-                return this._getRenderableTile(entity);
-            }
-        });
-    }
-
-    private _getRenderableTile(entity: Entity): ITile {
-        let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
-        return renderableBehavior.getTile();
     }
 
     private _loadTlkFile(tlkFilename: string) {
@@ -78,7 +64,6 @@ export class EntitiesService {
                 if (map["city"]) {
                     this._loadTlkFile(map["city"]["tlkfname"])
                         .then((talks: Array<ITalk>) => {
-                            this._createMapForMapId(map.id);
                             this._createNpcsFromTalks(talks, map);
                         });
                 }

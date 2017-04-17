@@ -113,12 +113,16 @@ export class ScenegraphService {
     }
 
     private _getEntitiesTilesAtPosition(position: Position): Array<ITile> {
-        let entitiesTiles: Array<ITile> = [];
         let entities = this._entitiesService.getEntitiesAtPosition(position);
-        if (entities.length > 0) {
-            entitiesTiles = this._entitiesService.getEntitiesTiles(entities);
-        }
-        return entitiesTiles;
+        return (entities.length > 0) ? this._getTilesForEntities(entities) : [];
+    }
+
+    private _getTilesForEntities(entities: Array<Entity>): Array<ITile> {
+        return _.map(entities, (entity: Entity) => {
+            if (entity.hasTile()) {
+                return entity.getEntityTile();
+            }
+        });
     }
 
     private _getCenterEntityPosition() {
