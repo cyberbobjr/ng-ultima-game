@@ -1,5 +1,4 @@
 import {Injectable} from "@angular/core";
-import {EntitiesService} from "../services/entities/entities.service";
 import {Entity} from "../classes/entity";
 import {MovableBehavior} from "../behaviors/movable-behavior";
 import {PositionBehavior} from "../behaviors/position-behavior";
@@ -14,8 +13,7 @@ import {TilesLoaderService} from "../services/tiles/tiles.service";
 
 @Injectable()
 export class MovementSystem {
-    constructor(private _entities: EntitiesService,
-                private _tilesService: TilesLoaderService,
+    constructor(private _tilesService: TilesLoaderService,
                 private _mapService: MapsService,
                 private _descriptionService: DescriptionsService,
                 private _scenesService: ScenegraphService) {
@@ -26,13 +24,27 @@ export class MovementSystem {
         this._mapService.getEntitiesOnCurrentMap()
             .forEach((entity: Entity) => {
                 if (entity.hasBehavior("movable") && entity.hasBehavior("position")) {
-                    this._processEntityMovements(entity);
+                    this._isPlayer(entity) ? this._processEntityMovementsPlayer(entity) : this._processEntityMovements(entity);
                 }
             });
         return entities;
     }
 
+    private _isPlayer(entity: Entity): boolean {
+        return entity.hasBehavior("keycontrol");
+    }
+
     private _processEntityMovements(entity: Entity) {
+        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
+        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+        let destinationPosition = this._getEntityDestinationPosition(positionBehavior, movableBehavior);
+        if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
+            this._processWalkableMovement(entity, destinationPosition);
+        }
+        movableBehavior.stay();
+    }
+
+    private _processEntityMovementsPlayer(entity: Entity) {
         let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
         let positionBehavior = <PositionBehavior>entity.getBehavior("position");
         let destinationPosition = this._getEntityDestinationPosition(positionBehavior, movableBehavior);

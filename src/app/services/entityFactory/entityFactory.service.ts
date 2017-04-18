@@ -9,6 +9,7 @@ import {TilesLoaderService} from "../tiles/tiles.service";
 import {SavestateBehavior} from "../../behaviors/savestate-behavior";
 import {HealthBehavior} from "../../behaviors/health-behavior";
 import {ITile} from "../../interfaces/ITile";
+import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
 
 @Injectable()
 export class EntityFactoryService {
@@ -45,11 +46,13 @@ export class EntityFactoryService {
         return <Position>(new SavestateBehavior(entityName)).loadKey("position");
     }
 
-    createNpc(position: Position, tileId: number, name: string): Entity {
+    createNpc(position: Position, tileId: number, name: string, movementType: number): Entity {
         let newEntity: Entity = new Entity(name);
         let tile: ITile = this._tileloaderService.getTileByIndex(tileId);
         newEntity.addBehavior(new RenderableBehavior(tile));
         newEntity.addBehavior(new PositionBehavior(position));
+        newEntity.addBehavior(new MovableBehavior());
+        newEntity.addBehavior(new AiMovementBehavior(newEntity, movementType));
         return newEntity;
     }
 }

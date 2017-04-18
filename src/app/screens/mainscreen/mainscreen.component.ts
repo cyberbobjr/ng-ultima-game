@@ -10,6 +10,7 @@ import {SavestateSystem} from "../../systems/savestate.system";
 import {DescriptionsService} from "../../services/informations/descriptions.service";
 import {PartyService} from "../../services/party/party.service";
 import {ActivatedRoute} from "@angular/router";
+import {AiSystem} from "../../systems/ai.system";
 
 
 @Component({
@@ -35,7 +36,8 @@ export class MainscreenComponent implements OnInit {
                 private _keyboardinputSystem: KeyboardinputSystem,
                 private _savestateSystem: SavestateSystem,
                 private _informationsService: DescriptionsService,
-                private _partyService: PartyService) {
+                private _partyService: PartyService,
+                private _aiSystem: AiSystem) {
     }
 
     ngOnInit() {
@@ -75,6 +77,7 @@ export class MainscreenComponent implements OnInit {
         this.renderLoop = window.setInterval(() => {
             this._renderableSystem.processTick();
             this._sceneService.refresh();
+            this._aiSystem.processAiBehavior();
         }, 250);
     }
 
