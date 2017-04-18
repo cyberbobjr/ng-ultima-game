@@ -3,8 +3,6 @@ import {Entity} from "../../classes/entity";
 import {PositionBehavior} from "../../behaviors/position-behavior";
 import {Position} from "../../classes/position";
 import * as _ from "lodash";
-import {ITile} from "../../interfaces/ITile";
-import {RenderableBehavior} from "../../behaviors/renderable-behavior";
 import {IMap} from "../../interfaces/IMap";
 import {ITalk} from "../../interfaces/ITalk";
 import {EntityFactoryService} from "../entityFactory/entityFactory.service";
@@ -52,9 +50,8 @@ export class EntitiesService {
         return fetch("/assets/npcs/" + tlkFilename)
             .then((res) => {
                 return res.json();
-            })
-            .then((jsonValue: Array<ITalk>) => {
-                return jsonValue;
+            }).then((jsonValue: any) => {
+                return <Array<ITalk>>jsonValue;
             });
     }
 
