@@ -20,8 +20,6 @@ export class ScenegraphService {
     visibleWindow: Array<ITile>[][] = [];
     fov_map: Array<Array<boolean>> = [[]];
 
-    map: GameMap;
-
     maxVisiblesCols: number = MAX_WIDTH;
     maxVisiblesRows: number = MAX_HEIGHT;
 
@@ -41,8 +39,7 @@ export class ScenegraphService {
     }
 
 
-    setMap(map: GameMap, cameraStartPosition?: Position) {
-        this.map = map;
+    setMap(cameraStartPosition?: Position) {
         if (cameraStartPosition !== undefined) {
             this.cameraStartPosition = cameraStartPosition;
         }
@@ -67,26 +64,28 @@ export class ScenegraphService {
     }
 
     private _computeViewport() {
+        let currentMap: GameMap = this._mapsService.getCurrentMap();
         this.cameraEndPosition.col = this.cameraStartPosition.col + this.maxVisiblesCols + 1;
         this.cameraEndPosition.row = this.cameraStartPosition.row + this.maxVisiblesRows + 1;
 
-        if (this.cameraEndPosition.col > this.map.getWidthMap()) {
-            this.cameraEndPosition.col = this.map.getWidthMap();
+        if (this.cameraEndPosition.col > currentMap.getWidthMap()) {
+            this.cameraEndPosition.col = currentMap.getWidthMap();
             this.cameraStartPosition.col = this.cameraEndPosition.col - this.maxVisiblesCols;
         }
-        if (this.cameraEndPosition.row > this.map.getHeightMap()) {
-            this.cameraEndPosition.row = this.map.getHeightMap();
+        if (this.cameraEndPosition.row > currentMap.getHeightMap()) {
+            this.cameraEndPosition.row = currentMap.getHeightMap();
             this.cameraStartPosition.row = this.cameraEndPosition.row - this.maxVisiblesRows;
         }
     }
 
     private _copyTilesToViewport() {
+        let currentMap: GameMap = this._mapsService.getCurrentMap();
         let visibileColIndex = 0;
         let visibleRowIndex = 0;
         for (let y = this.cameraStartPosition.row; y <= this.cameraEndPosition.row; y++) {
             this.visibleWindow[visibleRowIndex] = [];
             for (let x = this.cameraStartPosition.col; x <= this.cameraEndPosition.col; x++) {
-                let positionToDraw = new Position(y, x, this.map.mapMetaData.id);
+                let positionToDraw = new Position(y, x, currentMap.mapMetaData.id);
                 this.visibleWindow[visibleRowIndex][visibileColIndex] =
                     this._isMapVisibleAtPosition(positionToDraw) ? this._getTilesAtPosition(positionToDraw) : [];
                 visibileColIndex++;
@@ -114,12 +113,16 @@ export class ScenegraphService {
     }
 
     private _getEntitiesTilesAtPosition(position: Position): Array<ITile> {
-        let entitiesTiles: Array<ITile> = [];
         let entities = this._entitiesService.getEntitiesAtPosition(position);
-        if (entities.length > 0) {
-            entitiesTiles = this._entitiesService.getEntitiesTiles(entities);
-        }
-        return entitiesTiles;
+        return (entities.length > 0) ? this._getTilesForEntities(entities) : [];
+    }
+
+    private _getTilesForEntities(entities: Array<Entity>): Array<ITile> {
+        return _.map(entities, (entity: Entity) => {
+            if (entity.hasTile()) {
+                return entity.getEntityTile();
+            }
+        });
     }
 
     private _getCenterEntityPosition() {
@@ -217,16 +220,15 @@ export class ScenegraphService {
     setMapForEntity(entity: Entity, newPosition: Position): Promise<boolean> {
         let positionBehavior = <PositionBehavior>entity.getBehavior("position");
         return this._mapsService.loadMapByMapId(newPosition.mapId)
-                   .then((map: GameMap) => {
+                   .then(() => {
                        positionBehavior.setNewPosition(newPosition);
-                       this.setMap(map);
                        this.refresh();
                        return true;
                    });
     }
 
     enterInCity(entity: Entity, mapId: number) {
-        let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformation(mapId);
+        let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformationByPortalId(mapId);
         this.setMapForEntity(entity, new Position(parseInt(portalInformation.starty, 10), parseInt(portalInformation.startx, 10), mapId));
     }
 }

@@ -1,4 +1,3 @@
-import {EntitiesService} from "../services/entities/entities.service";
 import {Entity} from "../classes/entity";
 import {Injectable} from "@angular/core";
 import {MovableBehavior} from "../behaviors/movable-behavior";
@@ -18,19 +17,19 @@ const KEY_E = "KeyE";
 @Injectable()
 export class KeyboardinputSystem {
 
-    constructor(private _entities: EntitiesService,
-                private _mapsService: MapsService,
+    constructor(private _mapsService: MapsService,
                 private _sceneService: ScenegraphService,
                 private _descriptionService: DescriptionsService) {
     }
 
     processKeyboardInput(event: KeyboardEvent) {
         let entities: Array<Entity> = [];
-        this._entities.entities.forEach((entity: Entity) => {
-            if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
-                this._processKeybordInputMovement(event, entity);
-            }
-        });
+        this._mapsService.getEntitiesOnCurrentMap()
+            .forEach((entity: Entity) => {
+                if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
+                    this._processKeybordInputMovement(event, entity);
+                }
+            });
         return entities;
     }
 
@@ -59,10 +58,14 @@ export class KeyboardinputSystem {
     private _processEnter(entity: Entity, position: Position) {
         try {
             let portal: IPortal = this._mapsService.getPortalForPosition(position);
-            let destMapId = parseInt(portal.destmapid,10);
-            this._sceneService.enterInCity(entity, destMapId);
-            let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(destMapId);
-            this._descriptionService.addTextToInformation(`Enter ${mapMetaData.city.name}!`);
+            let destMapId = parseInt(portal.destmapid, 10);
+            let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformationByPortalId(destMapId);
+            let newPosition = new Position(parseInt(portalInformation.starty, 10), parseInt(portalInformation.startx, 10), destMapId);
+            this._sceneService.setMapForEntity(entity, newPosition)
+                .then(() => {
+                    let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(destMapId);
+                    this._descriptionService.addTextToInformation(`Enter ${mapMetaData.city.name}!`);
+                });
         } catch (error) {
             this._descriptionService.addTextToInformation("WHAT ???");
         }

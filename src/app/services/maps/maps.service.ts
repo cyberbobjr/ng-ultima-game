@@ -6,13 +6,16 @@ import {ITile} from "../../interfaces/ITile";
 import {IMap} from "../../interfaces/IMap";
 import * as _ from "lodash";
 import {IPortal} from "../../interfaces/IPortal";
+import {EntitiesService} from "../entities/entities.service";
+import {Entity} from "../../classes/entity";
 
 @Injectable()
 export class MapsService {
-    currentMap: GameMap;
+    private _currentMap: GameMap;
     maps: Array<IMap> = [];
 
-    constructor(private _tileloader: TilesLoaderService) {
+    constructor(private _tileloader: TilesLoaderService,
+                private _entitiesService: EntitiesService) {
     }
 
     loadMapByFilename(mapFilename: string): Promise<number[][]> {
@@ -26,7 +29,7 @@ export class MapsService {
     }
 
     getTileIndexAtPosition(position: Position): number {
-        return this.currentMap.getTileIndexAtPosition(position);
+        return this._currentMap.getTileIndexAtPosition(position);
     }
 
     isTileAtPositionIsOpaque(position: Position): boolean {
@@ -49,8 +52,10 @@ export class MapsService {
         let mapMetaData: IMap = this.getMapMetadataByMapId(mapId);
         return this.loadMapByFilename(mapMetaData.fname)
                    .then((mapData: any) => {
-                       this.currentMap = new GameMap(mapMetaData, mapData);
-                       return this.currentMap;
+                       this._currentMap = new GameMap(mapMetaData, mapData);
+                   })
+                   .then(() => {
+                       return this._currentMap;
                    });
     }
 
@@ -67,7 +72,7 @@ export class MapsService {
                 this.maps = _.map(jsonValue.maps.map, (map: IMap) => {
                     return map;
                 });
-                return jsonValue;
+                return this.maps;
             });
     }
 
@@ -88,13 +93,25 @@ export class MapsService {
         }
     }
 
-    getPositionOfCity(mapId: number): Position {
-        let portalInformation = this.getPortalInformation(mapId);
+    getPositionOfPortalId(portalId: number): Position {
+        let portalInformation = this.getPortalInformationByPortalId(portalId);
         return new Position(parseInt(portalInformation.y, 10), parseInt(portalInformation.x, 10), 0);
     }
 
-    getPortalInformation(mapId: number): IPortal {
+    getPortalInformationByPortalId(portalId: number): IPortal {
         let metaData: any = this.getMapMetadataByMapId(0);
-        return _.find(metaData.portal, {"destmapid": mapId.toString()});
+        return _.find(metaData.portal, {"destmapid": portalId.toString()});
+    }
+
+    getCurrentMap(): GameMap {
+        return this._currentMap;
+    }
+
+    getEntitiesOnCurrentMap(): Array<Entity> {
+        return this._entitiesService.getEntitiesForMapId(this._currentMap.mapMetaData.id);
+    }
+
+    getAllMaps(): Array<IMap> {
+        return this.maps;
     }
 }

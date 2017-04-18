@@ -1,5 +1,4 @@
 import {Component, OnInit} from "@angular/core";
-import {TilesLoaderService} from "./services/tiles/tiles.service";
 
 @Component({
                selector: "app-root",

@@ -9,4 +9,15 @@ export interface IMap {
     width: number;
     height: number;
     type: string;
-}
+    "city": {
+        "personrole": [
+            {
+                "role": string,
+                "id": string
+            }
+            ],
+        "name": string,
+        "type": string,
+        "tlkfname": string
+    };
+};

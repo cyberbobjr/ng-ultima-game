@@ -1,4 +1,8 @@
 import {IBehavior} from "../interfaces/IBehavior";
+import {PositionBehavior} from "../behaviors/position-behavior";
+import {Position} from "../classes/position";
+import {ITile} from "../interfaces/ITile";
+import {RenderableBehavior} from "../behaviors/renderable-behavior";
 
 export class Entity {
     name: string;
@@ -24,5 +28,26 @@ export class Entity {
 
     getBehavior(behaviorName: string): IBehavior {
         return this._behaviors.get(behaviorName);
+    }
+
+    getPosition(): Position {
+        let positionBehavior = <PositionBehavior>this.getBehavior("position");
+        return positionBehavior.position;
+    }
+
+    hasTile(): boolean {
+        return this.hasBehavior("renderable");
+    }
+
+    getEntityTile(): ITile {
+        if (this.hasBehavior("renderable")) {
+            return this._getRenderableTile();
+        }
+        return null;
+    }
+
+    private _getRenderableTile(): ITile {
+        let renderableBehavior = <RenderableBehavior>this.getBehavior("renderable");
+        return renderableBehavior.getTile();
     }
 }
