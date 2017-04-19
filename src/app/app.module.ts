@@ -24,6 +24,7 @@ import {PartyService} from "./services/party/party.service";
 import {PartyComponent} from "./ui/party/party.component";
 import {SubpartyComponent} from "./ui/subparty/subparty.component";
 import {ConfigService} from "./services/config/config.service";
+import {AiSystem} from "app/systems/ai.system";
 
 const appRoutes: Routes = [
     {path: "main", component: StartscreenComponent},
@@ -69,7 +70,8 @@ export function useFactory(service: ConfigService) {
                   MovementSystem,
                   SavestateSystem,
                   DescriptionsService,
-                  PartyService
+                  PartyService,
+                  AiSystem
               ],
               bootstrap: [AppComponent]
           })

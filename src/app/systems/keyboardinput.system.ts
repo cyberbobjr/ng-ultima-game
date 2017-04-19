@@ -23,14 +23,12 @@ export class KeyboardinputSystem {
     }
 
     processKeyboardInput(event: KeyboardEvent) {
-        let entities: Array<Entity> = [];
         this._mapsService.getEntitiesOnCurrentMap()
             .forEach((entity: Entity) => {
                 if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
                     this._processKeybordInputMovement(event, entity);
                 }
             });
-        return entities;
     }
 
     private _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {

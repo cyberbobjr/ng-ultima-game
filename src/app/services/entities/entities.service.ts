@@ -78,7 +78,7 @@ export class EntitiesService {
             } else {
                 name = talk.talks.name;
             }
-            let entity = this._entityFactory.createNpc(entityPosition, talk.tile1, name);
+            let entity = this._entityFactory.createNpc(entityPosition, talk.tile1, name, talk.move);
             this.addEntityForMapId(entity, mapMetaData.id);
         });
     }
