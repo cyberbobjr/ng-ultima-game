@@ -35,19 +35,15 @@ export class MovementSystem {
     }
 
     private _processEntityMovements(entity: Entity) {
-        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        let destinationPosition = this._getEntityDestinationPosition(positionBehavior, movableBehavior);
+        let destinationPosition: Position = this._getEntityDestinationPosition(entity);
         if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
             this._processWalkableMovement(entity, destinationPosition);
         }
-        movableBehavior.stay();
+        this._setEntityStay(entity);
     }
 
     private _processEntityMovementsPlayer(entity: Entity) {
-        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        let destinationPosition = this._getEntityDestinationPosition(positionBehavior, movableBehavior);
+        let destinationPosition = this._getEntityDestinationPosition(entity);
         if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
             if (this._isLeaveCity(destinationPosition)) {
                 this._processLeaveCity(entity, destinationPosition);
@@ -57,7 +53,12 @@ export class MovementSystem {
         } else {
             this._descriptionService.addTextToInformation("Blocked!");
         }
-        movableBehavior.stay();
+        this._setEntityStay(entity);
+    }
+
+    private _setEntityStay(entity: Entity) {
+        let movableEntity = <MovableBehavior>entity.getBehavior("movable");
+        movableEntity.stay();
     }
 
     private _processLeaveCity(entity: Entity, destinationPosition: Position) {
@@ -68,7 +69,9 @@ export class MovementSystem {
             });
     }
 
-    private _getEntityDestinationPosition(currentEntityPosition: PositionBehavior, entityDirection: MovableBehavior): Position {
+    private _getEntityDestinationPosition(entity): Position {
+        let entityDirection = <MovableBehavior>entity.getBehavior("movable");
+        let currentEntityPosition = <PositionBehavior>entity.getBehavior("position");
         return currentEntityPosition.position.addVector(entityDirection.vector);
     }
 
@@ -82,6 +85,7 @@ export class MovementSystem {
             positionBehavior.moveTo(movableBehavior.vector);
             this._displayMoveInformation(movableBehavior.vector);
         } else {
+            // @TODO : change because NPCs can trigger this information
             this._descriptionService.addTextToInformation("Slow progress!");
         }
     }
@@ -119,6 +123,6 @@ export class MovementSystem {
 
     private _isPositionInBorder(position: Position, mapMetaData: IMap): boolean {
         return (position.row === 0 || position.col === 0 || position.row === mapMetaData.height - 1
-                || position.col === mapMetaData.width - 1);
+        || position.col === mapMetaData.width - 1);
     }
 }

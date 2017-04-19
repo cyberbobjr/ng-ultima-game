@@ -43,9 +43,19 @@ export class MapsService {
     }
 
     isTileAtPositionIsWalkable(position: Position): boolean {
+        if (this._isPositionOutOfBounds(position)) {
+            return false;
+        }
         let tileIndex: number = this.getTileIndexAtPosition(position);
         let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
         return this._tileloader.isTileWalkable(tile.name);
+    }
+
+    private _isPositionOutOfBounds(position: Position): boolean {
+        if (position.row < 0 || position.col < 0) {
+            return true;
+        }
+        return (position.row >= this._currentMap.getHeightMap() || position.col >= this._currentMap.getWidthMap());
     }
 
     loadMapByMapId(mapId: number): Promise<GameMap> {
