@@ -8,7 +8,7 @@ export class InformationBehavior implements IBehavior {
 
     }
 
-    tick() {
+    tick(PerformanceNow: number) {
 
     }
 }

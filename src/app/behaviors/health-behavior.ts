@@ -10,7 +10,7 @@ export class HealthBehavior implements IBehavior {
         this._currentHealth = health;
     }
 
-    tick() {
+    tick(PerformanceNow: number) {
 
     }
 

@@ -9,7 +9,7 @@ export class PositionBehavior implements IBehavior {
         this.position = position;
     }
 
-    tick(): any {
+    tick(PerformanceNow: number): any {
         return null;
     }
 

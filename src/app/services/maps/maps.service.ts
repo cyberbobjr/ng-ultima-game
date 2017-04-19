@@ -29,7 +29,11 @@ export class MapsService {
     }
 
     getTileIndexAtPosition(position: Position): number {
-        return this._currentMap.getTileIndexAtPosition(position);
+        try {
+            return this._currentMap.getTileIndexAtPosition(position);
+        } catch (err) {
+            console.log(position);
+        }
     }
 
     isTileAtPositionIsOpaque(position: Position): boolean {

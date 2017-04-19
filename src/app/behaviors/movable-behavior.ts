@@ -9,7 +9,7 @@ export class MovableBehavior implements IBehavior {
         this.vector = new Position();
     }
 
-    tick(): any {
+    tick(PerformanceNow: number): any {
         return null;
     }
 

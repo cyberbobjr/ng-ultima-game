@@ -1,5 +1,5 @@
 export interface IBehavior {
     name: string;
 
-    tick(): any;
+    tick(PerformanceNow: number): any;
 }

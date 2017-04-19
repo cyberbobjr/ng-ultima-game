@@ -19,6 +19,6 @@ export class AiSystem {
 
     private _processAiEntityMovements(entity: Entity) {
         let AiMovementBehavior = <AiMovementBehavior>entity.getBehavior("aimovement");
-        AiMovementBehavior.tick();
+        AiMovementBehavior.tick(performance.now());
     }
 }
