@@ -11,7 +11,7 @@ export class RenderableBehavior implements IBehavior {
         this.tile.currentFrame = 0;
     }
 
-    tick(): any {
+    tick(PerformanceNow: number): any {
         if (this._isAnimatedTile()) {
             this._processNextFrame();
         }

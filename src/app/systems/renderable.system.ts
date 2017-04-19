@@ -13,7 +13,7 @@ export class RenderableSystem {
             .forEach((entity: Entity) => {
                 if (entity.hasBehavior("renderable")) {
                     let renderableBehavior = <RenderableBehavior>entity.getBehavior("renderable");
-                    renderableBehavior.tick();
+                    renderableBehavior.tick(performance.now());
                 }
             });
     }

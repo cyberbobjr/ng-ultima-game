@@ -10,15 +10,19 @@ export class AiMovementBehavior implements IBehavior {
     name = "aimovement";
     movementType: number = 0;
     actor: Entity = null;
+    lastPerformanceNow: number = 0;
 
     constructor(actor: Entity, movemenType: number) {
         this.actor = actor;
         this.movementType = movemenType;
     }
 
-    tick() {
-        if (this.actor.hasBehavior("movable") && this.actor.hasBehavior("position") && this.movementType === WANDER_MVT) {
-            this._randomMove();
+    tick(PerformanceNow: number) {
+        if (PerformanceNow - this.lastPerformanceNow > 1000) {
+            if (this.actor.hasBehavior("movable") && this.actor.hasBehavior("position") && this.movementType === WANDER_MVT) {
+                this._randomMove();
+            }
+            this.lastPerformanceNow = PerformanceNow;
         }
     }
 
