@@ -1,10 +1,12 @@
 import {IBehavior} from "../interfaces/IBehavior";
 import {ITile} from "../interfaces/ITile";
 import * as _ from "lodash";
+const TIMER_INTERVAL_SECONDS = 1000;
 
 export class RenderableBehavior implements IBehavior {
     name = "renderable";
     tile: ITile;
+    lastPerformanceNow: number = 0;
 
     constructor(tile: ITile) {
         this.tile = tile;
@@ -12,10 +14,13 @@ export class RenderableBehavior implements IBehavior {
     }
 
     tick(PerformanceNow: number): any {
-        if (this._isAnimatedTile()) {
-            this._processNextFrame();
+        if (PerformanceNow - this.lastPerformanceNow > TIMER_INTERVAL_SECONDS) {
+            if (this._isAnimatedTile()) {
+                this._processNextFrame();
+            }
+            this.lastPerformanceNow = PerformanceNow;
+            return null;
         }
-        return null;
     }
 
     getTile(): ITile {

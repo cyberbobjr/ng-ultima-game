@@ -5,6 +5,7 @@ import {Position} from "../classes/position";
 import {PositionBehavior} from "./position-behavior";
 
 const WANDER_MVT = 0;
+const TIMER_INTERVAL_SECONDS = 2000;
 
 export class AiMovementBehavior implements IBehavior {
     name = "aimovement";
@@ -18,7 +19,7 @@ export class AiMovementBehavior implements IBehavior {
     }
 
     tick(PerformanceNow: number) {
-        if (PerformanceNow - this.lastPerformanceNow > 1000) {
+        if (PerformanceNow - this.lastPerformanceNow > TIMER_INTERVAL_SECONDS) {
             if (this.actor.hasBehavior("movable") && this.actor.hasBehavior("position") && this.movementType === WANDER_MVT) {
                 this._randomMove();
             }

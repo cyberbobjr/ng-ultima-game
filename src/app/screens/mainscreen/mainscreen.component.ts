@@ -72,17 +72,14 @@ export class MainscreenComponent implements OnInit {
     mainLoop() {
         this.gameLoop = window.setInterval(() => {
             this._savestateSystem.processTick();
-        }, 5000);
-
-        this.renderLoop = window.setInterval(() => {
             this._renderableSystem.processTick();
             this._sceneService.refresh();
             this._aiSystem.processAiBehavior();
+            this._movementSystem.processMovementsBehavior();
         }, 250);
     }
 
     stopLoop() {
         window.clearInterval(this.gameLoop);
-        window.clearInterval(this.renderLoop);
     }
 }
