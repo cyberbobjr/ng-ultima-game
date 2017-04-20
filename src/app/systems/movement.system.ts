@@ -43,16 +43,19 @@ export class MovementSystem {
     private _processEntityMovements(entity: Entity) {
         let destinationPosition = this._getEntityDestinationPosition(entity);
         if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
-            // @TODO Refactor these if
-            if (this._canLeaveCity(entity) && this._isLeavingCity(destinationPosition)) {
-                this._processLeavingCity(entity, destinationPosition);
-            } else {
-                this._processWalkableMovement(entity, destinationPosition);
-            }
+            this._processWalkablePosition(entity, destinationPosition);
         } else {
             this._displayInformation(entity, "Blocked!");
         }
         this._setEntityStay(entity);
+    }
+
+    private _processWalkablePosition(entity: Entity, destinationPosition: Position) {
+        if (this._isLeavingCity(destinationPosition)) {
+            this._processLeavingCity(entity, destinationPosition);
+        } else {
+            this._processWalkableMovement(entity, destinationPosition);
+        }
     }
 
     private _setEntityStay(entity: Entity) {
@@ -61,6 +64,14 @@ export class MovementSystem {
     }
 
     private _processLeavingCity(entity: Entity, destinationPosition: Position) {
+        if (this._canLeaveCity(entity)) {
+            this._entityLeaveCity(entity, destinationPosition);
+        } else {
+            this._displayInformation(entity, "You can't exit the city!");
+        }
+    }
+
+    private _entityLeaveCity(entity: Entity, destinationPosition: Position) {
         let newPosition: Position = this._mapService.getPositionOfPortalId(destinationPosition.mapId);
         this._scenesService.setMapForEntity(entity, newPosition)
             .then(() => {
