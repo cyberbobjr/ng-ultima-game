@@ -1,5 +1,5 @@
 import {Component, NgZone, OnInit} from "@angular/core";
-import {DescriptionsService} from "../../services/informations/descriptions.service";
+import {DescriptionsService} from "../../services/descriptions/descriptions.service";
 
 @Component({
                selector: "app-game-informations",

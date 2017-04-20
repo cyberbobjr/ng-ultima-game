@@ -7,7 +7,7 @@ import {EntityFactoryService} from "../../services/entityFactory/entityFactory.s
 import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
 import {SavestateSystem} from "../../systems/savestate.system";
-import {DescriptionsService} from "../../services/informations/descriptions.service";
+import {DescriptionsService} from "../../services/descriptions/descriptions.service";
 import {PartyService} from "../../services/party/party.service";
 import {ActivatedRoute} from "@angular/router";
 import {AiSystem} from "../../systems/ai.system";

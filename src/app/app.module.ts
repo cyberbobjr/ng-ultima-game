@@ -18,7 +18,7 @@ import {MovementSystem} from "./systems/movement.system";
 import {MainscreenComponent} from "./screens/mainscreen/mainscreen.component";
 import {StartscreenComponent} from "./screens/startscreen/startscreen.component";
 import {SavestateSystem} from "./systems/savestate.system";
-import {DescriptionsService} from "./services/informations/descriptions.service";
+import {DescriptionsService} from "./services/descriptions/descriptions.service";
 import {KeyboardinputSystem} from "./systems/keyboardinput.system";
 import {PartyService} from "./services/party/party.service";
 import {PartyComponent} from "./ui/party/party.component";

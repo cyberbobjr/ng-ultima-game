@@ -3,6 +3,7 @@ import {PositionBehavior} from "../behaviors/position-behavior";
 import {Position} from "../classes/position";
 import {ITile} from "../interfaces/ITile";
 import {RenderableBehavior} from "../behaviors/renderable-behavior";
+import {DescriptionsService} from "../services/descriptions/descriptions.service";
 
 export class Entity {
     name: string;
@@ -44,6 +45,10 @@ export class Entity {
             return this._getRenderableTile();
         }
         return null;
+    }
+
+    get displayInfo() {
+        return this.hasBehavior("description");
     }
 
     private _getRenderableTile(): ITile {

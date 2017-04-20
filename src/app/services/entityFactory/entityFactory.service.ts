@@ -10,6 +10,8 @@ import {SavestateBehavior} from "../../behaviors/savestate-behavior";
 import {HealthBehavior} from "../../behaviors/health-behavior";
 import {ITile} from "../../interfaces/ITile";
 import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
+import {DescriptionBehavior} from "../../behaviors/description-behavior";
+import {TravelcityBehavior} from "../../behaviors/travelcity-behavior";
 
 @Injectable()
 export class EntityFactoryService {
@@ -20,15 +22,17 @@ export class EntityFactoryService {
 
     createOrLoadPlayer(): Promise<Entity> {
         return new Promise((resolve, reject) => {
-                               this.player = new Entity("Avatar");
-                               this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));
-                               this.player.addBehavior(new PositionBehavior(this._getEntityPosition("player")));
-                               this.player.addBehavior(new HealthBehavior(100));
-                               this.player.addBehavior(new MovableBehavior());
-                               this.player.addBehavior(new SavestateBehavior("player"));
-                               this.player.addBehavior(new KeycontrolBehavior());
-                               resolve(this.player);
-                           }
+                this.player = new Entity("Avatar");
+                this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));
+                this.player.addBehavior(new PositionBehavior(this._getEntityPosition("player")));
+                this.player.addBehavior(new HealthBehavior(100));
+                this.player.addBehavior(new MovableBehavior());
+                this.player.addBehavior(new SavestateBehavior("player"));
+                this.player.addBehavior(new KeycontrolBehavior());
+                this.player.addBehavior(new DescriptionBehavior());
+                this.player.addBehavior(new TravelcityBehavior());
+                resolve(this.player);
+            }
         );
     }
 

@@ -5,7 +5,7 @@ import {PositionBehavior} from "../behaviors/position-behavior";
 import {Position} from "../classes/position";
 import {MapsService} from "../services/maps/maps.service";
 import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
-import {DescriptionsService} from "../services/informations/descriptions.service";
+import {DescriptionsService} from "../services/descriptions/descriptions.service";
 import {IPortal} from "../interfaces/IPortal";
 
 const KEY_UP = "ArrowUp";

@@ -3,7 +3,7 @@ import {GameMap} from "../../classes/game_map";
 import {Position} from "../../classes/position";
 import {TilesLoaderService} from "../tiles/tiles.service";
 import {ITile} from "../../interfaces/ITile";
-import {IMap} from "../../interfaces/IMap";
+import {IMapMetaData} from "../../interfaces/IMap";
 import * as _ from "lodash";
 import {IPortal} from "../../interfaces/IPortal";
 import {EntitiesService} from "../entities/entities.service";
@@ -12,7 +12,7 @@ import {Entity} from "../../classes/entity";
 @Injectable()
 export class MapsService {
     private _currentMap: GameMap;
-    maps: Array<IMap> = [];
+    mapsMetaData: Array<IMapMetaData> = [];
 
     constructor(private _tileloader: TilesLoaderService,
                 private _entitiesService: EntitiesService) {
@@ -63,7 +63,7 @@ export class MapsService {
     }
 
     loadMapByMapId(mapId: number): Promise<GameMap> {
-        let mapMetaData: IMap = this.getMapMetadataByMapId(mapId);
+        let mapMetaData: IMapMetaData = this.getMapMetadataByMapId(mapId);
         return this.loadMapByFilename(mapMetaData.fname)
                    .then((mapData: any) => {
                        this._currentMap = new GameMap(mapMetaData, mapData);
@@ -73,8 +73,8 @@ export class MapsService {
                    });
     }
 
-    getMapMetadataByMapId(id: number): IMap {
-        return _.find(this.maps, {"id": id.toString()});
+    getMapMetadataByMapId(id: number): IMapMetaData {
+        return _.find(this.mapsMetaData, {"id": id.toString()});
     }
 
     loadAllMaps(): Promise<any> {
@@ -83,10 +83,10 @@ export class MapsService {
                 return res.json();
             })
             .then((jsonValue: any) => {
-                this.maps = _.map(jsonValue.maps.map, (map: IMap) => {
+                this.mapsMetaData = _.map(jsonValue.maps.map, (map: IMapMetaData) => {
                     return map;
                 });
-                return this.maps;
+                return this.mapsMetaData;
             });
     }
 
@@ -125,7 +125,7 @@ export class MapsService {
         return this._entitiesService.getEntitiesForMapId(this._currentMap.mapMetaData.id);
     }
 
-    getAllMaps(): Array<IMap> {
-        return this.maps;
+    getAllMaps(): Array<IMapMetaData> {
+        return this.mapsMetaData;
     }
 }

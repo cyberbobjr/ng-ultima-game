@@ -3,7 +3,7 @@ import {Entity} from "../../classes/entity";
 import {PositionBehavior} from "../../behaviors/position-behavior";
 import {Position} from "../../classes/position";
 import * as _ from "lodash";
-import {IMap} from "../../interfaces/IMap";
+import {IMapMetaData} from "../../interfaces/IMap";
 import {ITalk} from "../../interfaces/ITalk";
 import {EntityFactoryService} from "../entityFactory/entityFactory.service";
 
@@ -55,8 +55,8 @@ export class EntitiesService {
             });
     }
 
-    loadAllEntitiesForMaps(maps: Array<IMap>): Promise<boolean> {
-        return _.map(maps, (map: IMap) => {
+    loadAllEntitiesForMaps(maps: Array<IMapMetaData>): Promise<boolean> {
+        return _.map(maps, (map: IMapMetaData) => {
             return new Promise((resolve, reject) => {
                 if (map["city"]) {
                     this._loadTlkFile(map["city"]["tlkfname"])
@@ -69,7 +69,7 @@ export class EntitiesService {
         });
     }
 
-    private _createNpcsFromTalks(talks: Array<ITalk>, mapMetaData: IMap) {
+    private _createNpcsFromTalks(talks: Array<ITalk>, mapMetaData: IMapMetaData) {
         _.map(talks, (talk: ITalk) => {
             let name: string = "";
             let entityPosition: Position = new Position(talk.y_pos1, talk.x_pos1, mapMetaData.id);
@@ -82,5 +82,4 @@ export class EntitiesService {
             this.addEntityForMapId(entity, mapMetaData.id);
         });
     }
-
 }
