@@ -4,8 +4,9 @@ import {PositionBehavior} from "../../behaviors/position-behavior";
 import {Position} from "../../classes/position";
 import * as _ from "lodash";
 import {IMapMetaData} from "../../interfaces/IMap";
-import {ITalk} from "../../interfaces/ITalk";
 import {EntityFactoryService} from "../entityFactory/entityFactory.service";
+import {TalkBehavior} from "../../behaviors/talk-behavior";
+import {INpc, ITalk} from "../../interfaces/INpc";
 
 @Injectable()
 export class EntitiesService {
@@ -51,7 +52,7 @@ export class EntitiesService {
             .then((res) => {
                 return res.json();
             }).then((jsonValue: any) => {
-                return <Array<ITalk>>jsonValue;
+                return <Array<INpc>>jsonValue;
             });
     }
 
@@ -60,7 +61,7 @@ export class EntitiesService {
             return new Promise((resolve, reject) => {
                 if (map["city"]) {
                     this._loadTlkFile(map["city"]["tlkfname"])
-                        .then((talks: Array<ITalk>) => {
+                        .then((talks: Array<INpc>) => {
                             this._createNpcsFromTalks(talks, map);
                         });
                 }
@@ -69,16 +70,19 @@ export class EntitiesService {
         });
     }
 
-    private _createNpcsFromTalks(talks: Array<ITalk>, mapMetaData: IMapMetaData) {
-        _.map(talks, (talk: ITalk) => {
+    private _createNpcsFromTalks(npcs: Array<INpc>, mapMetaData: IMapMetaData) {
+        _.map(npcs, (npc: INpc) => {
             let name: string = "";
-            let entityPosition: Position = new Position(talk.y_pos1, talk.x_pos1, mapMetaData.id);
-            if (!_.has(talk, "talks")) {
+            let entityPosition: Position = new Position(npc.y_pos1, npc.x_pos1, mapMetaData.id);
+            if (!_.has(npc, "talks")) {
                 name = "vendor";
             } else {
-                name = talk.talks.name;
+                name = npc.talks.name;
             }
-            let entity = this._entityFactory.createNpc(entityPosition, talk.tile1, name, talk.move);
+            let entity = this._entityFactory.createNpc(entityPosition, npc.tile1, name, npc.move);
+            if (_.has(npc, "talks")) {
+                entity.addBehavior(new TalkBehavior(<ITalk>npc.talks));
+            }
             this.addEntityForMapId(entity, mapMetaData.id);
         });
     }
