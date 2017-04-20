@@ -12,6 +12,7 @@ import {ITile} from "../../interfaces/ITile";
 import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
 import {DescriptionBehavior} from "../../behaviors/description-behavior";
 import {TravelcityBehavior} from "../../behaviors/travelcity-behavior";
+import {CollideBehavior} from "../../behaviors/collide-behavior";
 
 @Injectable()
 export class EntityFactoryService {
@@ -30,6 +31,7 @@ export class EntityFactoryService {
                 this.player.addBehavior(new SavestateBehavior("player"));
                 this.player.addBehavior(new KeycontrolBehavior());
                 this.player.addBehavior(new DescriptionBehavior());
+                this.player.addBehavior(new CollideBehavior());
                 this.player.addBehavior(new TravelcityBehavior());
                 resolve(this.player);
             }
@@ -56,6 +58,7 @@ export class EntityFactoryService {
         newEntity.addBehavior(new RenderableBehavior(tile));
         newEntity.addBehavior(new PositionBehavior(position));
         newEntity.addBehavior(new MovableBehavior());
+        newEntity.addBehavior(new CollideBehavior());
         newEntity.addBehavior(new AiMovementBehavior(newEntity, movementType));
         return newEntity;
     }

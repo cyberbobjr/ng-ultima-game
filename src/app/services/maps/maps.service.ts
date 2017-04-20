@@ -59,7 +59,7 @@ export class MapsService {
         if (position.row < 0 || position.col < 0) {
             return true;
         }
-        return (position.row >= this._currentMap.getHeightMap() || position.col >= this._currentMap.getWidthMap());
+        return (position.row > this._currentMap.getHeightMap() || position.col > this._currentMap.getWidthMap());
     }
 
     loadMapByMapId(mapId: number): Promise<GameMap> {

@@ -10,12 +10,14 @@ import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
 import * as _ from "lodash";
 import {ITile} from "../interfaces/ITile";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
+import {EntitiesService} from "../services/entities/entities.service";
 const NORMAL_MOVE_SPEED = 1;
 
 @Injectable()
 export class MovementSystem {
     constructor(private _tilesService: TilesLoaderService,
                 private _mapService: MapsService,
+                private _entitiesService: EntitiesService,
                 private _descriptionService: DescriptionsService,
                 private _scenesService: ScenegraphService) {
     }
@@ -42,12 +44,31 @@ export class MovementSystem {
 
     private _processEntityMovements(entity: Entity) {
         let destinationPosition = this._getEntityDestinationPosition(entity);
-        if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
+        if (this._canWalkAtDestinationPosition(entity, destinationPosition)) {
             this._processWalkablePosition(entity, destinationPosition);
         } else {
             this._displayInformation(entity, "Blocked!");
         }
         this._setEntityStay(entity);
+    }
+
+    private _canWalkAtDestinationPosition(entity: Entity, destinationPosition: Position): boolean {
+        if (this._isEntityCollidable(entity) && (this._getEntityCollidableAtPosition(destinationPosition)).length > 0) {
+            return false;
+        }
+        return this._mapService.isTileAtPositionIsWalkable(destinationPosition);
+    }
+
+    private _isEntityCollidable(entity: Entity): boolean {
+        return entity.hasBehavior("collide");
+    }
+
+    private _getEntityCollidableAtPosition(position: Position): Array<Entity> {
+        let entities: Array<Entity> = this._entitiesService.getEntitiesAtPosition(position);
+        entities = _.filter(entities, (entity: Entity) => {
+            return (this._isEntityCollidable(entity));
+        });
+        return entities;
     }
 
     private _processWalkablePosition(entity: Entity, destinationPosition: Position) {

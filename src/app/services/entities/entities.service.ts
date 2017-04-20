@@ -31,7 +31,7 @@ export class EntitiesService {
     }
 
     getEntitiesForMapId(mapId: number): Array<Entity> {
-        let entities: Array<Entity> = this._entitiesForAllMaps.get(mapId);
+        let entities: Array<Entity> = this._entitiesForAllMaps.get(_.toString(mapId));
         if (!entities) {
             entities = [];
         }
