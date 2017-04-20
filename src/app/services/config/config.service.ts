@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {TilesLoaderService} from "../tiles/tiles.service";
 import {MapsService} from "../maps/maps.service";
 import {EntitiesService} from "../entities/entities.service";
-import {IMap} from "../../interfaces/IMap";
+import {IMapMetaData} from "../../interfaces/IMap";
 
 @Injectable()
 export class ConfigService {
@@ -18,7 +18,7 @@ export class ConfigService {
                                this._mapsService.loadAllMaps()
                            ])
                       .then(() => {
-                          let maps: Array<IMap> = this._mapsService.getAllMaps();
+                          let maps: Array<IMapMetaData> = this._mapsService.getAllMaps();
                           return this._entitiesService.loadAllEntitiesForMaps(maps);
                       });
     }

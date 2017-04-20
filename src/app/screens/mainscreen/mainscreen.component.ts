@@ -7,20 +7,19 @@ import {EntityFactoryService} from "../../services/entityFactory/entityFactory.s
 import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
 import {SavestateSystem} from "../../systems/savestate.system";
-import {DescriptionsService} from "../../services/informations/descriptions.service";
+import {DescriptionsService} from "../../services/descriptions/descriptions.service";
 import {PartyService} from "../../services/party/party.service";
 import {ActivatedRoute} from "@angular/router";
-
+import {AiSystem} from "../../systems/ai.system";
 
 @Component({
-               selector: "app-mainscreen",
-               templateUrl: "./mainscreen.component.html",
-               styleUrls: ["./mainscreen.component.css"]
-           })
+    selector: "app-mainscreen",
+    templateUrl: "./mainscreen.component.html",
+    styleUrls: ["./mainscreen.component.css"]
+})
 export class MainscreenComponent implements OnInit {
     isMapReady: boolean = false;
     gameLoop: any;
-    renderLoop: any;
 
     @HostListener("document:keyup", ["$event"]) handleKeyboardEvents($event: KeyboardEvent) {
         this.processKeyInput($event);
@@ -35,7 +34,8 @@ export class MainscreenComponent implements OnInit {
                 private _keyboardinputSystem: KeyboardinputSystem,
                 private _savestateSystem: SavestateSystem,
                 private _informationsService: DescriptionsService,
-                private _partyService: PartyService) {
+                private _partyService: PartyService,
+                private _aiSystem: AiSystem) {
     }
 
     ngOnInit() {
@@ -64,22 +64,17 @@ export class MainscreenComponent implements OnInit {
         this._sceneService.refresh();
     }
 
-    /**
-     * @TODO : code a tick function instead of refresh sceneService
-     */
     mainLoop() {
         this.gameLoop = window.setInterval(() => {
             this._savestateSystem.processTick();
-        }, 5000);
-
-        this.renderLoop = window.setInterval(() => {
             this._renderableSystem.processTick();
+            this._aiSystem.processAiBehavior();
+            this._movementSystem.processMovementsBehavior();
             this._sceneService.refresh();
         }, 250);
     }
 
     stopLoop() {
         window.clearInterval(this.gameLoop);
-        window.clearInterval(this.renderLoop);
     }
 }

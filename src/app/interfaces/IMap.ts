@@ -1,4 +1,4 @@
-export interface IMap {
+export interface IMapMetaData {
     fname: string;
     id: number;
     borderbehavior: string;

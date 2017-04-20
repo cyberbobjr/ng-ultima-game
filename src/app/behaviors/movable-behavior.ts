@@ -6,10 +6,10 @@ export class MovableBehavior implements IBehavior {
     vector: Position = null;
 
     constructor() {
-        this.vector = new Position();
+        this.vector = new Position(0, 0);
     }
 
-    tick(): any {
+    tick(PerformanceNow: number): any {
         return null;
     }
 

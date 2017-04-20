@@ -1,22 +1,23 @@
 import {Injectable} from "@angular/core";
-import {EntitiesService} from "../services/entities/entities.service";
 import {Entity} from "../classes/entity";
 import {MovableBehavior} from "../behaviors/movable-behavior";
 import {PositionBehavior} from "../behaviors/position-behavior";
 import {Position} from "../classes/position";
 import {MapsService} from "../services/maps/maps.service";
-import {DescriptionsService} from "../services/informations/descriptions.service";
-import {IMap} from "../interfaces/IMap";
+import {DescriptionsService} from "../services/descriptions/descriptions.service";
+import {IMapMetaData} from "../interfaces/IMap";
 import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
 import * as _ from "lodash";
 import {ITile} from "../interfaces/ITile";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
+import {EntitiesService} from "../services/entities/entities.service";
+const NORMAL_MOVE_SPEED = 1;
 
 @Injectable()
 export class MovementSystem {
-    constructor(private _entities: EntitiesService,
-                private _tilesService: TilesLoaderService,
+    constructor(private _tilesService: TilesLoaderService,
                 private _mapService: MapsService,
+                private _entitiesService: EntitiesService,
                 private _descriptionService: DescriptionsService,
                 private _scenesService: ScenegraphService) {
     }
@@ -25,38 +26,83 @@ export class MovementSystem {
         let entities: Array<Entity> = [];
         this._mapService.getEntitiesOnCurrentMap()
             .forEach((entity: Entity) => {
-                if (entity.hasBehavior("movable") && entity.hasBehavior("position")) {
+                if (entity.hasBehavior("movable") && this._isEntityMoving(entity)) {
                     this._processEntityMovements(entity);
                 }
             });
         return entities;
     }
 
-    private _processEntityMovements(entity: Entity) {
-        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        let destinationPosition = this._getEntityDestinationPosition(positionBehavior, movableBehavior);
-        if (this._mapService.isTileAtPositionIsWalkable(destinationPosition)) {
-            if (this._isLeaveCity(destinationPosition)) {
-                this._processLeaveCity(entity, destinationPosition);
-            } else {
-                this._processWalkableMovement(entity, destinationPosition);
-            }
-        } else {
-            this._descriptionService.addTextToInformation("Blocked!");
-        }
-        movableBehavior.stay();
+    private _isEntityMoving(entity: Entity): boolean {
+        let movabeBehavior = <MovableBehavior>entity.getBehavior("movable");
+        return this._isMoving(movabeBehavior.vector);
     }
 
-    private _processLeaveCity(entity: Entity, destinationPosition: Position) {
+    private _isMoving(vectorDirection: Position): boolean {
+        return (vectorDirection.col !== 0 || vectorDirection.row !== 0);
+    }
+
+    private _processEntityMovements(entity: Entity) {
+        let destinationPosition = this._getEntityDestinationPosition(entity);
+        if (this._canWalkAtDestinationPosition(entity, destinationPosition)) {
+            this._processWalkablePosition(entity, destinationPosition);
+        } else {
+            this._displayInformation(entity, "Blocked!");
+        }
+        this._setEntityStay(entity);
+    }
+
+    private _canWalkAtDestinationPosition(entity: Entity, destinationPosition: Position): boolean {
+        if (this._isEntityCollidable(entity) && (this._getEntityCollidableAtPosition(destinationPosition)).length > 0) {
+            return false;
+        }
+        return this._mapService.isTileAtPositionIsWalkable(destinationPosition);
+    }
+
+    private _isEntityCollidable(entity: Entity): boolean {
+        return entity.hasBehavior("collide");
+    }
+
+    private _getEntityCollidableAtPosition(position: Position): Array<Entity> {
+        let entities: Array<Entity> = this._entitiesService.getEntitiesAtPosition(position);
+        entities = _.filter(entities, (entity: Entity) => {
+            return (this._isEntityCollidable(entity));
+        });
+        return entities;
+    }
+
+    private _processWalkablePosition(entity: Entity, destinationPosition: Position) {
+        if (this._isLeavingCity(destinationPosition)) {
+            this._processLeavingCity(entity, destinationPosition);
+        } else {
+            this._processWalkableMovement(entity, destinationPosition);
+        }
+    }
+
+    private _setEntityStay(entity: Entity) {
+        let movableEntity = <MovableBehavior>entity.getBehavior("movable");
+        movableEntity.stay();
+    }
+
+    private _processLeavingCity(entity: Entity, destinationPosition: Position) {
+        if (this._canLeaveCity(entity)) {
+            this._entityLeaveCity(entity, destinationPosition);
+        } else {
+            this._displayInformation(entity, "You can't exit the city!");
+        }
+    }
+
+    private _entityLeaveCity(entity: Entity, destinationPosition: Position) {
         let newPosition: Position = this._mapService.getPositionOfPortalId(destinationPosition.mapId);
         this._scenesService.setMapForEntity(entity, newPosition)
             .then(() => {
-                this._descriptionService.addTextToInformation("LEAVING...");
+                this._displayInformation(entity, "LEAVING...");
             });
     }
 
-    private _getEntityDestinationPosition(currentEntityPosition: PositionBehavior, entityDirection: MovableBehavior): Position {
+    private _getEntityDestinationPosition(entity): Position {
+        let entityDirection = <MovableBehavior>entity.getBehavior("movable");
+        let currentEntityPosition = <PositionBehavior>entity.getBehavior("position");
         return currentEntityPosition.position.addVector(entityDirection.vector);
     }
 
@@ -64,21 +110,26 @@ export class MovementSystem {
         let tileIndex: number = this._mapService.getTileIndexAtPosition(destinationPosition);
         let tile: ITile = this._tilesService.getTileByIndex(tileIndex);
         let speed = this._tilesService.getTileSpeed(tile.name);
-        if ((speed === 1) || this._slowMove(speed)) {
-            let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
-            let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-            positionBehavior.moveTo(movableBehavior.vector);
-            this._displayMoveInformation(movableBehavior.vector);
+        if ((speed === NORMAL_MOVE_SPEED) || this._canMoveAtNormalSpeed(speed)) {
+            this._moveEntity(entity);
         } else {
-            this._descriptionService.addTextToInformation("Slow progress!");
+            this._displayInformation(entity, "Slow progress!");
         }
     }
 
-    private _slowMove(speedTile: number): boolean {
+    private _canMoveAtNormalSpeed(speedTile: number): boolean {
         return (Math.floor(Math.random() * speedTile) + 1 === 1);
     }
 
-    private _displayMoveInformation(vector: Position) {
+    private _moveEntity(entity: Entity) {
+        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
+        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
+        positionBehavior.moveTo(movableBehavior.vector);
+        let moveInformationText = this._getTextMoveDirection(movableBehavior.vector);
+        this._displayInformation(entity, moveInformationText);
+    }
+
+    private _getTextMoveDirection(vector: Position): string {
         let direction: string = "";
         if (vector.col === 1) {
             direction = "East";
@@ -92,12 +143,10 @@ export class MovementSystem {
         if (vector.row === -1) {
             direction = "North";
         }
-        if (!_.isEmpty(direction)) {
-            this._descriptionService.addTextToInformation(direction);
-        }
+        return direction;
     }
 
-    private _isLeaveCity(position: Position): boolean {
+    private _isLeavingCity(position: Position): boolean {
         if (position.mapId !== 0) {
             let mapMetaData = this._mapService.getMapMetadataByMapId(position.mapId);
             return (mapMetaData.borderbehavior === "exit" && this._isPositionInBorder(position, mapMetaData));
@@ -105,8 +154,18 @@ export class MovementSystem {
         return false;
     }
 
-    private _isPositionInBorder(position: Position, mapMetaData: IMap): boolean {
+    private _isPositionInBorder(position: Position, mapMetaData: IMapMetaData): boolean {
         return (position.row === 0 || position.col === 0 || position.row === mapMetaData.height - 1
-                || position.col === mapMetaData.width - 1);
+        || position.col === mapMetaData.width - 1);
+    }
+
+    private _displayInformation(entity: Entity, textToDisplay: string) {
+        if (entity.isDisplayInfo) {
+            this._descriptionService.addTextToInformation(textToDisplay);
+        }
+    }
+
+    private _canLeaveCity(entity: Entity): boolean {
+        return entity.hasBehavior("travelcity");
     }
 }

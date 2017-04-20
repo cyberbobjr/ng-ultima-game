@@ -3,11 +3,10 @@ import {Entity} from "../../classes/entity";
 import {PositionBehavior} from "../../behaviors/position-behavior";
 import {Position} from "../../classes/position";
 import * as _ from "lodash";
-import {ITile} from "../../interfaces/ITile";
-import {RenderableBehavior} from "../../behaviors/renderable-behavior";
-import {IMap} from "../../interfaces/IMap";
-import {ITalk} from "../../interfaces/ITalk";
+import {IMapMetaData} from "../../interfaces/IMap";
 import {EntityFactoryService} from "../entityFactory/entityFactory.service";
+import {TalkBehavior} from "../../behaviors/talk-behavior";
+import {INpc, ITalk} from "../../interfaces/INpc";
 
 @Injectable()
 export class EntitiesService {
@@ -27,12 +26,15 @@ export class EntitiesService {
         this._player = playerEntity;
     }
 
+    getPlayer(): Entity {
+        return this._player;
+    }
+
     getEntitiesForMapId(mapId: number): Array<Entity> {
-        let entities: Array<Entity> = this._entitiesForAllMaps.get(mapId);
+        let entities: Array<Entity> = this._entitiesForAllMaps.get(_.toString(mapId));
         if (!entities) {
             entities = [];
         }
-        entities = _.concat(entities, this._player);
         return entities;
     }
 
@@ -52,18 +54,17 @@ export class EntitiesService {
         return fetch("/assets/npcs/" + tlkFilename)
             .then((res) => {
                 return res.json();
-            })
-            .then((jsonValue: Array<ITalk>) => {
-                return jsonValue;
+            }).then((jsonValue: any) => {
+                return <Array<INpc>>jsonValue;
             });
     }
 
-    loadAllEntitiesForMaps(maps: Array<IMap>): Promise<boolean> {
-        return _.map(maps, (map: IMap) => {
+    loadAllEntitiesForMaps(maps: Array<IMapMetaData>): Promise<boolean> {
+        return _.map(maps, (map: IMapMetaData) => {
             return new Promise((resolve, reject) => {
                 if (map["city"]) {
                     this._loadTlkFile(map["city"]["tlkfname"])
-                        .then((talks: Array<ITalk>) => {
+                        .then((talks: Array<INpc>) => {
                             this._createNpcsFromTalks(talks, map);
                         });
                 }
@@ -72,18 +73,20 @@ export class EntitiesService {
         });
     }
 
-    private _createNpcsFromTalks(talks: Array<ITalk>, mapMetaData: IMap) {
-        _.map(talks, (talk: ITalk) => {
+    private _createNpcsFromTalks(npcs: Array<INpc>, mapMetaData: IMapMetaData) {
+        _.map(npcs, (npc: INpc) => {
             let name: string = "";
-            let entityPosition: Position = new Position(talk.y_pos1, talk.x_pos1, mapMetaData.id);
-            if (!_.has(talk, "talks")) {
+            let entityPosition: Position = new Position(npc.y_pos1, npc.x_pos1, mapMetaData.id);
+            if (!_.has(npc, "talks")) {
                 name = "vendor";
             } else {
-                name = talk.talks.name;
+                name = npc.talks.name;
             }
-            let entity = this._entityFactory.createNpc(entityPosition, talk.tile1, name);
+            let entity = this._entityFactory.createNpc(entityPosition, npc.tile1, name, npc.move);
+            if (_.has(npc, "talks")) {
+                entity.addBehavior(new TalkBehavior(<ITalk>npc.talks));
+            }
             this.addEntityForMapId(entity, mapMetaData.id);
         });
     }
-
 }

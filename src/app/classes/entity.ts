@@ -3,9 +3,17 @@ import {PositionBehavior} from "../behaviors/position-behavior";
 import {Position} from "../classes/position";
 import {ITile} from "../interfaces/ITile";
 import {RenderableBehavior} from "../behaviors/renderable-behavior";
+import {DescriptionsService} from "../services/descriptions/descriptions.service";
+export enum talkingState {
+    none = 1,
+    askDirection,
+    talking
+}
 
 export class Entity {
     name: string;
+    talkingState: talkingState = talkingState.none;
+
     private _behaviors: Map<string, IBehavior> = new Map();
 
     constructor(entityName?: string) {
@@ -44,6 +52,10 @@ export class Entity {
             return this._getRenderableTile();
         }
         return null;
+    }
+
+    get isDisplayInfo() {
+        return this.hasBehavior("description");
     }
 
     private _getRenderableTile(): ITile {

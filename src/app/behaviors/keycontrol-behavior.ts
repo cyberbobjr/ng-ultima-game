@@ -6,7 +6,7 @@ export class KeycontrolBehavior implements IBehavior {
     constructor() {
     }
 
-    tick(): any {
+    tick(PerformanceNow: number): any {
         return null;
     }
 }

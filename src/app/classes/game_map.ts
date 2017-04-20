@@ -1,9 +1,9 @@
 import {Position} from "./position";
-import {IMap} from "../interfaces/IMap";
+import {IMapMetaData} from "../interfaces/IMap";
 import {Entity} from "./entity";
 
 export class GameMap {
-    mapMetaData: IMap = null;
+    mapMetaData: IMapMetaData = null;
     mapData: number[][] = [];
 
     width: number;
@@ -11,7 +11,7 @@ export class GameMap {
 
     private _entitiesOnMap: Array<Entity> = [];
 
-    constructor(mapMetaData: IMap, mapRawData: number[][]) {
+    constructor(mapMetaData: IMapMetaData, mapRawData: number[][]) {
         this._convertRawDataToMapData(mapRawData);
         this.mapMetaData = mapMetaData;
         this.width = mapRawData[0].length;

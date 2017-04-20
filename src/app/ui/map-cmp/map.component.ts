@@ -7,10 +7,10 @@ const TILE_WIDTH = 32;
 const TILE_HEIGHT = 32;
 
 @Component({
-               selector: "app-map-cmp",
-               templateUrl: "./map.component.html",
-               styleUrls: ["./map.component.css"]
-           })
+    selector: "app-map-cmp",
+    templateUrl: "./map.component.html",
+    styleUrls: ["./map.component.css"]
+})
 export class MapComponent implements OnInit, AfterViewInit {
     @ViewChild("html5map") public canvas: ElementRef;
     ctx: CanvasRenderingContext2D;
@@ -74,7 +74,9 @@ export class MapComponent implements OnInit, AfterViewInit {
 
     _drawTile(tileImage: HTMLImageElement, position: Position, currentFrame: number) {
         let yOrigin: number = currentFrame * TILE_HEIGHT;
-        this.ctx.drawImage(tileImage, 0, yOrigin, TILE_WIDTH, TILE_HEIGHT, position.col * TILE_WIDTH, position.row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+        let [yDestination, xDestination] = [position.row * TILE_HEIGHT,
+                                            position.col * TILE_WIDTH];
+        this.ctx.drawImage(tileImage, 0, yOrigin, TILE_WIDTH, TILE_HEIGHT, xDestination, yDestination, TILE_WIDTH, TILE_HEIGHT);
     }
 
     _drawBlackTileAtPosition(position: Position) {
