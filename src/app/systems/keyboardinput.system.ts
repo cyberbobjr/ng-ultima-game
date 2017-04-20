@@ -1,4 +1,4 @@
-import {Entity} from "../classes/entity";
+import {Entity, talkingState} from "../classes/entity";
 import {Injectable} from "@angular/core";
 import {MovableBehavior} from "../behaviors/movable-behavior";
 import {PositionBehavior} from "../behaviors/position-behavior";
@@ -13,6 +13,7 @@ const KEY_DOWN = "ArrowDown";
 const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
 const KEY_E = "KeyE";
+const KEY_T = "KeyT";
 
 @Injectable()
 export class KeyboardinputSystem {
@@ -25,10 +26,44 @@ export class KeyboardinputSystem {
     processKeyboardInput(event: KeyboardEvent) {
         this._mapsService.getEntitiesOnCurrentMap()
             .forEach((entity: Entity) => {
-                if (entity.hasBehavior("keycontrol") && entity.hasBehavior("movable")) {
-                    this._processKeybordInputMovement(event, entity);
+                if (entity.hasBehavior("keycontrol")) {
+                    this._switchProcessKeyboardInput(event, entity);
                 }
             });
+    }
+
+    private _switchProcessKeyboardInput(event: KeyboardEvent, entity: Entity) {
+        switch (entity.talkingState) {
+            case talkingState.none :
+                this._processKeybordInputMovement(event, entity);
+                break;
+            case talkingState.askDirection :
+                this._processKeyboardInputAskDirection(event, entity);
+                break;
+            case talkingState.talking :
+                this._processKeyboardInputTalking(event, entity);
+                break;
+        }
+    }
+
+    private _processKeyboardInputTalking(event: KeyboardEvent, entity: Entity) {
+    }
+
+    private _processKeyboardInputAskDirection(event: KeyboardEvent, entity: Entity) {
+        switch (event.code) {
+            case KEY_UP :
+                break;
+            case KEY_DOWN:
+                break;
+            case KEY_LEFT:
+                break;
+            case KEY_RIGHT:
+                break;
+            default :
+                this._descriptionService.addTextToInformation("You pass");
+                entity.talkingState = talkingState.none;
+                break;
+        }
     }
 
     private _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
@@ -50,6 +85,9 @@ export class KeyboardinputSystem {
             case KEY_E:
                 this._processEnter(entity, positionBehavior.position);
                 break;
+            case KEY_T :
+                this._askTalkingDirection(entity);
+                break;
         }
     }
 
@@ -67,5 +105,10 @@ export class KeyboardinputSystem {
         } catch (error) {
             this._descriptionService.addTextToInformation("WHAT ???");
         }
+    }
+
+    private _askTalkingDirection(entity: Entity) {
+        this._descriptionService.addTextToInformation("In wich direction ?");
+        entity.talkingState = talkingState.askDirection;
     }
 }

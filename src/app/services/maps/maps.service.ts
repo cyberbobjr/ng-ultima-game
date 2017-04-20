@@ -122,7 +122,8 @@ export class MapsService {
     }
 
     getEntitiesOnCurrentMap(): Array<Entity> {
-        return this._entitiesService.getEntitiesForMapId(this._currentMap.mapMetaData.id);
+        let entities: Array<Entity> = this._entitiesService.getEntitiesForMapId(this._currentMap.mapMetaData.id);
+        return _.concat(entities, this._entitiesService.getPlayer());
     }
 
     getAllMaps(): Array<IMapMetaData> {

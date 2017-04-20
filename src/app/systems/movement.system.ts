@@ -139,7 +139,7 @@ export class MovementSystem {
     }
 
     private _displayInformation(entity: Entity, textToDisplay: string) {
-        if (entity.displayInfo) {
+        if (entity.isDisplayInfo) {
             this._descriptionService.addTextToInformation(textToDisplay);
         }
     }

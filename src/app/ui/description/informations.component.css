@@ -2,7 +2,7 @@ ul {
     -webkit-padding-start: 0px;
     list-style: none;
     position: absolute;
-    bottom: 0px;
+    bottom: 10px;
 }
 
 li {

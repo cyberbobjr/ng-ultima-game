@@ -12,16 +12,14 @@ import {PartyService} from "../../services/party/party.service";
 import {ActivatedRoute} from "@angular/router";
 import {AiSystem} from "../../systems/ai.system";
 
-
 @Component({
-               selector: "app-mainscreen",
-               templateUrl: "./mainscreen.component.html",
-               styleUrls: ["./mainscreen.component.css"]
-           })
+    selector: "app-mainscreen",
+    templateUrl: "./mainscreen.component.html",
+    styleUrls: ["./mainscreen.component.css"]
+})
 export class MainscreenComponent implements OnInit {
     isMapReady: boolean = false;
     gameLoop: any;
-    renderLoop: any;
 
     @HostListener("document:keyup", ["$event"]) handleKeyboardEvents($event: KeyboardEvent) {
         this.processKeyInput($event);
@@ -66,16 +64,13 @@ export class MainscreenComponent implements OnInit {
         this._sceneService.refresh();
     }
 
-    /**
-     * @TODO : code a tick function instead of refresh sceneService
-     */
     mainLoop() {
         this.gameLoop = window.setInterval(() => {
             this._savestateSystem.processTick();
             this._renderableSystem.processTick();
-            this._sceneService.refresh();
             this._aiSystem.processAiBehavior();
             this._movementSystem.processMovementsBehavior();
+            this._sceneService.refresh();
         }, 250);
     }
 

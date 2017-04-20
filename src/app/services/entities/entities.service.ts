@@ -26,12 +26,15 @@ export class EntitiesService {
         this._player = playerEntity;
     }
 
+    getPlayer(): Entity {
+        return this._player;
+    }
+
     getEntitiesForMapId(mapId: number): Array<Entity> {
         let entities: Array<Entity> = this._entitiesForAllMaps.get(mapId);
         if (!entities) {
             entities = [];
         }
-        entities = _.concat(entities, this._player);
         return entities;
     }
 
