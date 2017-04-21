@@ -7,6 +7,7 @@ import {MapsService} from "../services/maps/maps.service";
 import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
 import {DescriptionsService} from "../services/descriptions/descriptions.service";
 import {IPortal} from "../interfaces/IPortal";
+import {EntitiesService} from "../services/entities/entities.service";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
@@ -20,7 +21,8 @@ export class KeyboardinputSystem {
 
     constructor(private _mapsService: MapsService,
                 private _sceneService: ScenegraphService,
-                private _descriptionService: DescriptionsService) {
+                private _descriptionService: DescriptionsService,
+                private _entitiesService: EntitiesService) {
     }
 
     processKeyboardInput(event: KeyboardEvent) {
@@ -46,18 +48,35 @@ export class KeyboardinputSystem {
         }
     }
 
-    private _processKeyboardInputTalking(event: KeyboardEvent, entity: Entity) {
+    private _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
+        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
+        let entityPosition: Position = this._getEntityPosition(entity);
+        switch (event.code) {
+            case KEY_UP :
+            case KEY_DOWN:
+            case KEY_LEFT:
+            case KEY_RIGHT:
+                movableBehavior.moveTo(this._getVectorDirectionForKey(event.code, entityPosition));
+                break;
+            case KEY_E:
+                this._processEnter(entity, entityPosition);
+                break;
+            case KEY_T :
+                this._askTalkingDirection(entity);
+                break;
+        }
     }
 
     private _processKeyboardInputAskDirection(event: KeyboardEvent, entity: Entity) {
+        let entityPosition: Position = this._getEntityPosition(entity);
         switch (event.code) {
             case KEY_UP :
-                break;
             case KEY_DOWN:
-                break;
             case KEY_LEFT:
-                break;
             case KEY_RIGHT:
+                let vectorDirection: Position = this._getVectorDirectionForKey(event.code, entityPosition);
+                let destinationPositionAsk: Position = entityPosition.addVector(vectorDirection);
+                this._processAskTalkingToPosition(entity, destinationPositionAsk);
                 break;
             default :
                 this._descriptionService.addTextToInformation("You pass");
@@ -66,28 +85,32 @@ export class KeyboardinputSystem {
         }
     }
 
-    private _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
-        let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
-        let positionBehavior = <PositionBehavior>entity.getBehavior("position");
-        switch (event.code) {
+    private _processKeyboardInputTalking(event: KeyboardEvent, entity: Entity) {
+    }
+
+    private _getEntityPosition(entity: Entity): Position {
+        let positionBehavior: PositionBehavior = <PositionBehavior>entity.getBehavior("position");
+        return positionBehavior.position;
+    }
+
+    private _getVectorDirectionForKey(keycode: string, destPosition: Position): Position {
+        switch (keycode) {
             case KEY_UP :
-                movableBehavior.moveUp();
-                break;
+                return destPosition.getVectorUp();
             case KEY_DOWN:
-                movableBehavior.moveDown();
-                break;
+                return destPosition.getVectorDown();
             case KEY_LEFT:
-                movableBehavior.moveLeft();
-                break;
+                return destPosition.getVectorLeft();
             case KEY_RIGHT:
-                movableBehavior.moveRight();
-                break;
-            case KEY_E:
-                this._processEnter(entity, positionBehavior.position);
-                break;
-            case KEY_T :
-                this._askTalkingDirection(entity);
-                break;
+                return destPosition.getVectorRight();
+        }
+    }
+
+    private _processAskTalkingToPosition(entity: Entity, destinationPosition: Position) {
+        console.log(destinationPosition);
+        let destEntity: Entity = this._entitiesService.getEntityAtPosition(destinationPosition);
+        if (destEntity) {
+            console.log(destEntity);
         }
     }
 

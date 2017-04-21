@@ -50,6 +50,15 @@ export class EntitiesService {
         });
     }
 
+    getEntityAtPosition(position: Position): Entity {
+        let entities: Array<Entity> = this.getEntitiesForMapId(position.mapId);
+        return _.find(entities, (entity: Entity) => {
+            if (position.isEqual(entity.getPosition())) {
+                return entity;
+            }
+        });
+    }
+
     private _loadTlkFile(tlkFilename: string) {
         return fetch("/assets/npcs/" + tlkFilename)
             .then((res) => {

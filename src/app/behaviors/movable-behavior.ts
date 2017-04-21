@@ -13,6 +13,10 @@ export class MovableBehavior implements IBehavior {
         return null;
     }
 
+    moveTo(vector: Position) {
+        this.vector = vector;
+    }
+
     moveUp() {
         this.vector.row = -1;
     }
