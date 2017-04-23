@@ -8,6 +8,9 @@ import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
 import {DescriptionsService} from "../services/descriptions/descriptions.service";
 import {IPortal} from "../interfaces/IPortal";
 import {EntitiesService} from "../services/entities/entities.service";
+import {AiMovementBehavior} from "../behaviors/ai-movement-behavior";
+import {TalkBehavior} from "../behaviors/talk-behavior";
+import {TalkingService} from "../services/talking/talking.service";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
@@ -15,6 +18,7 @@ const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
 const KEY_E = "KeyE";
 const KEY_T = "KeyT";
+const KEY_ESC = "Escape";
 
 @Injectable()
 export class KeyboardinputSystem {
@@ -22,7 +26,8 @@ export class KeyboardinputSystem {
     constructor(private _mapsService: MapsService,
                 private _sceneService: ScenegraphService,
                 private _descriptionService: DescriptionsService,
-                private _entitiesService: EntitiesService) {
+                private _entitiesService: EntitiesService,
+                private _talkingService: TalkingService) {
     }
 
     processKeyboardInput(event: KeyboardEvent) {
@@ -80,12 +85,24 @@ export class KeyboardinputSystem {
                 break;
             default :
                 this._descriptionService.addTextToInformation("You pass");
-                entity.talkingState = talkingState.none;
+                this._stopConversation(entity);
                 break;
         }
     }
 
     private _processKeyboardInputTalking(event: KeyboardEvent, entity: Entity) {
+        switch (event.code) {
+            case KEY_ESC :
+                this._descriptionService.addTextToInformation("Bye");
+                this._stopConversation(entity);
+        }
+    }
+
+    private _processAskTalkingToPosition(entity: Entity, destinationPosition: Position) {
+        let destEntity: Entity = this._entitiesService.getEntityAtPosition(destinationPosition);
+        if (destEntity) {
+            this._startConversationWithEntity(entity, destEntity);
+        }
     }
 
     private _getEntityPosition(entity: Entity): Position {
@@ -106,12 +123,40 @@ export class KeyboardinputSystem {
         }
     }
 
-    private _processAskTalkingToPosition(entity: Entity, destinationPosition: Position) {
-        console.log(destinationPosition);
-        let destEntity: Entity = this._entitiesService.getEntityAtPosition(destinationPosition);
-        if (destEntity) {
-            console.log(destEntity);
+    private _startConversationWithEntity(entity: Entity, entityToTalk: Entity) {
+        if (this._canEntityTalk(entityToTalk)) {
+            this._stopAiMovementForEntity(entityToTalk);
+            let talkBehavior: TalkBehavior = <TalkBehavior>entity.getBehavior("talk");
+            talkBehavior.talker = entityToTalk;
+            entity.talkingState = talkingState.talking;
+            this._talkingService.talker$.next(entity);
+            this._displayGreetings(entityToTalk);
+        } else {
+            this._descriptionService.addTextToInformation("Funny, no response !");
+            this._stopConversation(entity);
         }
+    }
+
+    private _stopConversation(entity: Entity) {
+        entity.talkingState = talkingState.none;
+    }
+
+    private _stopAiMovementForEntity(entityToTalk: Entity) {
+        let aiMovementBehavior: AiMovementBehavior = <AiMovementBehavior>entityToTalk.getBehavior("aimovement");
+        if (aiMovementBehavior) {
+            aiMovementBehavior.stopAiMovement();
+        }
+    }
+
+    private _canEntityTalk(entity: Entity) {
+        return entity.hasBehavior("talk");
+    }
+
+    private _displayGreetings(entityToTalk: Entity) {
+        let talkBehavior: TalkBehavior = <TalkBehavior>entityToTalk.getBehavior("talk");
+        console.log(entityToTalk);
+        this._descriptionService.addTextToInformation(talkBehavior.description);
+        this._descriptionService.addTextToInformation(talkBehavior.greetings);
     }
 
     private _processEnter(entity: Entity, position: Position) {

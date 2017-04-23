@@ -13,6 +13,7 @@ import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
 import {DescriptionBehavior} from "../../behaviors/description-behavior";
 import {TravelcityBehavior} from "../../behaviors/travelcity-behavior";
 import {CollideBehavior} from "../../behaviors/collide-behavior";
+import {TalkBehavior} from "../../behaviors/talk-behavior";
 
 @Injectable()
 export class EntityFactoryService {
@@ -33,6 +34,7 @@ export class EntityFactoryService {
                 this.player.addBehavior(new DescriptionBehavior());
                 this.player.addBehavior(new CollideBehavior());
                 this.player.addBehavior(new TravelcityBehavior());
+                this.player.addBehavior(new TalkBehavior());
                 resolve(this.player);
             }
         );

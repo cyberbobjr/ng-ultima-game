@@ -6,7 +6,7 @@ import * as _ from "lodash";
 import {IMapMetaData} from "../../interfaces/IMap";
 import {EntityFactoryService} from "../entityFactory/entityFactory.service";
 import {TalkBehavior} from "../../behaviors/talk-behavior";
-import {INpc, ITalk} from "../../interfaces/INpc";
+import {INpc, ITalkTexts} from "../../interfaces/INpc";
 
 @Injectable()
 export class EntitiesService {
@@ -63,7 +63,8 @@ export class EntitiesService {
         return fetch("/assets/npcs/" + tlkFilename)
             .then((res) => {
                 return res.json();
-            }).then((jsonValue: any) => {
+            })
+            .then((jsonValue: any) => {
                 return <Array<INpc>>jsonValue;
             });
     }
@@ -92,8 +93,8 @@ export class EntitiesService {
                 name = npc.talks.name;
             }
             let entity = this._entityFactory.createNpc(entityPosition, npc.tile1, name, npc.move);
-            if (_.has(npc, "talks")) {
-                entity.addBehavior(new TalkBehavior(<ITalk>npc.talks));
+            if (_.has(npc, "talks") && _.size(npc["talks"]) > 0) {
+                entity.addBehavior(new TalkBehavior(<ITalkTexts>npc.talks));
             }
             this.addEntityForMapId(entity, mapMetaData.id);
         });

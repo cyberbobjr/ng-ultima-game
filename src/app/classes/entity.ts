@@ -7,7 +7,8 @@ import {DescriptionsService} from "../services/descriptions/descriptions.service
 export enum talkingState {
     none = 1,
     askDirection,
-    talking
+    talking,
+    askQuestion
 }
 
 export class Entity {
