@@ -104,7 +104,6 @@ export class KeyboardinputSystem {
         if (destEntity) {
             this._startConversationWithEntity(entity, destEntity);
         } else {
-            entity.talkingState = talkingState.none;
             this._descriptionService.addTextToInformation("What ?");
         }
     }
