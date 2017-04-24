@@ -4,10 +4,12 @@ import {TalkBehavior} from "../../behaviors/talk-behavior";
 import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
 import {DescriptionsService} from "../descriptions/descriptions.service";
 import * as _ from "lodash";
+import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class TalkingService {
     talker: Entity = null;
+    talker$: Subject<Entity> = new Subject();
     private _entityToTalk: Entity = null;
     private _talkerToBehavior: TalkBehavior = null;
 
@@ -15,6 +17,7 @@ export class TalkingService {
     }
 
     startNewConversation(entity: Entity, entityToTalk: Entity) {
+        this.talker$.next(entity);
         this.talker = entity;
         this._entityToTalk = entityToTalk;
         entity.talkingState = talkingState.talking;
@@ -27,9 +30,9 @@ export class TalkingService {
         this._talkerToBehavior = <TalkBehavior>this._entityToTalk.getBehavior("talk");
     }
 
-    parseInputTalking(conversation: string): string|Array<string> {
+    parseInputTalking(conversation: string): string | Array<string> {
         if (_.toLower(conversation) === "bye") {
-            this._stopConversation();
+            this.stopConversation();
             return "Bye";
         } else {
             return this._talkerToBehavior.parseInput(conversation);
@@ -56,10 +59,11 @@ export class TalkingService {
         this._descriptionService.addTextToInformation(talkBehavior.greetings);
     }
 
-    private _stopConversation() {
+    stopConversation() {
         this.talker.talkingState = talkingState.none;
         this._resumeAiMovementsForEntity(this._entityToTalk);
         this.talker = null;
+        this.talker$.next(null);
         this._entityToTalk = null;
     }
 

@@ -25,7 +25,7 @@ import {PartyComponent} from "./ui/party/party.component";
 import {SubpartyComponent} from "./ui/subparty/subparty.component";
 import {ConfigService} from "./services/config/config.service";
 import {AiSystem} from "app/systems/ai.system";
-import {TalkingInputComponent} from "./ui/talking-input/talking-input.component";
+import {FocusInput, TalkingInputComponent} from "./ui/talking-input/talking-input.component";
 import {TalkingService} from "app/services/talking/talking.service";
 
 const appRoutes: Routes = [
@@ -46,7 +46,8 @@ export function useFactory(service: ConfigService) {
         StartscreenComponent,
         PartyComponent,
         SubpartyComponent,
-        TalkingInputComponent
+        TalkingInputComponent,
+        FocusInput
     ],
     imports: [
         BrowserModule,

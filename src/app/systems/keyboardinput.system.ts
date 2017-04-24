@@ -94,6 +94,7 @@ export class KeyboardinputSystem {
         switch (event.code) {
             case KEY_ESC :
                 entity.talkingState = talkingState.none;
+                this._talkingService.stopConversation();
                 this._descriptionService.addTextToInformation("Bye");
         }
     }
