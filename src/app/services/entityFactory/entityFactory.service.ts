@@ -34,7 +34,7 @@ export class EntityFactoryService {
                 this.player.addBehavior(new DescriptionBehavior());
                 this.player.addBehavior(new CollideBehavior());
                 this.player.addBehavior(new TravelcityBehavior());
-                this.player.addBehavior(new TalkBehavior());
+                this.player.addBehavior(new TalkBehavior(this.player));
                 resolve(this.player);
             }
         );

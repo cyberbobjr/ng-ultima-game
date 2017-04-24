@@ -84,8 +84,8 @@ export class KeyboardinputSystem {
                 this._processAskTalkingToPosition(entity, destinationPositionAsk);
                 break;
             default :
+                entity.talkingState = talkingState.none;
                 this._descriptionService.addTextToInformation("You pass");
-                this._stopConversation(entity);
                 break;
         }
     }
@@ -94,7 +94,6 @@ export class KeyboardinputSystem {
         switch (event.code) {
             case KEY_ESC :
                 this._descriptionService.addTextToInformation("Bye");
-                this._stopConversation(entity);
         }
     }
 
@@ -125,38 +124,14 @@ export class KeyboardinputSystem {
 
     private _startConversationWithEntity(entity: Entity, entityToTalk: Entity) {
         if (this._canEntityTalk(entityToTalk)) {
-            this._stopAiMovementForEntity(entityToTalk);
-            let talkBehavior: TalkBehavior = <TalkBehavior>entity.getBehavior("talk");
-            talkBehavior.talker = entityToTalk;
-            entity.talkingState = talkingState.talking;
-            this._talkingService.talker$.next(entity);
-            this._displayGreetings(entityToTalk);
+            this._talkingService.startNewConversation(entity, entityToTalk);
         } else {
             this._descriptionService.addTextToInformation("Funny, no response !");
-            this._stopConversation(entity);
-        }
-    }
-
-    private _stopConversation(entity: Entity) {
-        entity.talkingState = talkingState.none;
-    }
-
-    private _stopAiMovementForEntity(entityToTalk: Entity) {
-        let aiMovementBehavior: AiMovementBehavior = <AiMovementBehavior>entityToTalk.getBehavior("aimovement");
-        if (aiMovementBehavior) {
-            aiMovementBehavior.stopAiMovement();
         }
     }
 
     private _canEntityTalk(entity: Entity) {
         return entity.hasBehavior("talk");
-    }
-
-    private _displayGreetings(entityToTalk: Entity) {
-        let talkBehavior: TalkBehavior = <TalkBehavior>entityToTalk.getBehavior("talk");
-        console.log(entityToTalk);
-        this._descriptionService.addTextToInformation(talkBehavior.description);
-        this._descriptionService.addTextToInformation(talkBehavior.greetings);
     }
 
     private _processEnter(entity: Entity, position: Position) {

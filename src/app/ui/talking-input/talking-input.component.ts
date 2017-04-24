@@ -3,10 +3,10 @@ import {TalkingService} from "../../services/talking/talking.service";
 import {DescriptionsService} from "../../services/descriptions/descriptions.service";
 
 @Component({
-               selector: "app-talking-input",
-               templateUrl: "talking-input.component.html",
-               styleUrls: ["talking-input.component.css"]
-           })
+    selector: "app-talking-input",
+    templateUrl: "talking-input.component.html",
+    styleUrls: ["talking-input.component.css"]
+})
 
 export class TalkingInputComponent implements OnInit {
     @ViewChild("inputText") inputText: ElementRef;
@@ -18,10 +18,11 @@ export class TalkingInputComponent implements OnInit {
     ngOnInit() {
     }
 
-    submitTalk() {
+    submitTalk(event) {
         let answer = this._talkingService.parseInputTalking(this.inputText.nativeElement.value);
         this._descriptionService.addTextToInformation(answer);
         this.clearTalk();
+        event.preventDefault();
     }
 
     clearTalk() {
