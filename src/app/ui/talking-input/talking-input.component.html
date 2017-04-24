@@ -1,3 +1,8 @@
-<form (submit)="submitTalk($event)">
-    <input #inputText>
+<form (submit)="submitTalk($event)" *ngIf="this._talkingService.talker">
+    <div class="wrapper">
+        <div class="text">You say : <i class="fa fa-circle-o-notch fa-fw fa-2x"></i></div>
+        <div class="input-box">
+            <input #inputText autofocus>
+        </div>
+    </div>
 </form>

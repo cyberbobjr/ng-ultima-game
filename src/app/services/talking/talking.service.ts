@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {Entity, talkingState} from "../../classes/entity";
-import {Subject} from "rxjs/Subject";
 import {TalkBehavior} from "../../behaviors/talk-behavior";
 import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
 import {DescriptionsService} from "../descriptions/descriptions.service";
@@ -8,8 +7,7 @@ import * as _ from "lodash";
 
 @Injectable()
 export class TalkingService {
-    talker$: Subject<Entity> = new Subject();
-    private _talker: Entity = null;
+    talker: Entity = null;
     private _entityToTalk: Entity = null;
     private _talkerToBehavior: TalkBehavior = null;
 
@@ -17,7 +15,7 @@ export class TalkingService {
     }
 
     startNewConversation(entity: Entity, entityToTalk: Entity) {
-        this._talker = entity;
+        this.talker = entity;
         this._entityToTalk = entityToTalk;
         entity.talkingState = talkingState.talking;
         this._loadTalkTo();
@@ -29,12 +27,12 @@ export class TalkingService {
         this._talkerToBehavior = <TalkBehavior>this._entityToTalk.getBehavior("talk");
     }
 
-    parseInputTalking(conversation: string): string {
-        if (_.toLowerCase(conversation) === "bye") {
+    parseInputTalking(conversation: string): string|Array<string> {
+        if (_.toLower(conversation) === "bye") {
             this._stopConversation();
             return "Bye";
         } else {
-            return this._talkerToBehavior.parseQuestion(conversation);
+            return this._talkerToBehavior.parseInput(conversation);
         }
     }
 
@@ -59,9 +57,9 @@ export class TalkingService {
     }
 
     private _stopConversation() {
-        this._talker.talkingState = talkingState.none;
+        this.talker.talkingState = talkingState.none;
         this._resumeAiMovementsForEntity(this._entityToTalk);
-        this._talker = null;
+        this.talker = null;
         this._entityToTalk = null;
     }
 

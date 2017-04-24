@@ -1,5 +1,5 @@
 <ul *ngIf="informationsTexts.length > 0">
-    <li *ngFor="let descriptionText of informationsTexts">
-        {{descriptionText}}
+    <li *ngFor="let descriptionText of informationsTexts" class="{{descriptionText.color}}">
+        <span [innerHTML]="descriptionText.text"></span>
     </li>
 </ul>

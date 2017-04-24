@@ -27,7 +27,7 @@ export class MovementSystem {
         this._mapService.getEntitiesOnCurrentMap()
             .forEach((entity: Entity) => {
                 if (entity.hasBehavior("movable") && this._isEntityMoving(entity)) {
-                    this._processEntityMovements(entity);
+                    this._processMovementsForEntity(entity);
                 }
             });
         return entities;
@@ -42,8 +42,8 @@ export class MovementSystem {
         return (vectorDirection.col !== 0 || vectorDirection.row !== 0);
     }
 
-    private _processEntityMovements(entity: Entity) {
-        let destinationPosition = this._getEntityDestinationPosition(entity);
+    private _processMovementsForEntity(entity: Entity) {
+        let destinationPosition = this._getDestinationPositionForEntity(entity);
         if (this._canWalkAtDestinationPosition(entity, destinationPosition)) {
             this._processWalkablePosition(entity, destinationPosition);
         } else {
@@ -100,7 +100,7 @@ export class MovementSystem {
             });
     }
 
-    private _getEntityDestinationPosition(entity): Position {
+    private _getDestinationPositionForEntity(entity): Position {
         let entityDirection = <MovableBehavior>entity.getBehavior("movable");
         let currentEntityPosition = <PositionBehavior>entity.getBehavior("position");
         return currentEntityPosition.position.addVector(entityDirection.vector);

@@ -61,7 +61,7 @@ export class EntitiesService {
 
     private _loadTlkFile(tlkFilename: string) {
         return fetch("/assets/npcs/" + tlkFilename)
-            .then((res : any) => {
+            .then((res: any) => {
                 return res.json();
             })
             .then((jsonValue: any) => {
@@ -94,7 +94,7 @@ export class EntitiesService {
             }
             let entity = this._entityFactory.createNpc(entityPosition, npc.tile1, name, npc.move);
             if (_.has(npc, "talks") && _.size(npc["talks"]) > 0) {
-                entity.addBehavior(new TalkBehavior(entity, <ITalkTexts>npc.talks));
+                entity.addBehavior(new TalkBehavior(entity, <INpc>npc));
             }
             this.addEntityForMapId(entity, mapMetaData.id);
         });

@@ -19,10 +19,11 @@ export class TalkingInputComponent implements OnInit {
     }
 
     submitTalk(event) {
+        event.preventDefault();
         let answer = this._talkingService.parseInputTalking(this.inputText.nativeElement.value);
+        this._descriptionService.addTextToInformation(this.inputText.nativeElement.value, "yellow");
         this._descriptionService.addTextToInformation(answer);
         this.clearTalk();
-        event.preventDefault();
     }
 
     clearTalk() {

@@ -45,18 +45,21 @@ app-map-cmp {
 }
 
 .party-viewer {
-    height: 135px;
+    height: 130px;
+    z-index: 1;
 }
 
 .gold-viewer {
-    margin-top: 5px;
-    height: 25px;
+    margin-top: 10px;
+    height: 20px;
+    z-index: 1;
 }
 
 .description-viewer {
-    z-index: 1;
-    margin-top: 10px;
+    z-index: -1;
+    padding-top: 15px;
     margin-bottom: 10px;
-    height: auto;
+    height: 180px;
     flex: 3;
+    overflow-y: scroll;
 }

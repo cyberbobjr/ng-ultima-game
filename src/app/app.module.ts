@@ -38,46 +38,46 @@ export function useFactory(service: ConfigService) {
 }
 
 @NgModule({
-              declarations: [
-                  AppComponent,
-                  MapComponent,
-                  InformationsComponent,
-                  MainscreenComponent,
-                  StartscreenComponent,
-                  PartyComponent,
-                  SubpartyComponent,
-                  TalkingInputComponent
-              ],
-              imports: [
-                  BrowserModule,
-                  FormsModule,
-                  HttpModule,
-                  HotkeyModule.forRoot(),
-                  RouterModule.forRoot(appRoutes)
-              ],
-              providers: [
-                  {
-                      provide: APP_INITIALIZER,
-                      useFactory: useFactory,
-                      deps: [ConfigService],
-                      multi: true
-                  },
-                  ConfigService,
-                  MapsService,
-                  EntitiesService,
-                  RenderableSystem,
-                  TilesLoaderService,
-                  ScenegraphService,
-                  EntityFactoryService,
-                  KeyboardinputSystem,
-                  MovementSystem,
-                  SavestateSystem,
-                  DescriptionsService,
-                  PartyService,
-                  AiSystem,
-                  TalkingService
-              ],
-              bootstrap: [AppComponent]
-          })
+    declarations: [
+        AppComponent,
+        MapComponent,
+        InformationsComponent,
+        MainscreenComponent,
+        StartscreenComponent,
+        PartyComponent,
+        SubpartyComponent,
+        TalkingInputComponent
+    ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpModule,
+        HotkeyModule.forRoot(),
+        RouterModule.forRoot(appRoutes)
+    ],
+    providers: [
+        {
+            provide: APP_INITIALIZER,
+            useFactory: useFactory,
+            deps: [ConfigService],
+            multi: true
+        },
+        ConfigService,
+        MapsService,
+        EntitiesService,
+        RenderableSystem,
+        TilesLoaderService,
+        ScenegraphService,
+        EntityFactoryService,
+        KeyboardinputSystem,
+        MovementSystem,
+        SavestateSystem,
+        DescriptionsService,
+        PartyService,
+        AiSystem,
+        TalkingService
+    ],
+    bootstrap: [AppComponent]
+})
 export class AppModule {
 }

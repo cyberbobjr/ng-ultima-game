@@ -93,6 +93,7 @@ export class KeyboardinputSystem {
     private _processKeyboardInputTalking(event: KeyboardEvent, entity: Entity) {
         switch (event.code) {
             case KEY_ESC :
+                entity.talkingState = talkingState.none;
                 this._descriptionService.addTextToInformation("Bye");
         }
     }
@@ -101,6 +102,9 @@ export class KeyboardinputSystem {
         let destEntity: Entity = this._entitiesService.getEntityAtPosition(destinationPosition);
         if (destEntity) {
             this._startConversationWithEntity(entity, destEntity);
+        } else {
+            entity.talkingState = talkingState.none;
+            this._descriptionService.addTextToInformation("What ?");
         }
     }
 
