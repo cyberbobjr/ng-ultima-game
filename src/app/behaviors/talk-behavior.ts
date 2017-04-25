@@ -93,8 +93,8 @@ export class TalkBehavior implements IBehavior {
     private _getAnswerForKeyword(keyword: string): string {
         let answer: string = null;
         for (let i = 1; i <= MAX_KEYWORDS; i++) {
-            let keywordTalk = _.toLower(this._talkTexts["keyword" + i]);
-            if (_.startsWith(keyword, keywordTalk)) {
+            let keywordTalk = _.trimEnd(_.toLower(this._talkTexts["keyword" + i]));
+            if (_.startsWith(_.trimEnd(keyword), keywordTalk)) {
                 // @ TODO : bad bad bad
                 this._questionIndex = 4 + i;
                 return this._talkTexts["answer" + i];
