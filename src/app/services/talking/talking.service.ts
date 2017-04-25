@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Entity, talkingState} from "../../classes/entity";
+import {Entity} from "../../classes/entity";
 import {TalkBehavior} from "../../behaviors/talk-behavior";
 import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
 import {DescriptionsService} from "../descriptions/descriptions.service";
@@ -20,7 +20,6 @@ export class TalkingService {
         this.talker$.next(entity);
         this.talker = entity;
         this._entityToTalk = entityToTalk;
-        entity.talkingState = talkingState.talking;
         this._loadTalkTo();
         this._stopAiMovementForEntityTalkTo();
         this._displayGreetings();
@@ -60,7 +59,6 @@ export class TalkingService {
     }
 
     stopConversation() {
-        this.talker.talkingState = talkingState.none;
         this._resumeAiMovementsForEntity(this._entityToTalk);
         this.talker = null;
         this.talker$.next(null);

@@ -4,16 +4,9 @@ import {Position} from "../classes/position";
 import {ITile} from "../interfaces/ITile";
 import {RenderableBehavior} from "../behaviors/renderable-behavior";
 import {DescriptionsService} from "../services/descriptions/descriptions.service";
-export enum talkingState {
-    none = 1,
-    askDirection,
-    talking,
-    askQuestion
-}
 
 export class Entity {
     name: string;
-    talkingState: talkingState = talkingState.none;
 
     private _behaviors: Map<string, IBehavior> = new Map();
 
@@ -57,6 +50,10 @@ export class Entity {
 
     get isDisplayInfo() {
         return this.hasBehavior("description");
+    }
+
+    get canEntityTalk() {
+        return this.hasBehavior("talk");
     }
 
     private _getRenderableTile(): ITile {

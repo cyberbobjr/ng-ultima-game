@@ -1,4 +1,4 @@
-import {Entity, talkingState} from "../classes/entity";
+import {Entity} from "../classes/entity";
 import {Injectable} from "@angular/core";
 import {MovableBehavior} from "../behaviors/movable-behavior";
 import {PositionBehavior} from "../behaviors/position-behavior";
@@ -8,8 +8,6 @@ import {ScenegraphService} from "../services/scene-graph/scenegraph.service";
 import {DescriptionsService} from "../services/descriptions/descriptions.service";
 import {IPortal} from "../interfaces/IPortal";
 import {EntitiesService} from "../services/entities/entities.service";
-import {AiMovementBehavior} from "../behaviors/ai-movement-behavior";
-import {TalkBehavior} from "../behaviors/talk-behavior";
 import {TalkingService} from "../services/talking/talking.service";
 
 const KEY_UP = "ArrowUp";
@@ -17,43 +15,38 @@ const KEY_DOWN = "ArrowDown";
 const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
 const KEY_E = "KeyE";
+const KEY_O = "KeyO";
 const KEY_T = "KeyT";
 const KEY_ESC = "Escape";
 
 @Injectable()
 export class KeyboardinputSystem {
+    private _cbKeyboardInputManager: (event: KeyboardEvent, entity: Entity) => void = this._cbProcessKeybordInputMovementManager;
+    private _cbProcessAfterAskDirection: (entity: Entity, destPosition: Position) => void;
 
     constructor(private _mapsService: MapsService,
                 private _sceneService: ScenegraphService,
                 private _descriptionService: DescriptionsService,
                 private _entitiesService: EntitiesService,
                 private _talkingService: TalkingService) {
+
+        this._talkingService.talker$.subscribe((talker: Entity) => {
+            if (!talker) {
+                this._setKeyboardInputManagerToDefault();
+            }
+        });
     }
 
     processKeyboardInput(event: KeyboardEvent) {
         this._mapsService.getEntitiesOnCurrentMap()
             .forEach((entity: Entity) => {
                 if (entity.hasBehavior("keycontrol")) {
-                    this._switchProcessKeyboardInput(event, entity);
+                    this._cbKeyboardInputManager(event, entity);
                 }
             });
     }
 
-    private _switchProcessKeyboardInput(event: KeyboardEvent, entity: Entity) {
-        switch (entity.talkingState) {
-            case talkingState.none :
-                this._processKeybordInputMovement(event, entity);
-                break;
-            case talkingState.askDirection :
-                this._processKeyboardInputAskDirection(event, entity);
-                break;
-            case talkingState.talking :
-                this._processKeyboardInputTalking(event, entity);
-                break;
-        }
-    }
-
-    private _processKeybordInputMovement(event: KeyboardEvent, entity: Entity) {
+    private _cbProcessKeybordInputMovementManager(event: KeyboardEvent, entity: Entity) {
         let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
         let entityPosition: Position = this._getEntityPosition(entity);
         switch (event.code) {
@@ -66,46 +59,47 @@ export class KeyboardinputSystem {
             case KEY_E:
                 this._processEnter(entity, entityPosition);
                 break;
+            case KEY_O:
+                this._askOpenDirection();
+                break;
             case KEY_T :
-                this._askTalkingDirection(entity);
+                this._askTalkingDirection();
                 break;
         }
     }
 
-    private _processKeyboardInputAskDirection(event: KeyboardEvent, entity: Entity) {
-        let entityPosition: Position = this._getEntityPosition(entity);
+    private _cbProcessKeyboardInputAskDirectionManager(event: KeyboardEvent, entity: Entity) {
         switch (event.code) {
             case KEY_UP :
             case KEY_DOWN:
             case KEY_LEFT:
             case KEY_RIGHT:
+                let entityPosition: Position = this._getEntityPosition(entity);
                 let vectorDirection: Position = this._getVectorDirectionForKey(event.code, entityPosition);
                 let destinationPositionAsk: Position = entityPosition.addVector(vectorDirection);
-                this._processAskTalkingToPosition(entity, destinationPositionAsk);
+                this._cbProcessAfterAskDirection(entity, destinationPositionAsk);
                 break;
             default :
-                entity.talkingState = talkingState.none;
                 this._descriptionService.addTextToInformation("You pass");
+                this._setKeyboardInputManagerToDefault();
                 break;
         }
     }
 
-    private _processKeyboardInputTalking(event: KeyboardEvent, entity: Entity) {
+    private _cbProcessKeyboardInputTalkingManager(event: KeyboardEvent, entity: Entity) {
         switch (event.code) {
             case KEY_ESC :
-                entity.talkingState = talkingState.none;
                 this._talkingService.stopConversation();
                 this._descriptionService.addTextToInformation("Bye");
         }
     }
 
-    private _processAskTalkingToPosition(entity: Entity, destinationPosition: Position) {
-        let destEntity: Entity = this._entitiesService.getEntityAtPosition(destinationPosition);
-        if (destEntity) {
-            this._startConversationWithEntity(entity, destEntity);
-        } else {
-            this._descriptionService.addTextToInformation("What ?");
+    private _getEntityAtPosition(position: Position): Entity {
+        let destEntity: Entity = this._entitiesService.getEntityAtPosition(position);
+        if (!destEntity) {
+            throw new Error("Funny, no response !");
         }
+        return destEntity;
     }
 
     private _getEntityPosition(entity: Entity): Position {
@@ -127,15 +121,11 @@ export class KeyboardinputSystem {
     }
 
     private _startConversationWithEntity(entity: Entity, entityToTalk: Entity) {
-        if (this._canEntityTalk(entityToTalk)) {
-            this._talkingService.startNewConversation(entity, entityToTalk);
-        } else {
-            this._descriptionService.addTextToInformation("Funny, no response !");
+        if (!entityToTalk.canEntityTalk) {
+            throw new Error("Funny, no response !");
         }
-    }
-
-    private _canEntityTalk(entity: Entity) {
-        return entity.hasBehavior("talk");
+        this._talkingService.startNewConversation(entity, entityToTalk);
+        this._cbKeyboardInputManager = this._cbProcessKeyboardInputTalkingManager;
     }
 
     private _processEnter(entity: Entity, position: Position) {
@@ -154,8 +144,34 @@ export class KeyboardinputSystem {
         }
     }
 
-    private _askTalkingDirection(entity: Entity) {
+    private _askTalkingDirection() {
         this._descriptionService.addTextToInformation("In wich direction ?");
-        entity.talkingState = talkingState.askDirection;
+        this._cbKeyboardInputManager = this._cbProcessKeyboardInputAskDirectionManager;
+        this._cbProcessAfterAskDirection = this._processAfterAskTalkingToPosition;
+    }
+
+    private _askOpenDirection() {
+        this._descriptionService.addTextToInformation("In wich direction ?");
+        this._cbKeyboardInputManager = this._cbProcessKeyboardInputAskDirectionManager;
+        this._cbProcessAfterAskDirection = this._processAfterAskOpenToPosition;
+    }
+
+    private _processAfterAskTalkingToPosition(entity: Entity, destinationPosition: Position) {
+        try {
+            let destEntity: Entity = this._getEntityAtPosition(destinationPosition);
+            this._startConversationWithEntity(entity, destEntity);
+        } catch (Error) {
+            this._descriptionService.addTextToInformation(Error.message);
+            this._setKeyboardInputManagerToDefault();
+        }
+    }
+
+    private _processAfterAskOpenToPosition(entity: Entity, destinationPosition: Position) {
+        this._descriptionService.addTextToInformation("ok done");
+        this._setKeyboardInputManagerToDefault();
+    }
+
+    private _setKeyboardInputManagerToDefault() {
+        this._cbKeyboardInputManager = this._cbProcessKeybordInputMovementManager;
     }
 }
