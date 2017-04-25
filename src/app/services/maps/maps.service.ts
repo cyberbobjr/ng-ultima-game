@@ -36,6 +36,12 @@ export class MapsService {
         }
     }
 
+    isTileAtPositionIsClosedDoor(position: Position): boolean {
+        let tileIndex: number = this.getTileIndexAtPosition(position);
+        let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
+        return this._tileloader.isTileClosedDoor(tile.name);
+    }
+
     isTileAtPositionIsOpaque(position: Position): boolean {
         let tileIndex: number = this.getTileIndexAtPosition(position);
         let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
@@ -128,5 +134,28 @@ export class MapsService {
 
     getAllMaps(): Array<IMapMetaData> {
         return this.mapsMetaData;
+    }
+
+    openDoorAtPosition(position: Position) {
+        try {
+            let floorTileIndex: number = this._tileloader.tileset.getTileIndexByName("brick_floor");
+            this._currentMap.setTileIndexAtPosition(floorTileIndex, position);
+
+            window.setTimeout(() => {
+                this.closeDoorAtPosition(position);
+            }, 1500);
+
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    closeDoorAtPosition(position: Position) {
+        try {
+            let doorTileIndex: number = this._tileloader.tileset.getTileIndexByName("door");
+            this._currentMap.setTileIndexAtPosition(doorTileIndex, position);
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 }

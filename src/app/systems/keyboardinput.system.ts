@@ -9,6 +9,8 @@ import {DescriptionsService} from "../services/descriptions/descriptions.service
 import {IPortal} from "../interfaces/IPortal";
 import {EntitiesService} from "../services/entities/entities.service";
 import {TalkingService} from "../services/talking/talking.service";
+import {ITile} from "../interfaces/ITile";
+import {TilesLoaderService} from "../services/tiles/tiles.service";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
@@ -28,7 +30,8 @@ export class KeyboardinputSystem {
                 private _sceneService: ScenegraphService,
                 private _descriptionService: DescriptionsService,
                 private _entitiesService: EntitiesService,
-                private _talkingService: TalkingService) {
+                private _talkingService: TalkingService,
+                private _tilesService: TilesLoaderService) {
 
         this._talkingService.talker$.subscribe((talker: Entity) => {
             if (!talker) {
@@ -167,7 +170,11 @@ export class KeyboardinputSystem {
     }
 
     private _processAfterAskOpenToPosition(entity: Entity, destinationPosition: Position) {
-        this._descriptionService.addTextToInformation("ok done");
+        if (this._mapsService.isTileAtPositionIsClosedDoor(destinationPosition)) {
+            this._mapsService.openDoorAtPosition(destinationPosition);
+        } else {
+
+        }
         this._setKeyboardInputManagerToDefault();
     }
 

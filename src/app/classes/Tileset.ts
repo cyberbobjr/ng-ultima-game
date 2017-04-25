@@ -50,4 +50,18 @@ export class Tileset implements ITileset {
     getTileAtIndex(index: number): ITile {
         return this._internalTilesIndices.get(index);
     }
+
+    getTileIndexByName(name: string): number {
+        let tileIndex: number = null;
+        this._internalTilesIndices.forEach((tile: ITile, keyIndex: number) => {
+            if (tile.name === name) {
+                tileIndex = keyIndex;
+            }
+        });
+        if (!tileIndex) {
+            throw new Error(`Tile ${name} not found`);
+        } else {
+            return tileIndex;
+        }
+    }
 }

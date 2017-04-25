@@ -51,4 +51,8 @@ export class GameMap {
     getEntitiesOnMap(): Array<Entity> {
         return this._entitiesOnMap;
     }
+
+    setTileIndexAtPosition(tileIndex: number, position: Position) {
+        this.mapData[position.row][position.col] = tileIndex;
+    }
 }

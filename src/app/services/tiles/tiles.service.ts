@@ -108,6 +108,12 @@ export class TilesLoaderService {
         return (cantwalkon !== "all");
     }
 
+    isTileClosedDoor(tileName: string): boolean {
+        let tile = this.getTileByName(tileName);
+        let rule = this._getRuleName(tile.rule);
+        return _.has(rule, "door");
+    }
+
     getTileSpeed(tileName: string): number {
         let tile = this.getTileByName(tileName);
         let rule = this._getRuleName(tile.rule);
