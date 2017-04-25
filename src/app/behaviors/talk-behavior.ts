@@ -81,10 +81,11 @@ export class TalkBehavior implements IBehavior {
     }
 
     private _parseKeyWord(question: string): string | Array<string> {
-        let answer: Array<string> = [this._getAnswerForKeyword(question)];
+        let answer: string = this._getAnswerForKeyword(question);
         if (answer && this._isYesNoQuestion(this._questionIndex)) {
             this._waitForAnswer = true;
-            answer.push(this._talkTexts["yesnoquestion"]);
+            return [answer,
+                    this._talkTexts["yesnoquestion"]];
         }
         return answer;
     }
