@@ -74,7 +74,7 @@ export class TilesLoaderService {
         return img;
     }
 
-    private _loadJsonTileDefinition(): Promise<Tileset> {
+    private _loadJsonTileDefinition(): Promise<ITileset> {
         return new Promise((resolve, reject) => {
             this._http.get("assets/tiles.json")
                 .subscribe((res) => {

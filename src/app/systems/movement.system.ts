@@ -11,6 +11,7 @@ import * as _ from "lodash";
 import {ITile} from "../interfaces/ITile";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
 import {EntitiesService} from "../services/entities/entities.service";
+import {IPortal} from "../interfaces/IPortal";
 const NORMAL_MOVE_SPEED = 1;
 
 @Injectable()
@@ -93,7 +94,8 @@ export class MovementSystem {
     }
 
     private _entityLeaveCity(entity: Entity, destinationPosition: Position) {
-        let newPosition: Position = this._mapService.getPositionOfPortalId(destinationPosition.mapId);
+        let portal: IPortal = this._mapService.getPortalInformationForMapIdPortal(destinationPosition.mapId, 0);
+        let newPosition: Position = this._mapService.getPositionOfPortal(portal);
         this._scenesService.setMapForEntity(entity, newPosition)
             .then(() => {
                 this._displayInformation(entity, "LEAVING...");

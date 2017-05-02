@@ -9,16 +9,17 @@ import {DescriptionsService} from "../services/descriptions/descriptions.service
 import {IPortal} from "../interfaces/IPortal";
 import {EntitiesService} from "../services/entities/entities.service";
 import {TalkingService} from "../services/talking/talking.service";
-import {ITile} from "../interfaces/ITile";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
 const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
-const KEY_E = "KeyE";
-const KEY_O = "KeyO";
-const KEY_T = "KeyT";
+const KEY_ENTER = "KeyE";
+const KEY_OPEN = "KeyO";
+const KEY_TALK = "KeyT";
+const KEY_KLIMB = "KeyK";
+const KEY_DESCEND = "KeyD";
 const KEY_ESC = "Escape";
 
 @Injectable()
@@ -59,14 +60,20 @@ export class KeyboardinputSystem {
             case KEY_RIGHT:
                 movableBehavior.moveTo(this._getVectorDirectionForKey(event.code, entityPosition));
                 break;
-            case KEY_E:
+            case KEY_ENTER:
                 this._processEnter(entity, entityPosition);
                 break;
-            case KEY_O:
+            case KEY_OPEN:
                 this._askOpenDirection();
                 break;
-            case KEY_T :
+            case KEY_TALK :
                 this._askTalkingDirection();
+                break;
+            case KEY_KLIMB:
+                this._processAction(entity, entityPosition, "klimb");
+                break;
+            case KEY_DESCEND:
+                this._processAction(entity, entityPosition, "descend");
                 break;
         }
     }
@@ -133,18 +140,37 @@ export class KeyboardinputSystem {
 
     private _processEnter(entity: Entity, position: Position) {
         try {
-            let portal: IPortal = this._mapsService.getPortalForPosition(position);
-            let destMapId = parseInt(portal.destmapid, 10);
-            let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformationByPortalId(destMapId);
-            let newPosition = new Position(parseInt(portalInformation.starty, 10), parseInt(portalInformation.startx, 10), destMapId);
-            this._sceneService.setMapForEntity(entity, newPosition)
-                .then(() => {
-                    let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(destMapId);
+            this._changeMapForEntity(entity, position)
+                .then((portalInformation: IPortal) => {
+                    let mapMetaData = <any>this._mapsService.getMapMetadataByMapId(parseInt(portalInformation.destmapid, 10));
                     this._descriptionService.addTextToInformation(`Enter ${mapMetaData.city.name}!`);
                 });
         } catch (error) {
             this._descriptionService.addTextToInformation("WHAT ???");
         }
+    }
+
+    private _processAction(entity: Entity, position: Position, action: string) {
+        try {
+
+            this._changeMapForEntity(entity, position)
+                .then((portalInformation: IPortal) => {
+                    if (portalInformation.action === action) {
+                        this._descriptionService.addTextToInformation(portalInformation.message!);
+                    }
+                });
+        } catch (error) {
+            this._descriptionService.addTextToInformation("WHAT ???");
+        }
+    }
+
+    private _changeMapForEntity(entity: Entity, entityPosition: Position): Promise<IPortal> {
+        let portal: IPortal = this._mapsService.getPortalForPosition(entityPosition);
+        let destMapId = parseInt(portal.destmapid, 10);
+        let destinationPosition = new Position(parseInt(portal.starty, 10), parseInt(portal.startx, 10), destMapId);
+        return this._sceneService.setMapForEntity(entity, destinationPosition).then(() => {
+            return portal;
+        });
     }
 
     private _askTalkingDirection() {
@@ -172,8 +198,9 @@ export class KeyboardinputSystem {
     private _processAfterAskOpenToPosition(entity: Entity, destinationPosition: Position) {
         if (this._mapsService.isTileAtPositionIsClosedDoor(destinationPosition)) {
             this._mapsService.openDoorAtPosition(destinationPosition);
+            this._descriptionService.addTextToInformation("Door open");
         } else {
-
+            this._descriptionService.addTextToInformation("No door!");
         }
         this._setKeyboardInputManagerToDefault();
     }
