@@ -117,7 +117,7 @@ export class MapsService {
         return new Position(parseInt(portalInformation.y, 10), parseInt(portalInformation.x, 10), 0);
     }
 
-    getPortalInformationForMapIdPortal(mapIdDestination: number, mapIdContainPortal: number = 0): IPortal {
+    getPortalInformationForMapId(mapIdDestination: number, mapIdContainPortal: number = 0): IPortal {
         let metaData: any = this.getMapMetadataByMapId(mapIdContainPortal);
         return _.find(metaData.portal, {"destmapid": mapIdDestination.toString()});
     }

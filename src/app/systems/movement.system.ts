@@ -94,7 +94,7 @@ export class MovementSystem {
     }
 
     private _entityLeaveCity(entity: Entity, destinationPosition: Position) {
-        let portal: IPortal = this._mapService.getPortalInformationForMapIdPortal(destinationPosition.mapId, 0);
+        let portal: IPortal = this._mapService.getPortalInformationForMapId(destinationPosition.mapId, 0);
         let newPosition: Position = this._mapService.getPositionOfPortal(portal);
         this._scenesService.setMapForEntity(entity, newPosition)
             .then(() => {
