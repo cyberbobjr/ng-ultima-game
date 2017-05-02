@@ -189,12 +189,14 @@ export class KeyboardinputSystem {
     }
 
     private _processAfterAskOpenToPosition(entity: Entity, destinationPosition: Position) {
+        let message: string = "";
         if (this._mapsService.isTileAtPositionIsClosedDoor(destinationPosition)) {
             this._mapsService.openDoorAtPosition(destinationPosition);
-            this._descriptionService.addTextToInformation("Door open");
+            message = "Door open";
         } else {
-            this._descriptionService.addTextToInformation("No door!");
+            message = "No door!";
         }
+        this._descriptionService.addTextToInformation(message);
         this._setKeyboardInputManagerToDefault();
     }
 
