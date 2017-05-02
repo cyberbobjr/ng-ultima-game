@@ -31,8 +31,7 @@ export class KeyboardinputSystem {
                 private _sceneService: ScenegraphService,
                 private _descriptionService: DescriptionsService,
                 private _entitiesService: EntitiesService,
-                private _talkingService: TalkingService,
-                private _tilesService: TilesLoaderService) {
+                private _talkingService: TalkingService) {
 
         this._talkingService.talker$.subscribe((talker: Entity) => {
             if (!talker) {
@@ -53,6 +52,7 @@ export class KeyboardinputSystem {
     private _cbProcessKeybordInputMovementManager(event: KeyboardEvent, entity: Entity) {
         let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
         let entityPosition: Position = this._getEntityPosition(entity);
+        console.log(entityPosition);
         switch (event.code) {
             case KEY_UP :
             case KEY_DOWN:
@@ -104,9 +104,9 @@ export class KeyboardinputSystem {
         }
     }
 
-    private _getEntityAtPosition(position: Position): Entity {
+    private _getTalkingEntityAtPosition(position: Position): Entity {
         let destEntity: Entity = this._entitiesService.getEntityAtPosition(position);
-        if (!destEntity) {
+        if (!destEntity || !destEntity.canEntityTalk) {
             throw new Error("Funny, no response !");
         }
         return destEntity;
@@ -128,14 +128,6 @@ export class KeyboardinputSystem {
             case KEY_RIGHT:
                 return destPosition.getVectorRight();
         }
-    }
-
-    private _startConversationWithEntity(entity: Entity, entityToTalk: Entity) {
-        if (!entityToTalk.canEntityTalk) {
-            throw new Error("Funny, no response !");
-        }
-        this._talkingService.startNewConversation(entity, entityToTalk);
-        this._cbKeyboardInputManager = this._cbProcessKeyboardInputTalkingManager;
     }
 
     private _processEnter(entity: Entity, position: Position) {
@@ -187,8 +179,9 @@ export class KeyboardinputSystem {
 
     private _processAfterAskTalkingToPosition(entity: Entity, destinationPosition: Position) {
         try {
-            let destEntity: Entity = this._getEntityAtPosition(destinationPosition);
-            this._startConversationWithEntity(entity, destEntity);
+            let destEntity: Entity = this._getTalkingEntityAtPosition(destinationPosition);
+            this._talkingService.startNewConversation(entity, destEntity);
+            this._cbKeyboardInputManager = this._cbProcessKeyboardInputTalkingManager;
         } catch (Error) {
             this._descriptionService.addTextToInformation(Error.message);
             this._setKeyboardInputManagerToDefault();
