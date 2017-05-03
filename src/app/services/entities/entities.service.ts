@@ -7,13 +7,18 @@ import {IMapMetaData} from "../../interfaces/IMap";
 import {EntityFactoryService} from "../entityFactory/entityFactory.service";
 import {TalkBehavior} from "../../behaviors/talk-behavior";
 import {INpc, ITalkTexts} from "../../interfaces/INpc";
+import {VendorTalkBehavior} from "../../behaviors/vendor-talk-behavior";
+import {IVendorItem} from "../../interfaces/IVendorItem";
+import {IVendorInfo} from "../../interfaces/IVendorInfo";
 
 @Injectable()
 export class EntitiesService {
     private _entitiesForAllMaps: Map<number, Array<Entity>> = new Map();
     private _player: Entity;
+    private _vendors: any;
 
     constructor(private _entityFactory: EntityFactoryService) {
+        this._loadVendorFile();
     }
 
     addEntityForMapId(entity: Entity, mapId: number) {
@@ -69,6 +74,15 @@ export class EntitiesService {
             });
     }
 
+    private _loadVendorFile() {
+        return fetch("/assets/npcs/vendors.json")
+            .then((res: any) => {
+                return res.json();
+            }).then((jsonValue: any) => {
+                this._vendors = jsonValue;
+            });
+    }
+
     loadAllEntitiesForMaps(maps: Array<IMapMetaData>): Promise<boolean> {
         return _.map(maps, (map: IMapMetaData) => {
             return new Promise((resolve, reject) => {
@@ -96,7 +110,23 @@ export class EntitiesService {
             if (_.has(npc, "talks") && _.size(npc["talks"]) > 0) {
                 entity.addBehavior(new TalkBehavior(entity, <INpc>npc));
             }
+            if (_.has(npc, "vendor")) {
+                let vendorInfo: IVendorInfo = this._getVendorInfo(mapMetaData.city.name, npc["vendor"]);
+                entity.addBehavior(new VendorTalkBehavior(entity, <INpc>npc, vendorInfo));
+            }
             this.addEntityForMapId(entity, mapMetaData.id);
         });
+    }
+
+    private _getVendorInfo(mapName: string, vendorType: string): IVendorInfo {
+        let vendorForMap: IVendorInfo = null;
+        let allVendorsForType: any = _.find(this._vendors, {id: vendorType});
+        if (allVendorsForType) {
+            vendorForMap = _.find(allVendorsForType["vendor"], {id: mapName});
+            if (vendorForMap) {
+                vendorForMap.inventory = <Array<IVendorItem>>vendorForMap[allVendorsForType["noun"]];
+            }
+        }
+        return vendorForMap;
     }
 }

@@ -114,6 +114,12 @@ export class TilesLoaderService {
         return _.has(rule, "door");
     }
 
+    isTileTalkOver(tileName: string): boolean {
+        let tile = this.getTileByName(tileName);
+        let rule = this._getRuleName(tile.rule);
+        return _.has(rule, "talkover");
+    }
+
     getTileSpeed(tileName: string): number {
         let tile = this.getTileByName(tileName);
         let rule = this._getRuleName(tile.rule);

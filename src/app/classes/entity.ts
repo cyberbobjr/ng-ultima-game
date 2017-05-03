@@ -53,7 +53,7 @@ export class Entity {
     }
 
     get canEntityTalk() {
-        return this.hasBehavior("talk");
+        return (this.hasBehavior("talk") || this.hasBehavior("vendortalk"));
     }
 
     private _getRenderableTile(): ITile {

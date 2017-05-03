@@ -20,19 +20,21 @@ export class TalkingService {
         this.talker$.next(entity);
         this.talker = entity;
         this._entityToTalk = entityToTalk;
-        this._loadTalkTo();
+        this._loadTalkWith(entity);
         this._stopAiMovementForEntityTalkTo();
         this._displayGreetings();
+        this._subscribeToEndConversationFromEntity();
     }
 
-    private _loadTalkTo() {
+    private _loadTalkWith(entity: Entity) {
         this._talkerToBehavior = <TalkBehavior>this._entityToTalk.getBehavior("talk");
+        this._talkerToBehavior.talkTo = entity;
     }
 
     parseInputTalking(conversation: string): string | Array<string> {
         if (_.toLower(conversation) === "bye") {
             this.stopConversation();
-            return "Bye";
+            return this._talkerToBehavior.bye;
         } else {
             return this._talkerToBehavior.parseInput(conversation);
         }
@@ -65,4 +67,11 @@ export class TalkingService {
         this._entityToTalk = null;
     }
 
+    private _subscribeToEndConversationFromEntity() {
+        this._talkerToBehavior.stopConversationFlag$.subscribe((stop: boolean) => {
+            if (stop) {
+                this.stopConversation();
+            }
+        });
+    }
 }

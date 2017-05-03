@@ -36,6 +36,12 @@ export class MapsService {
         }
     }
 
+    isTileAtPositionIsTalkOver(position: Position): boolean {
+        let tileIndex: number = this.getTileIndexAtPosition(position);
+        let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
+        return this._tileloader.isTileTalkOver(tile.name);
+    }
+
     isTileAtPositionIsClosedDoor(position: Position): boolean {
         let tileIndex: number = this.getTileIndexAtPosition(position);
         let tile: ITile = this._tileloader.getTileByIndex(tileIndex);

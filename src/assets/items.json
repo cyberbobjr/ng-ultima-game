@@ -1,0 +1,342 @@
+{
+    "armors": [
+        {
+            "name": "Skin",
+            "defense": "96"
+        },
+        {
+            "name": "Cloth",
+            "defense": "128"
+        },
+        {
+            "name": "Leather",
+            "defense": "144",
+            "constraint": {
+                "canuse": "false",
+                "class": "mage"
+            }
+        },
+        {
+            "name": "Chain Mail",
+            "defense": "160",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "fighter"
+                },
+                {
+                    "canuse": "true",
+                    "class": "tinker"
+                },
+                {
+                    "canuse": "true",
+                    "class": "paladin"
+                }
+            ]
+        },
+        {
+            "name": "Plate Mail",
+            "defense": "176",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "fighter"
+                },
+                {
+                    "canuse": "true",
+                    "class": "tinker"
+                },
+                {
+                    "canuse": "true",
+                    "class": "paladin"
+                }
+            ]
+        },
+        {
+            "name": "Magic Chain",
+            "defense": "192",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "fighter"
+                },
+                {
+                    "canuse": "true",
+                    "class": "paladin"
+                }
+            ]
+        },
+        {
+            "name": "Magic Plate",
+            "defense": "208",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "paladin"
+                }
+            ]
+        },
+        {
+            "name": "Mystic Robe",
+            "defense": "248"
+        }
+    ],
+    "weapons": [
+        {
+            "name": "Hands",
+            "abbr": "HND",
+            "range": "1",
+            "damage": "8"
+        },
+        {
+            "name": "Staff",
+            "abbr": "STF",
+            "range": "1",
+            "damage": "16"
+        },
+        {
+            "name": "Dagger",
+            "abbr": "DAG",
+            "range": "10",
+            "damage": "24",
+            "losewhenranged": "true"
+        },
+        {
+            "name": "Sling",
+            "abbr": "SLN",
+            "range": "10",
+            "damage": "32"
+        },
+        {
+            "name": "Mace",
+            "abbr": "MAC",
+            "range": "1",
+            "damage": "40",
+            "constraint": {
+                "canuse": "false",
+                "class": "mage"
+            }
+        },
+        {
+            "name": "Axe",
+            "abbr": "AXE",
+            "range": "1",
+            "damage": "48",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "mage"
+                },
+                {
+                    "canuse": "false",
+                    "class": "druid"
+                }
+            ]
+        },
+        {
+            "name": "Sword",
+            "abbr": "SWD",
+            "range": "1",
+            "damage": "64",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "mage"
+                },
+                {
+                    "canuse": "false",
+                    "class": "druid"
+                }
+            ]
+        },
+        {
+            "name": "Bow",
+            "abbr": "BOW",
+            "range": "10",
+            "damage": "40",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "mage"
+                },
+                {
+                    "canuse": "false",
+                    "class": "shepherd"
+                }
+            ]
+        },
+        {
+            "name": "Crossbow",
+            "abbr": "XBO",
+            "range": "10",
+            "damage": "56",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "mage"
+                },
+                {
+                    "canuse": "false",
+                    "class": "shepherd"
+                }
+            ]
+        },
+        {
+            "name": "Flaming Oil",
+            "abbr": "OIL",
+            "range": "9",
+            "damage": "64",
+            "lose": "true",
+            "choosedistance": "true",
+            "leavetile": "fire_field"
+        },
+        {
+            "name": "Halberd",
+            "abbr": "HAL",
+            "absolute_range": "2",
+            "attackthroughobjects": "true",
+            "damage": "96",
+            "dontshowtravel": "true",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "fighter"
+                },
+                {
+                    "canuse": "true",
+                    "class": "tinker"
+                },
+                {
+                    "canuse": "true",
+                    "class": "paladin"
+                }
+            ]
+        },
+        {
+            "name": "Magic Axe",
+            "abbr": "+AX",
+            "range": "10",
+            "returns": "true",
+            "damage": "96",
+            "magic": "true",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "tinker"
+                },
+                {
+                    "canuse": "true",
+                    "class": "paladin"
+                }
+            ]
+        },
+        {
+            "name": "Magic Sword",
+            "abbr": "+SW",
+            "range": "1",
+            "damage": "128",
+            "magic": "true",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "fighter"
+                },
+                {
+                    "canuse": "true",
+                    "class": "tinker"
+                },
+                {
+                    "canuse": "true",
+                    "class": "paladin"
+                },
+                {
+                    "canuse": "true",
+                    "class": "ranger"
+                }
+            ]
+        },
+        {
+            "name": "Magic Bow",
+            "abbr": "+BO",
+            "range": "10",
+            "damage": "80",
+            "magic": "true",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "mage"
+                },
+                {
+                    "canuse": "false",
+                    "class": "fighter"
+                },
+                {
+                    "canuse": "false",
+                    "class": "shepherd"
+                }
+            ]
+        },
+        {
+            "name": "Magic Wand",
+            "abbr": "WND",
+            "range": "10",
+            "damage": "160",
+            "magic": "true",
+            "hittile": "magic_flash",
+            "misstile": "magic_flash",
+            "constraint": [
+                {
+                    "canuse": "false",
+                    "class": "all"
+                },
+                {
+                    "canuse": "true",
+                    "class": "mage"
+                },
+                {
+                    "canuse": "true",
+                    "class": "bard"
+                },
+                {
+                    "canuse": "true",
+                    "class": "druid"
+                }
+            ]
+        },
+        {
+            "name": "Mystic Sword",
+            "abbr": "^SW",
+            "range": "1",
+            "damage": "255",
+            "magic": "true"
+        }
+    ]
+}

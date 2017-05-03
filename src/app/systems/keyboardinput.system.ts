@@ -25,7 +25,7 @@ const KEY_ESC = "Escape";
 @Injectable()
 export class KeyboardinputSystem {
     private _cbKeyboardInputManager: (event: KeyboardEvent, entity: Entity) => void = this._cbProcessKeybordInputMovementManager;
-    private _cbProcessAfterAskDirection: (entity: Entity, destPosition: Position) => void;
+    private _cbProcessAfterAskDirection: (entity: Entity, direction: Position) => void;
 
     constructor(private _mapsService: MapsService,
                 private _sceneService: ScenegraphService,
@@ -52,7 +52,6 @@ export class KeyboardinputSystem {
     private _cbProcessKeybordInputMovementManager(event: KeyboardEvent, entity: Entity) {
         let movableBehavior = <MovableBehavior>entity.getBehavior("movable");
         let entityPosition: Position = this._getEntityPosition(entity);
-        console.log(entityPosition);
         switch (event.code) {
             case KEY_UP :
             case KEY_DOWN:
@@ -86,8 +85,7 @@ export class KeyboardinputSystem {
             case KEY_RIGHT:
                 let entityPosition: Position = this._getEntityPosition(entity);
                 let vectorDirection: Position = this._getVectorDirectionForKey(event.code, entityPosition);
-                let destinationPositionAsk: Position = entityPosition.addVector(vectorDirection);
-                this._cbProcessAfterAskDirection(entity, destinationPositionAsk);
+                this._cbProcessAfterAskDirection(entity, vectorDirection);
                 break;
             default :
                 this._descriptionService.addTextToInformation("You pass");
@@ -104,8 +102,12 @@ export class KeyboardinputSystem {
         }
     }
 
-    private _getTalkingEntityAtPosition(position: Position): Entity {
-        let destEntity: Entity = this._entitiesService.getEntityAtPosition(position);
+    private _getTalkingEntityAtPosition(entityFromPosition: Position, direction: Position): Entity {
+        let destinationPosition: Position = entityFromPosition.addVector(direction);
+        if (this._mapsService.isTileAtPositionIsTalkOver(destinationPosition)) {
+            destinationPosition = destinationPosition.addVector(direction);
+        }
+        let destEntity: Entity = this._entitiesService.getEntityAtPosition(destinationPosition);
         if (!destEntity || !destEntity.canEntityTalk) {
             throw new Error("Funny, no response !");
         }
@@ -177,9 +179,10 @@ export class KeyboardinputSystem {
         this._cbProcessAfterAskDirection = this._processAfterAskOpenToPosition;
     }
 
-    private _processAfterAskTalkingToPosition(entity: Entity, destinationPosition: Position) {
+    private _processAfterAskTalkingToPosition(entity: Entity, direction: Position) {
         try {
-            let destEntity: Entity = this._getTalkingEntityAtPosition(destinationPosition);
+            let entityPosition: Position = this._getEntityPosition(entity);
+            let destEntity: Entity = this._getTalkingEntityAtPosition(entityPosition, direction);
             this._talkingService.startNewConversation(entity, destEntity);
             this._cbKeyboardInputManager = this._cbProcessKeyboardInputTalkingManager;
         } catch (Error) {
@@ -188,8 +191,10 @@ export class KeyboardinputSystem {
         }
     }
 
-    private _processAfterAskOpenToPosition(entity: Entity, destinationPosition: Position) {
+    private _processAfterAskOpenToPosition(entity: Entity, direction: Position) {
         let message: string = "";
+        let entityPosition: Position = this._getEntityPosition(entity);
+        let destinationPosition: Position = entityPosition.addVector(direction);
         if (this._mapsService.isTileAtPositionIsClosedDoor(destinationPosition)) {
             this._mapsService.openDoorAtPosition(destinationPosition);
             message = "Door open";

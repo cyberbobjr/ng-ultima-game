@@ -581,7 +581,8 @@
         "x_pos1": 5,
         "y_pos1": 8,
         "move": 1,
-        "role": "armourvendor"
+        "role": "vendor",
+        "vendor": "Armor"
     },
     {
         "tlk_id": 0,
@@ -589,7 +590,8 @@
         "x_pos1": 5,
         "y_pos1": 2,
         "move": 128,
-        "role": "weaponvendor"
+        "role": "vendor",
+        "vendor": "Weapons"
     },
     {
         "tlk_id": 3,
