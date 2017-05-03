@@ -4,4 +4,5 @@ export interface IVendorInfo {
     name: string;
     owner: string;
     inventory: Array<IVendorItem>;
+    tellAbout: Array<{ choice: string, text: string }>;
 }

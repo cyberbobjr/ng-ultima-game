@@ -2,7 +2,6 @@ import {IBehavior} from "../interfaces/IBehavior";
 import {INpc, ITalkTexts} from "../interfaces/INpc";
 import {Entity} from "../classes/entity";
 import * as _ from "lodash";
-import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 const MAX_KEYWORDS = 2;
 export enum questionsOrder  {

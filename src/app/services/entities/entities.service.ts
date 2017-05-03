@@ -125,6 +125,7 @@ export class EntitiesService {
             vendorForMap = _.find(allVendorsForType["vendor"], {id: mapName});
             if (vendorForMap) {
                 vendorForMap.inventory = <Array<IVendorItem>>vendorForMap[allVendorsForType["noun"]];
+                vendorForMap.tellAbout = allVendorsForType["tell_about"];
             }
         }
         return vendorForMap;
