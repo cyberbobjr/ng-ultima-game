@@ -5,7 +5,6 @@ import {Position} from "../classes/position";
 import {PositionBehavior} from "./position-behavior";
 import * as _ from "lodash";
 
-const WANDER_MVT = 0;
 const TIMER_INTERVAL_SECONDS = 2000;
 export enum movementType {
     fixed = 0,

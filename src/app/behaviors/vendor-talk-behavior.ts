@@ -5,13 +5,16 @@ import {TalkBehavior} from "./talk-behavior";
 import * as _ from "lodash";
 import {IVendorItem} from "../interfaces/IVendorItem";
 import {InventoryBehavior} from "./inventory-behavior";
+import {PartyBehavior} from "./party-behavior";
 
 enum talkStatus {
     start = 0,
     wait_for_buy_or_sell,
     wait_for_item_buying_choice,
     wait_for_item_selling_choice,
-    wait_for_take_it
+    wait_for_take_it,
+    wait_how_many_to_buy,
+    wait_for_anything_else
 }
 
 export class VendorTalkBehavior extends TalkBehavior {
@@ -49,8 +52,12 @@ export class VendorTalkBehavior extends TalkBehavior {
         this._talkStatut = talkStatus.wait_for_buy_or_sell;
         return [
             `Welcome to ${this._vendorInfo.name}!`,
-            `${this._vendorInfo.owner} says: Welcome friend! Art thou here to Buy or Sell?`
+            this._getBuyOrSellQuestion()
         ];
+    }
+
+    private _getBuyOrSellQuestion(): string {
+        return `${this._vendorInfo.owner} says: Welcome friend! Art thou here to Buy or Sell?`;
     }
 
     parseInput(inputText: string): string | Array<string> {
@@ -66,6 +73,13 @@ export class VendorTalkBehavior extends TalkBehavior {
                 answer = this._parseBuyItemChoice(lowerInputText);
                 break;
             case talkStatus.wait_for_take_it:
+                answer = this._parseTakeIt(lowerInputText);
+                break;
+            case talkStatus.wait_how_many_to_buy:
+                answer = this._parseHowManyToBuy(lowerInputText);
+                break;
+            case talkStatus.wait_for_anything_else:
+                answer = this._parseAnythingElse(lowerInputText);
                 break;
         }
         return answer;
@@ -111,25 +125,29 @@ export class VendorTalkBehavior extends TalkBehavior {
 
     private _processBuyingItem(item: IVendorItem): string | Array<string> {
         let answer: string | Array<string> = "";
-        let gold: number = this._getEntityGold();
+        let gold: number = this._getEntityGold(this._talkTo);
         switch (this._howManyItemCanAfford(item, gold)) {
             case 0 :
                 throw new Error("You have not the funds for even one!");
             case 1 :
-                answer = [this._getItemAboutInformation(item)];
+                answer = [this._getInformationForItem(item)];
                 answer.push("Take it?");
                 this._itemTransaction = item;
                 this._talkStatut = talkStatus.wait_for_take_it;
                 break;
             default :
-                return this._getItemAboutInformation(item);
+                answer = [this._getInformationForItem(item)];
+                answer.push("How many would you like?");
+                this._itemTransaction = item;
+                this._talkStatut = talkStatus.wait_how_many_to_buy;
+                break;
         }
         return answer;
     }
 
-    private _getEntityGold(): number {
-        let inventoryBehavior: InventoryBehavior = <InventoryBehavior>this._talkTo.getBehavior("inventory");
-        return inventoryBehavior ? inventoryBehavior.gold : 0;
+    private _getEntityGold(entity: Entity): number {
+        return entity.hasBehavior("party") ?
+            (<PartyBehavior>entity.getBehavior("party")).partyGold : (<InventoryBehavior>entity.getBehavior("inventory")).gold;
     }
 
     private _getItemByChoice(choice: string): IVendorItem {
@@ -144,8 +162,45 @@ export class VendorTalkBehavior extends TalkBehavior {
         return Math.floor(playerGold / item.price);
     }
 
-    private _getItemAboutInformation(item: IVendorItem): string {
+    private _getInformationForItem(item: IVendorItem): string {
         let tellAbout = _.find(this._vendorInfo.tellAbout, {choice: item.choice});
         return _.replace(tellAbout.text, "{price}", item.price);
+    }
+
+    private _parseTakeIt(inputText: string): string | Array<string> {
+        switch (inputText[0]) {
+            case "y":
+                this._talkStatut = talkStatus.wait_for_anything_else;
+                return [`${this._vendorInfo.name} says: A fine choice!`,
+                        "Anything else?"];
+            case "n" :
+                this._talkStatut = talkStatus.wait_for_anything_else;
+                return ["Too bad.",
+                        "Anything else?"];
+            default :
+                return "Yes Or No !";
+        }
+    }
+
+    private _parseHowManyToBuy(inputText: string): string | Array<string> {
+        if (!_.isNumber(inputText)) {
+            return "What ?";
+        }
+        let totalAmount: number = this._itemTransaction.price * inputText;
+
+    }
+
+    private _parseAnythingElse(inputText: string): string | Array<string> {
+        switch (inputText[0]) {
+            case "y" :
+                this._talkStatut = talkStatus.wait_for_buy_or_sell;
+                return this._getBuyOrSellQuestion();
+            case "n":
+                this._talkStatut = talkStatus.wait_for_buy_or_sell;
+                this._endConversation();
+                return this.bye;
+            default :
+                return "Yes Or No !";
+        }
     }
 }

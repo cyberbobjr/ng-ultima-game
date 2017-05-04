@@ -144,4 +144,8 @@ export class TalkBehavior implements IBehavior {
     private _getNoAnswer() {
         return this._talkTexts["noanswer"];
     }
+
+    protected _endConversation() {
+        this.stopConversationFlag$.next(true);
+    }
 }

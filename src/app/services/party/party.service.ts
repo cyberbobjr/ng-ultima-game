@@ -14,7 +14,7 @@ export class PartyService {
         }).share();
     }
 
-    addMember(entityToAdd: Entity) {
+    addLeader(entityToAdd: Entity) {
         this.party.push(entityToAdd);
         this.observer.next(this.party);
     }
@@ -23,7 +23,7 @@ export class PartyService {
 
     }
 
-    getMembers(): Array<Entity> {
+    get members(): Array<Entity> {
         return this.party;
     }
 }

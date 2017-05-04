@@ -12,6 +12,10 @@ export class InventoryBehavior implements IBehavior {
         return this._gold;
     }
 
+    set gold(amount) {
+        this._gold = amount;
+    }
+
     tick(PerformanceNow: number) {
 
     }
