@@ -50,6 +50,14 @@ Available Soon :
 - Conversation
 - Inventory
 
+## Keymap :
+Available commands :
+- Arrows => move
+- E : enter city
+- K : Klimb stairs
+- D : Descend stairs
+- T : Talk to NPC
+
 ## Licence
 This project is under GNU GENERAL PUBLIC LICENS, see licence.txt for details
 Some assets comes from XU4 - https://sourceforge.net/projects/xu4/
