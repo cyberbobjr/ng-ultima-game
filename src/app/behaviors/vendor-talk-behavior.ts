@@ -186,7 +186,7 @@ export class VendorTalkBehavior extends TalkBehavior {
         if (!_.isNumber(inputText)) {
             return "What ?";
         }
-        let totalAmount: number = this._itemTransaction.price * inputText;
+        let totalAmount: number = this._itemTransaction.price * parseInt(inputText, 10);
 
     }
 
