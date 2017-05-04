@@ -185,14 +185,14 @@ export class VendorTalkBehavior extends TalkBehavior {
             return "What ?";
         }
         let totalAmount: number = this._itemTransaction.price * input;
+        this._talkStatut = talkStatus.wait_for_anything_else;
         if (totalAmount > this._getEntityGold(this._talkTo)) {
-            this._talkStatut = talkStatus.wait_for_anything_else;
-            return [
-                "I fear you have not the funds, perhaps something else.",
-                "Anything else?"
-            ];
+            return ["I fear you have not the funds, perhaps something else.",
+                    "Anything else?"];
         } else {
             this._removeGoldToParty(totalAmount);
+            return [`${this._vendorInfo.name} says: A fine choice!`,
+                    "Anything else?"];
         }
     }
 
