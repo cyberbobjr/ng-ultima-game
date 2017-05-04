@@ -1,0 +1,25 @@
+input {
+    width: 100%;
+    background-color: black;
+    color: white;
+    font-size: large;
+    font-family: "avatar", sans-serif;
+    border: none;
+}
+
+.wrapper {
+    display: flex;
+}
+
+.text {
+    align-self: center;
+    margin-right: 10px;
+}
+
+.input-box {
+    align-self: center;
+}
+
+i.fa {
+    color : aqua;
+}

@@ -27,4 +27,20 @@ export class Position {
     isEqual(positionToCompare: Position): boolean {
         return (positionToCompare.row === this.row && positionToCompare.col === this.col && _.toInteger(positionToCompare.mapId) === _.toInteger(this.mapId));
     }
+
+    getVectorUp(): Position {
+        return new Position(-1, 0, this.mapId);
+    }
+
+    getVectorDown(): Position {
+        return new Position(1, 0, this.mapId);
+    }
+
+    getVectorLeft(): Position {
+        return new Position(0, -1, this.mapId);
+    }
+
+    getVectorRight(): Position {
+        return new Position(0, +1, this.mapId);
+    }
 }

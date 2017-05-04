@@ -1,16 +1,16 @@
-export interface ITalk {
-    answer1: string,
-    answer2: string,
-    heal: string,
-    job: string,
-    keyword1: string,
-    keyword2: string,
-    look: string,
-    name: string,
-    pronoun: string,
-    yesanswer: string,
-    noanswer: string,
-    yesnoquestion: string
+export interface ITalkTexts {
+    answer1: string;
+    answer2: string;
+    heal: string;
+    job: string;
+    keyword1: string;
+    keyword2: string;
+    look: string;
+    name: string;
+    pronoun: string;
+    yesanswer: string;
+    noanswer: string;
+    yesnoquestion: string;
 }
 
 export interface INpc {
@@ -23,5 +23,5 @@ export interface INpc {
     turningaway: number;
     x_pos1: number;
     y_pos1: number;
-    talks: ITalk;
+    talks: ITalkTexts;
 }

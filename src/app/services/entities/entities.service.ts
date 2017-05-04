@@ -6,14 +6,19 @@ import * as _ from "lodash";
 import {IMapMetaData} from "../../interfaces/IMap";
 import {EntityFactoryService} from "../entityFactory/entityFactory.service";
 import {TalkBehavior} from "../../behaviors/talk-behavior";
-import {INpc, ITalk} from "../../interfaces/INpc";
+import {INpc, ITalkTexts} from "../../interfaces/INpc";
+import {VendorTalkBehavior} from "../../behaviors/vendor-talk-behavior";
+import {IVendorItem} from "../../interfaces/IVendorItem";
+import {IVendorInfo} from "../../interfaces/IVendorInfo";
 
 @Injectable()
 export class EntitiesService {
     private _entitiesForAllMaps: Map<number, Array<Entity>> = new Map();
     private _player: Entity;
+    private _vendors: any;
 
     constructor(private _entityFactory: EntityFactoryService) {
+        this._loadVendorFile();
     }
 
     addEntityForMapId(entity: Entity, mapId: number) {
@@ -50,12 +55,31 @@ export class EntitiesService {
         });
     }
 
+    getEntityAtPosition(position: Position): Entity {
+        let entities: Array<Entity> = this.getEntitiesForMapId(position.mapId);
+        return _.find(entities, (entity: Entity) => {
+            if (position.isEqual(entity.getPosition())) {
+                return entity;
+            }
+        });
+    }
+
     private _loadTlkFile(tlkFilename: string) {
         return fetch("/assets/npcs/" + tlkFilename)
-            .then((res) => {
+            .then((res: any) => {
+                return res.json();
+            })
+            .then((jsonValue: any) => {
+                return <Array<INpc>>jsonValue;
+            });
+    }
+
+    private _loadVendorFile() {
+        return fetch("/assets/npcs/vendors.json")
+            .then((res: any) => {
                 return res.json();
             }).then((jsonValue: any) => {
-                return <Array<INpc>>jsonValue;
+                this._vendors = jsonValue;
             });
     }
 
@@ -83,10 +107,27 @@ export class EntitiesService {
                 name = npc.talks.name;
             }
             let entity = this._entityFactory.createNpc(entityPosition, npc.tile1, name, npc.move);
-            if (_.has(npc, "talks")) {
-                entity.addBehavior(new TalkBehavior(<ITalk>npc.talks));
+            if (_.has(npc, "talks") && _.size(npc["talks"]) > 0) {
+                entity.addBehavior(new TalkBehavior(entity, <INpc>npc));
+            }
+            if (_.has(npc, "vendor")) {
+                let vendorInfo: IVendorInfo = this._getVendorInfo(mapMetaData.city.name, npc["vendor"]);
+                entity.addBehavior(new VendorTalkBehavior(entity, <INpc>npc, vendorInfo));
             }
             this.addEntityForMapId(entity, mapMetaData.id);
         });
+    }
+
+    private _getVendorInfo(mapName: string, vendorType: string): IVendorInfo {
+        let vendorForMap: IVendorInfo = null;
+        let allVendorsForType: any = _.find(this._vendors, {id: vendorType});
+        if (allVendorsForType) {
+            vendorForMap = _.find(allVendorsForType["vendor"], {id: mapName});
+            if (vendorForMap) {
+                vendorForMap.inventory = <Array<IVendorItem>>vendorForMap[allVendorsForType["noun"]];
+                vendorForMap.tellAbout = allVendorsForType["tell_about"];
+            }
+        }
+        return vendorForMap;
     }
 }

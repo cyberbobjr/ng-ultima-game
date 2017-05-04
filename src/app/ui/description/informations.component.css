@@ -14,3 +14,11 @@ li::before {
     content: "• ";
     color: blue; /* or whatever color you prefer */
 }
+
+.white {
+    color: white;
+}
+
+.yellow {
+    color: yellow;
+}

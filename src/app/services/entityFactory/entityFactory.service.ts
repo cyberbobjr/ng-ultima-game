@@ -13,12 +13,17 @@ import {AiMovementBehavior} from "../../behaviors/ai-movement-behavior";
 import {DescriptionBehavior} from "../../behaviors/description-behavior";
 import {TravelcityBehavior} from "../../behaviors/travelcity-behavior";
 import {CollideBehavior} from "../../behaviors/collide-behavior";
+import {TalkBehavior} from "../../behaviors/talk-behavior";
+import {InventoryBehavior} from "../../behaviors/inventory-behavior";
+import {PartyBehavior} from "../../behaviors/party-behavior";
+import {PartyService} from "../party/party.service";
 
 @Injectable()
 export class EntityFactoryService {
     player: Entity = null;
 
-    constructor(private _tileloaderService: TilesLoaderService) {
+    constructor(private _tileloaderService: TilesLoaderService,
+                private _partyService: PartyService) {
     }
 
     createOrLoadPlayer(): Promise<Entity> {
@@ -33,6 +38,9 @@ export class EntityFactoryService {
                 this.player.addBehavior(new DescriptionBehavior());
                 this.player.addBehavior(new CollideBehavior());
                 this.player.addBehavior(new TravelcityBehavior());
+                this.player.addBehavior(new TalkBehavior(this.player));
+                this.player.addBehavior(new InventoryBehavior());
+                this.player.addBehavior(new PartyBehavior(this.player, this._partyService));
                 resolve(this.player);
             }
         );

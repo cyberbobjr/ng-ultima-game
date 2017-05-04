@@ -11,6 +11,7 @@ import * as _ from "lodash";
 import {ITile} from "../interfaces/ITile";
 import {TilesLoaderService} from "../services/tiles/tiles.service";
 import {EntitiesService} from "../services/entities/entities.service";
+import {IPortal} from "../interfaces/IPortal";
 const NORMAL_MOVE_SPEED = 1;
 
 @Injectable()
@@ -27,7 +28,7 @@ export class MovementSystem {
         this._mapService.getEntitiesOnCurrentMap()
             .forEach((entity: Entity) => {
                 if (entity.hasBehavior("movable") && this._isEntityMoving(entity)) {
-                    this._processEntityMovements(entity);
+                    this._processMovementsForEntity(entity);
                 }
             });
         return entities;
@@ -42,8 +43,8 @@ export class MovementSystem {
         return (vectorDirection.col !== 0 || vectorDirection.row !== 0);
     }
 
-    private _processEntityMovements(entity: Entity) {
-        let destinationPosition = this._getEntityDestinationPosition(entity);
+    private _processMovementsForEntity(entity: Entity) {
+        let destinationPosition = this._getDestinationPositionForEntity(entity);
         if (this._canWalkAtDestinationPosition(entity, destinationPosition)) {
             this._processWalkablePosition(entity, destinationPosition);
         } else {
@@ -93,14 +94,15 @@ export class MovementSystem {
     }
 
     private _entityLeaveCity(entity: Entity, destinationPosition: Position) {
-        let newPosition: Position = this._mapService.getPositionOfPortalId(destinationPosition.mapId);
+        let portal: IPortal = this._mapService.getPortalInformationForMapId(destinationPosition.mapId, 0);
+        let newPosition: Position = this._mapService.getPositionOfPortal(portal);
         this._scenesService.setMapForEntity(entity, newPosition)
             .then(() => {
                 this._displayInformation(entity, "LEAVING...");
             });
     }
 
-    private _getEntityDestinationPosition(entity): Position {
+    private _getDestinationPositionForEntity(entity): Position {
         let entityDirection = <MovableBehavior>entity.getBehavior("movable");
         let currentEntityPosition = <PositionBehavior>entity.getBehavior("position");
         return currentEntityPosition.position.addVector(entityDirection.vector);

@@ -74,7 +74,7 @@ export class TilesLoaderService {
         return img;
     }
 
-    private _loadJsonTileDefinition(): Promise<Tileset> {
+    private _loadJsonTileDefinition(): Promise<ITileset> {
         return new Promise((resolve, reject) => {
             this._http.get("assets/tiles.json")
                 .subscribe((res) => {
@@ -106,6 +106,18 @@ export class TilesLoaderService {
         let cantwalkon = _.get(rule, "cantwalkon");
 
         return (cantwalkon !== "all");
+    }
+
+    isTileClosedDoor(tileName: string): boolean {
+        let tile = this.getTileByName(tileName);
+        let rule = this._getRuleName(tile.rule);
+        return _.has(rule, "door");
+    }
+
+    isTileTalkOver(tileName: string): boolean {
+        let tile = this.getTileByName(tileName);
+        let rule = this._getRuleName(tile.rule);
+        return _.has(rule, "talkover");
     }
 
     getTileSpeed(tileName: string): number {

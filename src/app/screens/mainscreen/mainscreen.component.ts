@@ -34,7 +34,6 @@ export class MainscreenComponent implements OnInit {
                 private _keyboardinputSystem: KeyboardinputSystem,
                 private _savestateSystem: SavestateSystem,
                 private _informationsService: DescriptionsService,
-                private _partyService: PartyService,
                 private _aiSystem: AiSystem) {
     }
 
@@ -52,7 +51,6 @@ export class MainscreenComponent implements OnInit {
                    .then((player: Entity) => {
                        let positionPlayer = player.getPosition();
                        this._entitiesService.addPlayer(player);
-                       this._partyService.addMember(player);
                        this._sceneService.setCenterCameraOnEntity(player);
                        return this._sceneService.setMapForEntity(player, positionPlayer);
                    });

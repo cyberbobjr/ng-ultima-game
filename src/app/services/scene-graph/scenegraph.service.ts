@@ -228,7 +228,7 @@ export class ScenegraphService {
     }
 
     enterInCity(entity: Entity, mapId: number) {
-        let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformationByPortalId(mapId);
+        let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformationForMapId(mapId);
         this.setMapForEntity(entity, new Position(parseInt(portalInformation.starty, 10), parseInt(portalInformation.startx, 10), mapId));
     }
 }

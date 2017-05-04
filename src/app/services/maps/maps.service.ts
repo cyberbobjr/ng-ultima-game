@@ -36,6 +36,18 @@ export class MapsService {
         }
     }
 
+    isTileAtPositionIsTalkOver(position: Position): boolean {
+        let tileIndex: number = this.getTileIndexAtPosition(position);
+        let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
+        return this._tileloader.isTileTalkOver(tile.name);
+    }
+
+    isTileAtPositionIsClosedDoor(position: Position): boolean {
+        let tileIndex: number = this.getTileIndexAtPosition(position);
+        let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
+        return this._tileloader.isTileClosedDoor(tile.name);
+    }
+
     isTileAtPositionIsOpaque(position: Position): boolean {
         let tileIndex: number = this.getTileIndexAtPosition(position);
         let tile: ITile = this._tileloader.getTileByIndex(tileIndex);
@@ -90,7 +102,7 @@ export class MapsService {
             });
     }
 
-    private _getPortalInPosition(portals: Array<IPortal>, position: Position): IPortal | undefined {
+    private _getPortalForPosition(portals: Array<IPortal>, position: Position): IPortal | undefined {
         return _.find(portals, (portal: IPortal) => {
             return (parseInt(portal.x, 10) === position.col && parseInt(portal.y, 10) === position.row);
         });
@@ -99,7 +111,7 @@ export class MapsService {
     getPortalForPosition(position: Position): IPortal {
         let metaData: any = this.getMapMetadataByMapId(position.mapId);
         let portals = metaData.portal;
-        let portal = this._getPortalInPosition(portals, position);
+        let portal = this._getPortalForPosition(portals, position);
         if (portal) {
             return portal;
         } else {
@@ -107,14 +119,13 @@ export class MapsService {
         }
     }
 
-    getPositionOfPortalId(portalId: number): Position {
-        let portalInformation = this.getPortalInformationByPortalId(portalId);
+    getPositionOfPortal(portalInformation: IPortal): Position {
         return new Position(parseInt(portalInformation.y, 10), parseInt(portalInformation.x, 10), 0);
     }
 
-    getPortalInformationByPortalId(portalId: number): IPortal {
-        let metaData: any = this.getMapMetadataByMapId(0);
-        return _.find(metaData.portal, {"destmapid": portalId.toString()});
+    getPortalInformationForMapId(mapIdDestination: number, mapIdContainPortal: number = 0): IPortal {
+        let metaData: any = this.getMapMetadataByMapId(mapIdContainPortal);
+        return _.find(metaData.portal, {"destmapid": mapIdDestination.toString()});
     }
 
     getCurrentMap(): GameMap {
@@ -128,5 +139,28 @@ export class MapsService {
 
     getAllMaps(): Array<IMapMetaData> {
         return this.mapsMetaData;
+    }
+
+    openDoorAtPosition(position: Position) {
+        try {
+            let floorTileIndex: number = this._tileloader.tileset.getTileIndexByName("brick_floor");
+            this._currentMap.setTileIndexAtPosition(floorTileIndex, position);
+
+            window.setTimeout(() => {
+                this.closeDoorAtPosition(position);
+            }, 1500);
+
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    closeDoorAtPosition(position: Position) {
+        try {
+            let doorTileIndex: number = this._tileloader.tileset.getTileIndexByName("door");
+            this._currentMap.setTileIndexAtPosition(doorTileIndex, position);
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 }
