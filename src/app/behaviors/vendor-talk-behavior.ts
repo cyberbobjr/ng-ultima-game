@@ -32,10 +32,6 @@ export class VendorTalkBehavior extends TalkBehavior {
 
     }
 
-    set talkTo(entity: Entity) {
-        this._talkTo = entity;
-    }
-
     get talkTo(): Entity {
         return this._talkTo;
     }
@@ -93,7 +89,8 @@ export class VendorTalkBehavior extends TalkBehavior {
             case "s" :
                 return "Excellent! Which wouldst";
             default :
-                this.stopConversationFlag$.next(true);
+                this._endConversation();
+                this._talkStatut = talkStatus.wait_for_buy_or_sell;
                 return "Tu viendras me revoir quand tu sauras ce que tu veux !";
         }
     }
@@ -147,7 +144,7 @@ export class VendorTalkBehavior extends TalkBehavior {
 
     private _getEntityGold(entity: Entity): number {
         return entity.hasBehavior("party") ?
-            (<PartyBehavior>entity.getBehavior("party")).partyGold : (<InventoryBehavior>entity.getBehavior("inventory")).gold;
+               (<PartyBehavior>entity.getBehavior("party")).partyGold : (<InventoryBehavior>entity.getBehavior("inventory")).gold;
     }
 
     private _getItemByChoice(choice: string): IVendorItem {
@@ -183,11 +180,17 @@ export class VendorTalkBehavior extends TalkBehavior {
     }
 
     private _parseHowManyToBuy(inputText: string): string | Array<string> {
-        if (!_.isNumber(inputText)) {
+        let input = parseInt(inputText, 10);
+        if (!_.isNumber(input)) {
             return "What ?";
         }
-        let totalAmount: number = this._itemTransaction.price * parseInt(inputText, 10);
+        let totalAmount: number = this._itemTransaction.price * input;
+        this._removeGoldToParty(totalAmount);
+    }
 
+    private _removeGoldToParty(totalAmount: number) {
+        let partyBehavior: PartyBehavior = <PartyBehavior>this._talkTo.getBehavior("inventtory");
+        partyBehavior.removeGold(totalAmount);
     }
 
     private _parseAnythingElse(inputText: string): string | Array<string> {

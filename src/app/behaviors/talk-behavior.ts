@@ -42,11 +42,6 @@ export class TalkBehavior implements IBehavior {
 
     }
 
-    // @TODO : replace with behavior properties
-    set talkTo(entity: Entity) {
-        this._talkTo = entity;
-    }
-
     get talkTo(): Entity {
         return this._talkTo;
     }
@@ -147,5 +142,10 @@ export class TalkBehavior implements IBehavior {
 
     protected _endConversation() {
         this.stopConversationFlag$.next(true);
+    }
+
+    startConversationWith(entity: Entity) {
+        this._talkTo = entity;
+        this.stopConversationFlag$.next(false);
     }
 }
