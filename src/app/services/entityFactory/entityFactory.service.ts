@@ -28,21 +28,21 @@ export class EntityFactoryService {
 
     createOrLoadPlayer(): Promise<Entity> {
         return new Promise((resolve, reject) => {
-                this.player = new Entity("Avatar");
-                this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));
-                this.player.addBehavior(new PositionBehavior(this._getEntityPosition("player")));
-                this.player.addBehavior(new HealthBehavior(100));
-                this.player.addBehavior(new MovableBehavior());
-                this.player.addBehavior(new SavestateBehavior("player"));
-                this.player.addBehavior(new KeycontrolBehavior());
-                this.player.addBehavior(new DescriptionBehavior());
-                this.player.addBehavior(new CollideBehavior());
-                this.player.addBehavior(new TravelcityBehavior());
-                this.player.addBehavior(new TalkBehavior(this.player));
-                this.player.addBehavior(new InventoryBehavior());
-                this.player.addBehavior(new PartyBehavior(this.player, this._partyService));
-                resolve(this.player);
-            }
+                               this.player = new Entity("Avatar");
+                               this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));
+                               this.player.addBehavior(new PositionBehavior(this._getEntityPosition("player")));
+                               this.player.addBehavior(new HealthBehavior(100));
+                               this.player.addBehavior(new MovableBehavior());
+                               this.player.addBehavior(new SavestateBehavior("player"));
+                               this.player.addBehavior(new KeycontrolBehavior());
+                               this.player.addBehavior(new DescriptionBehavior());
+                               this.player.addBehavior(new CollideBehavior());
+                               this.player.addBehavior(new TravelcityBehavior());
+                               this.player.addBehavior(new TalkBehavior(this.player));
+                               this.player.addBehavior(new InventoryBehavior());
+                               this.player.addBehavior(new PartyBehavior(this.player, this._partyService));
+                               resolve(this.player);
+                           }
         );
     }
 
@@ -69,5 +69,9 @@ export class EntityFactoryService {
         newEntity.addBehavior(new CollideBehavior());
         newEntity.addBehavior(new AiMovementBehavior(newEntity, movementType));
         return newEntity;
+    }
+
+    createItem(itemName: string): Entity {
+        return new Entity(itemName);
     }
 }

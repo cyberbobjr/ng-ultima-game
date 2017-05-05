@@ -8,15 +8,15 @@ import {ScenegraphService} from "app/services/scene-graph/scenegraph.service";
 import {KeyboardinputSystem} from "../../systems/keyboardinput.system";
 import {SavestateSystem} from "../../systems/savestate.system";
 import {DescriptionsService} from "../../services/descriptions/descriptions.service";
-import {PartyService} from "../../services/party/party.service";
 import {ActivatedRoute} from "@angular/router";
 import {AiSystem} from "../../systems/ai.system";
+import {InventorySystem} from "../../systems/inventory.system";
 
 @Component({
-    selector: "app-mainscreen",
-    templateUrl: "./mainscreen.component.html",
-    styleUrls: ["./mainscreen.component.css"]
-})
+               selector: "app-mainscreen",
+               templateUrl: "./mainscreen.component.html",
+               styleUrls: ["./mainscreen.component.css"]
+           })
 export class MainscreenComponent implements OnInit {
     isMapReady: boolean = false;
     gameLoop: any;
@@ -34,7 +34,8 @@ export class MainscreenComponent implements OnInit {
                 private _keyboardinputSystem: KeyboardinputSystem,
                 private _savestateSystem: SavestateSystem,
                 private _informationsService: DescriptionsService,
-                private _aiSystem: AiSystem) {
+                private _aiSystem: AiSystem,
+                private _inventorySystem: InventorySystem) {
     }
 
     ngOnInit() {
@@ -68,6 +69,7 @@ export class MainscreenComponent implements OnInit {
             this._renderableSystem.processTick();
             this._aiSystem.processAiBehavior();
             this._movementSystem.processMovementsBehavior();
+            this._inventorySystem.processInventoryBehavior();
             this._sceneService.refresh();
         }, 250);
     }

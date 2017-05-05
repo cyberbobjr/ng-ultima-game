@@ -27,6 +27,7 @@ import {ConfigService} from "./services/config/config.service";
 import {AiSystem} from "app/systems/ai.system";
 import {FocusInput, TalkingInputComponent} from "./ui/talking-input/talking-input.component";
 import {TalkingService} from "app/services/talking/talking.service";
+import {InventorySystem} from "./systems/inventory.system";
 
 const appRoutes: Routes = [
     {path: "main", component: StartscreenComponent},
@@ -38,47 +39,48 @@ export function useFactory(service: ConfigService) {
 }
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        MapComponent,
-        InformationsComponent,
-        MainscreenComponent,
-        StartscreenComponent,
-        PartyComponent,
-        SubpartyComponent,
-        TalkingInputComponent,
-        FocusInput
-    ],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        HttpModule,
-        HotkeyModule.forRoot(),
-        RouterModule.forRoot(appRoutes)
-    ],
-    providers: [
-        {
-            provide: APP_INITIALIZER,
-            useFactory: useFactory,
-            deps: [ConfigService],
-            multi: true
-        },
-        ConfigService,
-        MapsService,
-        EntitiesService,
-        RenderableSystem,
-        TilesLoaderService,
-        ScenegraphService,
-        EntityFactoryService,
-        KeyboardinputSystem,
-        MovementSystem,
-        SavestateSystem,
-        DescriptionsService,
-        PartyService,
-        AiSystem,
-        TalkingService
-    ],
-    bootstrap: [AppComponent]
-})
+              declarations: [
+                  AppComponent,
+                  MapComponent,
+                  InformationsComponent,
+                  MainscreenComponent,
+                  StartscreenComponent,
+                  PartyComponent,
+                  SubpartyComponent,
+                  TalkingInputComponent,
+                  FocusInput
+              ],
+              imports: [
+                  BrowserModule,
+                  FormsModule,
+                  HttpModule,
+                  HotkeyModule.forRoot(),
+                  RouterModule.forRoot(appRoutes)
+              ],
+              providers: [
+                  {
+                      provide: APP_INITIALIZER,
+                      useFactory: useFactory,
+                      deps: [ConfigService],
+                      multi: true
+                  },
+                  ConfigService,
+                  MapsService,
+                  EntitiesService,
+                  RenderableSystem,
+                  TilesLoaderService,
+                  ScenegraphService,
+                  EntityFactoryService,
+                  KeyboardinputSystem,
+                  MovementSystem,
+                  SavestateSystem,
+                  InventorySystem,
+                  DescriptionsService,
+                  PartyService,
+                  AiSystem,
+                  TalkingService
+              ],
+              bootstrap: [AppComponent]
+          })
 export class AppModule {
 }

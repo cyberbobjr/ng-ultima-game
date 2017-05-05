@@ -81,6 +81,8 @@ export class VendorTalkBehavior extends TalkBehavior {
         return answer;
     }
 
+    /// BUY CHOICE
+
     private _parseBuySellAnswer(inputText: string): string | Array<string> {
         switch (inputText[0]) {
             case "b":
@@ -168,6 +170,7 @@ export class VendorTalkBehavior extends TalkBehavior {
         switch (inputText[0]) {
             case "y":
                 this._talkStatut = talkStatus.wait_for_anything_else;
+                this._giveItemToParty(this._itemTransaction, 1);
                 return [`${this._vendorInfo.name} says: A fine choice!`,
                         "Anything else?"];
             case "n" :
@@ -176,6 +179,13 @@ export class VendorTalkBehavior extends TalkBehavior {
                         "Anything else?"];
             default :
                 return "Yes Or No !";
+        }
+    }
+
+    private _giveItemToParty(item: IVendorItem, qty: number) {
+        let inventoryBehavior: InventoryBehavior = <InventoryBehavior>this._talkTo.getBehavior("inventory");
+        if (inventoryBehavior) {
+            inventoryBehavior.factoryItem(item.name, qty);
         }
     }
 
@@ -191,6 +201,7 @@ export class VendorTalkBehavior extends TalkBehavior {
                     "Anything else?"];
         } else {
             this._removeGoldToParty(totalAmount);
+            this._giveItemToParty(this._itemTransaction, input);
             return [`${this._vendorInfo.name} says: A fine choice!`,
                     "Anything else?"];
         }
@@ -214,4 +225,7 @@ export class VendorTalkBehavior extends TalkBehavior {
                 return "Yes Or No !";
         }
     }
+
+    /// SELL CHOICE
+
 }
