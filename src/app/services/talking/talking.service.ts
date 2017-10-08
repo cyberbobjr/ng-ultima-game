@@ -14,11 +14,14 @@ export class TalkingService {
     private _talkerToBehavior: TalkBehavior = null;
 
     constructor(private _descriptionService: DescriptionsService) {
+        this.talker$
+            .subscribe((talker: Entity) => {
+                this.talker = talker;
+            });
     }
 
     startNewConversation(entity: Entity, entityToTalk: Entity) {
         this.talker$.next(entity);
-        this.talker = entity;
         this._entityToTalk = entityToTalk;
         this._loadTalkWith(entity);
         this._stopAiMovementForEntity(this._entityToTalk);
@@ -31,19 +34,34 @@ export class TalkingService {
         this._talkerToBehavior.startConversationWith(entity);
     }
 
+    private _stopAiMovementForEntity(entityToTalk: Entity) {
+        let aiMovementBehavior: AiMovementBehavior = <AiMovementBehavior>entityToTalk.getBehavior("aimovement");
+        if (aiMovementBehavior) {
+            aiMovementBehavior.stopAiMovement();
+        }
+    }
+
+    private _displayGreetings() {
+        this._descriptionService.addTextToInformation(this._talkerToBehavior.description);
+        this._descriptionService.addTextToInformation(this._talkerToBehavior.greetings);
+    }
+
+    private _subscribeToEndConversationFromEntity() {
+        this._talkerToBehavior
+            .stopConversationFlag$
+            .subscribe((stop: boolean) => {
+                if (stop) {
+                    this.stopConversation();
+                }
+            });
+    }
+
     parseInputTalking(conversation: string): string | Array<string> {
         if (_.toLower(conversation) === "bye") {
             this.stopConversation();
             return this._talkerToBehavior.bye;
         } else {
             return this._talkerToBehavior.parseInput(conversation);
-        }
-    }
-
-    private _stopAiMovementForEntity(entityToTalk: Entity) {
-        let aiMovementBehavior: AiMovementBehavior = <AiMovementBehavior>entityToTalk.getBehavior("aimovement");
-        if (aiMovementBehavior) {
-            aiMovementBehavior.stopAiMovement();
         }
     }
 
@@ -54,23 +72,8 @@ export class TalkingService {
         }
     }
 
-    private _displayGreetings() {
-        let talkBehavior: TalkBehavior = <TalkBehavior>this._entityToTalk.getBehavior("talk");
-        this._descriptionService.addTextToInformation(talkBehavior.description);
-        this._descriptionService.addTextToInformation(talkBehavior.greetings);
-    }
-
     stopConversation() {
         this._resumeAiMovementsForEntity(this._entityToTalk);
-        this.talker = null;
         this.talker$.next(null);
-    }
-
-    private _subscribeToEndConversationFromEntity() {
-        this._talkerToBehavior.stopConversationFlag$.subscribe((stop: boolean) => {
-            if (stop) {
-                this.stopConversation();
-            }
-        });
     }
 }

@@ -60,10 +60,8 @@ export class TalkBehavior implements IBehavior {
 
     parseInput(inputText: string): string | Array<string> {
         let lowerInputText: string = _.toLower(inputText);
-        if (this._waitForAnswer) {
-            return this._parseYesNoAnswer(lowerInputText);
-        }
-        let answer: string | Array<string> = this._checkInputForKeywordAndQuestion(lowerInputText);
+        let answer: string | Array<string>;
+        answer = (this._waitForAnswer) ? this._parseYesNoAnswer(lowerInputText) : this._checkInputForKeywordAndQuestion(lowerInputText);
         return answer ? answer : "That I Cannot help thee with.";
     }
 
@@ -115,21 +113,16 @@ export class TalkBehavior implements IBehavior {
     }
 
     private _parseYesNoAnswer(answer: string): string {
-        let result: string = null;
         switch (answer) {
             case "yes" :
                 this._waitForAnswer = false;
-                result = this._getYesAnswer();
-                break;
+                return this._getYesAnswer();
             case "no":
                 this._waitForAnswer = false;
-                result = this._getNoAnswer();
-                break;
+                return this._getNoAnswer();
             default :
-                result = "Yes or No !";
-                break;
+                return "Yes or No !";
         }
-        return result;
     }
 
     private _getYesAnswer() {

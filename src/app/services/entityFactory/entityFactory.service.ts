@@ -30,7 +30,7 @@ export class EntityFactoryService {
         return new Promise((resolve, reject) => {
                                this.player = new Entity("Avatar");
                                this.player.addBehavior(new RenderableBehavior(this._tileloaderService.getTileByName("avatar")));
-                               this.player.addBehavior(new PositionBehavior(this._getEntityPosition("player")));
+                               this.player.addBehavior(new PositionBehavior(this._getEntityPositionByName("player")));
                                this.player.addBehavior(new HealthBehavior(100));
                                this.player.addBehavior(new MovableBehavior());
                                this.player.addBehavior(new SavestateBehavior("player"));
@@ -46,7 +46,7 @@ export class EntityFactoryService {
         );
     }
 
-    private _getEntityPosition(entityName: string): Position {
+    private _getEntityPositionByName(entityName: string): Position {
         let entityPosition = this._getEntityPositionInStorage(entityName);
         if (!entityPosition) {
             entityPosition = new Position(104, 85);

@@ -7,7 +7,7 @@ export class PartyBehavior implements IBehavior {
     name = "party";
 
     constructor(private _entityLeader: Entity, private _partyService: PartyService) {
-        this._partyService.addLeader(this._entityLeader);
+        this._partyService.addMember(this._entityLeader);
     }
 
     tick(PerformanceNow: number) {

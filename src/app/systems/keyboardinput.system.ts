@@ -9,7 +9,6 @@ import {DescriptionsService} from "../services/descriptions/descriptions.service
 import {IPortal} from "../interfaces/IPortal";
 import {EntitiesService} from "../services/entities/entities.service";
 import {TalkingService} from "../services/talking/talking.service";
-import {TilesLoaderService} from "../services/tiles/tiles.service";
 
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
@@ -97,7 +96,7 @@ export class KeyboardinputSystem {
     private _cbProcessKeyboardInputTalkingManager(event: KeyboardEvent, entity: Entity) {
         switch (event.code) {
             case KEY_ESC :
-                this._talkingService.stopConversation();
+                this._talkingService.parseInputTalking("bye");
                 this._descriptionService.addTextToInformation("Bye");
         }
     }
@@ -162,9 +161,10 @@ export class KeyboardinputSystem {
         let portal: IPortal = this._mapsService.getPortalForPosition(entityPosition);
         let destMapId = parseInt(portal.destmapid, 10);
         let destinationPosition = new Position(parseInt(portal.starty, 10), parseInt(portal.startx, 10), destMapId);
-        return this._sceneService.setMapForEntity(entity, destinationPosition).then(() => {
-            return portal;
-        });
+        return this._sceneService.setMapForEntity(entity, destinationPosition)
+                   .then(() => {
+                       return portal;
+                   });
     }
 
     private _askTalkingDirection() {

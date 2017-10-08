@@ -8,22 +8,22 @@ export class PartyService {
     party$: Observable<Array<Entity>>;
     observer: any;
 
+    get members(): Array<Entity> {
+        return this.party;
+    }
+
     constructor() {
         this.party$ = new Observable((observer) => {
             this.observer = observer;
         }).share();
     }
 
-    addLeader(entityToAdd: Entity) {
+    addMember(entityToAdd: Entity) {
         this.party.push(entityToAdd);
         this.observer.next(this.party);
     }
 
     removeMember(entityToRemove: Entity) {
 
-    }
-
-    get members(): Array<Entity> {
-        return this.party;
     }
 }
