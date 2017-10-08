@@ -65,6 +65,19 @@ export class TalkBehavior implements IBehavior {
         return answer ? answer : "That I Cannot help thee with.";
     }
 
+    private _parseYesNoAnswer(answer: string): string {
+        switch (answer) {
+            case "yes" :
+                this._waitForAnswer = false;
+                return this._getYesAnswer();
+            case "no":
+                this._waitForAnswer = false;
+                return this._getNoAnswer();
+            default :
+                return "Yes or No !";
+        }
+    }
+
     private _checkInputForKeywordAndQuestion(playerInput: string): string | Array<string> {
         let answer: string | Array<string>;
         answer = this._parseKeyWord(playerInput);
@@ -87,7 +100,7 @@ export class TalkBehavior implements IBehavior {
 
     private _parseKeyWord(question: string): string | Array<string> {
         let answer: string = this._getAnswerForKeyword(question);
-        if (answer && this._isYesNoQuestion(this._questionIndex)) {
+        if (answer && this._isYesNoQuestion(question)) {
             this._waitForAnswer = true;
             return [answer,
                     this._talkTexts["yesnoquestion"]];
@@ -108,21 +121,19 @@ export class TalkBehavior implements IBehavior {
         return null;
     }
 
-    private _isYesNoQuestion(questionIndex: number): boolean {
-        return (this._npc.flag === questionIndex);
-    }
-
-    private _parseYesNoAnswer(answer: string): string {
-        switch (answer) {
-            case "yes" :
-                this._waitForAnswer = false;
-                return this._getYesAnswer();
-            case "no":
-                this._waitForAnswer = false;
-                return this._getNoAnswer();
-            default :
-                return "Yes or No !";
+    private _isYesNoQuestion(keyword: string): boolean {
+        let questionIndex: number;
+        for (let i = 1; i <= MAX_KEYWORDS; i++) {
+            let keywordTalk = _.trimEnd(_.toLower(this._talkTexts["keyword" + i]));
+            if (_.startsWith(_.trimEnd(keyword), keywordTalk)) {
+                // @ TODO : bad bad bad
+                questionIndex = 4 + i;
+                if (this._npc.flag === questionIndex) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     private _getYesAnswer() {
