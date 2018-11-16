@@ -38,13 +38,6 @@ export class ScenegraphService {
         }
     }
 
-
-    setMap(cameraStartPosition?: Position) {
-        if (cameraStartPosition !== undefined) {
-            this.cameraStartPosition = cameraStartPosition;
-        }
-    }
-
     getVisiblesTilesAtPositions(position: Position): Array<ITile> {
         return this.visibleWindow[position.row][position.col];
     }
@@ -225,10 +218,5 @@ export class ScenegraphService {
                        this.refresh();
                        return true;
                    });
-    }
-
-    enterInCity(entity: Entity, mapId: number) {
-        let portalInformation: IPortal = <IPortal>this._mapsService.getPortalInformationForMapId(mapId);
-        this.setMapForEntity(entity, new Position(parseInt(portalInformation.starty, 10), parseInt(portalInformation.startx, 10), mapId));
     }
 }
