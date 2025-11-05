@@ -29,6 +29,7 @@ export class GameScene extends Phaser.Scene {
   private fogGraphics: Phaser.GameObjects.Graphics | null = null
   private currentMapWidth: number = 0
   private currentMapHeight: number = 0
+  private isLoadingMap: boolean = false // Flag pour bloquer updateVisibility pendant le chargement
 
   // Sprites pour les entités
   private entitySprites: Map<string, Phaser.GameObjects.Sprite> = new Map()
@@ -112,6 +113,9 @@ export class GameScene extends Phaser.Scene {
     console.time(`⏱️  Total loadMap(${mapId})`)
     console.log(`GameScene: Loading map ${mapId}...`)
 
+    // Bloquer updateVisibility pendant le chargement
+    this.isLoadingMap = true
+
     // Charger la carte via le store
     console.time('  ↳ mapStore.loadMapByMapId')
     const gameMap = await this.mapStore.loadMapByMapId(mapId)
@@ -180,6 +184,9 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, worldWidth, worldHeight)
     this.physics.world.setBounds(0, 0, worldWidth, worldHeight)
     console.timeEnd('  ↳ setup camera bounds')
+
+    // Débloquer updateVisibility maintenant que le chargement est terminé
+    this.isLoadingMap = false
 
     console.timeEnd(`⏱️  Total loadMap(${mapId})`)
     console.log(`GameScene: Map ${mapId} loaded (${width}x${height})`)
@@ -364,6 +371,11 @@ export class GameScene extends Phaser.Scene {
    * Met à jour la visibilité du champ de vision (FOV)
    */
   private updateVisibility(): void {
+    // Ne pas mettre à jour la visibilité pendant le chargement d'une carte
+    if (this.isLoadingMap) {
+      return
+    }
+
     if (!this.fogGraphics) {
       console.warn('⚠️  fogGraphics is null!')
       return
