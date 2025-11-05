@@ -9,6 +9,7 @@ import { AISystem } from '@/game/ecs/systems/AISystem'
 import { KeyboardInputSystem } from '@/game/ecs/systems/KeyboardInputSystem'
 import { MovementSystem } from '@/game/ecs/systems/MovementSystem'
 import type { PositionBehavior } from '@/game/ecs/behaviors/PositionBehavior'
+import { TILE_SIZE, HALF_TILE } from '@/game/constants'
 
 /**
  * GameScene - Scène principale du jeu
@@ -123,9 +124,9 @@ export class GameScene extends Phaser.Scene {
             // Vérifier si la texture existe, sinon utiliser grass
             const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_grass'
 
-            const sprite = this.add.sprite(col * 16 + 8, row * 16 + 8, finalTileKey)
+            const sprite = this.add.sprite(col * TILE_SIZE + HALF_TILE, row * TILE_SIZE + HALF_TILE, finalTileKey)
             sprite.setDepth(0) // Les tuiles au fond
-            sprite.setDisplaySize(16, 16) // Scale to 16x16 grid
+            sprite.setDisplaySize(TILE_SIZE, TILE_SIZE) // Scale to tile size
             this.tileSprites[row]![col] = sprite
           }
         }
@@ -133,8 +134,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Configurer les limites du monde pour la caméra
-    const worldWidth = width * 16
-    const worldHeight = height * 16
+    const worldWidth = width * TILE_SIZE
+    const worldHeight = height * TILE_SIZE
     this.cameras.main.setBounds(0, 0, worldWidth, worldHeight)
     this.physics.world.setBounds(0, 0, worldWidth, worldHeight)
 
@@ -205,7 +206,7 @@ export class GameScene extends Phaser.Scene {
     if (!player) return
 
     const position = player.getPosition()
-    this.cameras.main.centerOn(position.col * 16 + 8, position.row * 16 + 8)
+    this.cameras.main.centerOn(position.col * TILE_SIZE + HALF_TILE, position.row * TILE_SIZE + HALF_TILE)
   }
 
   /**
@@ -252,12 +253,19 @@ export class GameScene extends Phaser.Scene {
     // Vérifier si la texture existe, sinon utiliser avatar par défaut
     const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_avatar'
 
-    const sprite = this.add.sprite(position.col * 16 + 8, position.row * 16 + 8, finalTileKey)
+    const sprite = this.add.sprite(position.col * TILE_SIZE + HALF_TILE, position.row * TILE_SIZE + HALF_TILE, finalTileKey)
     sprite.setDepth(10) // Les entités au-dessus des tuiles
 
-    // Scale sprite to match tile size (16x16)
-    // Original tiles are 32x32 or 32x64, we need them to display as 16x16
-    sprite.setDisplaySize(16, 16)
+    // Scale sprite to match tile size
+    // Original tiles are 32x32 or 32x64, scale to TILE_SIZE
+    sprite.setDisplaySize(TILE_SIZE, TILE_SIZE)
+
+    // Fix texture wrapping - prevent character from appearing twice
+    sprite.setOrigin(0.5, 0.5) // Center the sprite
+    const texture = this.textures.get(finalTileKey)
+    if (texture) {
+      texture.setFilter(Phaser.Textures.FilterMode.NEAREST) // Pixel-perfect scaling
+    }
 
     // Sauvegarder le sprite
     this.entitySprites.set(entity.id, sprite)
@@ -275,7 +283,7 @@ export class GameScene extends Phaser.Scene {
     const position = entity.getPosition()
 
     // Mettre à jour la position du sprite
-    sprite.setPosition(position.col * 16 + 8, position.row * 16 + 8)
+    sprite.setPosition(position.col * TILE_SIZE + HALF_TILE, position.row * TILE_SIZE + HALF_TILE)
 
     // Mettre à jour la texture si la tuile de l'entité a changé
     const tile = entity.getEntityTile()
