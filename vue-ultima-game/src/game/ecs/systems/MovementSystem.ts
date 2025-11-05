@@ -2,10 +2,15 @@ import _ from 'lodash'
 import type { Entity } from '../entities/Entity'
 import type { MovableBehavior } from '../behaviors/MovableBehavior'
 import type { PositionBehavior } from '../behaviors/PositionBehavior'
+import type { SavestateBehavior } from '../behaviors/SavestateBehavior'
 import { Position } from '../../models/Position'
 import { useMapStore } from '@/stores/useMapStore'
+import type { IPortal } from '@/game/models/interfaces/IPortal'
 
 const NORMAL_MOVE_SPEED = 1
+
+// Type pour les callbacks de détection de portail
+export type PortalDetectedCallback = (portal: IPortal, entity: Entity) => void
 
 /**
  * MovementSystem - Gère les mouvements de toutes les entités
@@ -20,6 +25,15 @@ const NORMAL_MOVE_SPEED = 1
  * - TilesLoaderService → useMapStore
  */
 export class MovementSystem {
+  private onPortalDetected: PortalDetectedCallback | null = null
+
+  /**
+   * Définit le callback appelé quand un portail est détecté
+   */
+  setOnPortalDetected(callback: PortalDetectedCallback): void {
+    this.onPortalDetected = callback
+  }
+
   /**
    * Traite les mouvements de toutes les entités
    * @param entities Liste des entités
@@ -53,15 +67,53 @@ export class MovementSystem {
   private _processMovementsForEntity(entity: Entity, allEntities: Entity[]): void {
     const destinationPosition = this._getDestinationPositionForEntity(entity)
 
-    // Pour la Phase 2, on fait un mouvement simplifié sans vérification de walkability
-    // TODO Phase 3: Ajouter les vérifications de walkability, collisions, etc.
     if (this._canWalkAtDestinationPosition(entity, destinationPosition, allEntities)) {
       this._moveEntity(entity)
+
+      // Auto-save après le mouvement
+      this._autoSaveEntity(entity)
+
+      // Détecter les portails (entrées de villes/villages)
+      this._checkForPortal(entity)
     } else {
       console.log('Blocked!')
     }
 
     this._setEntityStay(entity)
+  }
+
+  /**
+   * Sauvegarde automatique de la position d'une entité
+   */
+  private _autoSaveEntity(entity: Entity): void {
+    if (entity.hasBehavior('savestate') && entity.hasBehavior('position')) {
+      const savestateBehavior = entity.getBehavior('savestate') as SavestateBehavior
+      const positionBehavior = entity.getBehavior('position') as PositionBehavior
+
+      savestateBehavior.storeKeyValue('position', positionBehavior.position)
+
+      // Debug log uniquement pour le joueur
+      if (entity.name === 'Avatar') {
+        const pos = positionBehavior.position
+        console.log(`💾 Auto-save: Player position saved (${pos.row}, ${pos.col}) on map ${pos.mapId}`)
+      }
+    }
+  }
+
+  /**
+   * Vérifie si l'entité est sur un portail (entrée de ville/village)
+   */
+  private _checkForPortal(entity: Entity): void {
+    if (!entity.hasBehavior('position')) return
+
+    const mapStore = useMapStore()
+    const positionBehavior = entity.getBehavior('position') as PositionBehavior
+    const portal = mapStore.getPortalForPosition(positionBehavior.position)
+
+    if (portal && this.onPortalDetected) {
+      console.log(`🚪 Portal détecté: ${portal.destmapid} à (${positionBehavior.position.row}, ${positionBehavior.position.col})`)
+      this.onPortalDetected(portal, entity)
+    }
   }
 
   /**

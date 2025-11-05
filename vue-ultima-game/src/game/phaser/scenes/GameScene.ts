@@ -67,6 +67,9 @@ export class GameScene extends Phaser.Scene {
       // Configurer les contrôles clavier
       this.setupKeyboardControls()
 
+      // Configurer la détection de portails
+      this.setupPortalDetection()
+
       // Calculer la visibilité initiale
       this.updateVisibility()
 
@@ -271,6 +274,60 @@ export class GameScene extends Phaser.Scene {
       // Traiter l'input avec le système ECS
       this.keyboardInputSystem.processKeyboardInput(event, [player])
     })
+  }
+
+  /**
+   * Configure la détection de portails pour les transitions de carte
+   */
+  private setupPortalDetection(): void {
+    this.movementSystem.setOnPortalDetected((portal, entity) => {
+      // Ne traiter que les portails pour le joueur
+      if (entity.name === 'Avatar') {
+        console.log(`🗺️  Transition vers la carte ${portal.destmapid}`)
+        this.transitionToMap(portal)
+      }
+    })
+  }
+
+  /**
+   * Effectue la transition vers une nouvelle carte via un portail
+   */
+  private async transitionToMap(portal: any): Promise<void> {
+    console.log(`🚪 Entering portal to map ${portal.destmapid}`)
+
+    const player = this.entityStore.getPlayer()
+    if (!player) return
+
+    // Récupérer la position de destination
+    const destMapId = parseInt(portal.destmapid, 10)
+    const destPosition = this.mapStore.getPositionOfPortal(portal)
+
+    // Mettre à jour la position du joueur
+    const positionBehavior = player.getBehavior('position') as any
+    if (positionBehavior) {
+      positionBehavior.position = new Position(destPosition.row, destPosition.col, destMapId)
+
+      // Sauvegarder immédiatement la nouvelle position
+      const savestateBehavior = player.getBehavior('savestate')
+      if (savestateBehavior) {
+        ;(savestateBehavior as any).storeKeyValue('position', positionBehavior.position)
+        console.log(`💾 Position sauvegardée: map ${destMapId}, (${destPosition.row}, ${destPosition.col})`)
+      }
+    }
+
+    // Charger la nouvelle carte
+    await this.loadMap(destMapId)
+
+    // Recréer les entités pour la nouvelle carte
+    await this.createEntitiesForCurrentMap()
+
+    // Recentrer la caméra sur le joueur
+    this.centerCameraOnPlayer()
+
+    // Mettre à jour la visibilité
+    this.updateVisibility()
+
+    console.log(`✅ Transition terminée vers la carte ${destMapId}`)
   }
 
   /**
