@@ -73,13 +73,38 @@ export class MovementSystem {
       // Auto-save après le mouvement
       this._autoSaveEntity(entity)
 
-      // NOTE: La détection de portail a été retirée du mouvement
-      // Les portails doivent être activés manuellement avec la touche "E"
+      // Détection de portail conditionnelle :
+      // - World map : manuel avec touche "E"
+      // - Autres cartes : automatique (sortie de ville/donjon)
+      this._checkPortalAutoActivation(entity)
     } else {
       console.log('Blocked!')
     }
 
     this._setEntityStay(entity)
+  }
+
+  /**
+   * Vérifie et active automatiquement les portails si on n'est pas sur la world map
+   */
+  private _checkPortalAutoActivation(entity: Entity): void {
+    const mapStore = useMapStore()
+
+    // Si on est sur la world map, ne rien faire (activation manuelle avec E)
+    if (mapStore.isCurrentMapWorldMap()) {
+      return
+    }
+
+    // Pour les autres cartes (villes, donjons), activation automatique
+    if (!entity.hasBehavior('position')) return
+
+    const positionBehavior = entity.getBehavior('position') as PositionBehavior
+    const portal = mapStore.getPortalForPosition(positionBehavior.position)
+
+    if (portal && this.onPortalDetected) {
+      console.log(`🚶 Sortie automatique via portail: ${portal.destmapid}`)
+      this.onPortalDetected(portal, entity)
+    }
   }
 
   /**
@@ -102,7 +127,7 @@ export class MovementSystem {
 
   /**
    * Vérifie manuellement si l'entité est sur un portail et l'active
-   * Doit être appelé quand le joueur appuie sur "E"
+   * Doit être appelé quand le joueur appuie sur "E" (sur la world map uniquement)
    */
   checkAndActivatePortal(entity: Entity): boolean {
     if (!entity.hasBehavior('position')) return false
@@ -112,7 +137,7 @@ export class MovementSystem {
     const portal = mapStore.getPortalForPosition(positionBehavior.position)
 
     if (portal) {
-      console.log(`🚪 Portal détecté: ${portal.destmapid} à (${positionBehavior.position.row}, ${positionBehavior.position.col})`)
+      console.log(`🚪 Entrée manuelle via portail (touche E): destination map ${portal.destmapid}`)
       if (this.onPortalDetected) {
         this.onPortalDetected(portal, entity)
       }

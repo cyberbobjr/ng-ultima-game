@@ -138,6 +138,14 @@ export const useMapStore = defineStore('map', () => {
   }
 
   /**
+   * Vérifie si la carte actuelle est la world map
+   */
+  function isCurrentMapWorldMap(): boolean {
+    if (!currentMap.value || !currentMap.value.mapMetaData) return false
+    return currentMap.value.mapMetaData.type === 'world'
+  }
+
+  /**
    * Récupère les entités sur la carte actuelle
    */
   function getEntitiesOnCurrentMap(): Entity[] {
@@ -471,6 +479,7 @@ export const useMapStore = defineStore('map', () => {
     getMapMetadataByMapId,
     getAllMaps,
     getCurrentMap,
+    isCurrentMapWorldMap,
     getEntitiesOnCurrentMap,
     getTileIndexAtPosition,
     isPositionOutOfBounds,
