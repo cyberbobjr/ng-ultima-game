@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { useMapStore } from '@/stores/useMapStore'
 import { useGameStore } from '@/stores/useGameStore'
 import { useEntityStore } from '@/stores/useEntityStore'
+import { FRAME_WIDTH, FRAME_HEIGHT } from '@/game/constants'
 
 // API Configuration - Read from environment variable
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
@@ -68,15 +69,21 @@ export class LoadingScene extends Phaser.Scene {
     this.load.json('tiles_rules', `${API_BASE_URL}/assets/tiles_rules.json`)
     this.load.json('maps', `${API_BASE_URL}/assets/maps.json`)
 
-    // Charger seulement les tuiles essentielles
+    // Charger les tuiles essentielles
     const essentialTiles = [
-      'avatar', 'grass', 'water', 'sea', 'mountains', 'forest',
+      'grass', 'water', 'sea', 'mountains', 'forest',
       'city', 'castle', 'dungeon', 'door', 'bridge'
     ]
 
     for (const tileName of essentialTiles) {
       this.load.image(`tile_${tileName}`, `${API_BASE_URL}/assets/tiles/tile_${tileName}.png`)
     }
+
+    // Charger l'avatar comme spritesheet (32x64 = 2 frames de 32x32 pour l'animation)
+    this.load.spritesheet('tile_avatar', `${API_BASE_URL}/assets/tiles/tile_avatar.png`, {
+      frameWidth: FRAME_WIDTH,
+      frameHeight: FRAME_HEIGHT
+    })
 
     // Si les assets ne se chargent pas, on utilisera des tuiles générées
     // Cela sera fait dans onLoadComplete si besoin
@@ -155,7 +162,7 @@ export class LoadingScene extends Phaser.Scene {
    * Crée des tuiles de fallback si les vrais assets ne sont pas disponibles
    */
   private createFallbackTiles(): void {
-    const tileSize = 16
+    const tileSize = FRAME_WIDTH
     const canvas = document.createElement('canvas')
     canvas.width = tileSize
     canvas.height = tileSize
@@ -174,11 +181,10 @@ export class LoadingScene extends Phaser.Scene {
       castle: '#8a8a8a',
       dungeon: '#4a4a4a',
       door: '#8b7355',
-      bridge: '#6a5a4a',
-      avatar: '#ffffff'
+      bridge: '#6a5a4a'
     }
 
-    // Créer une texture pour chaque tuile
+    // Créer une texture pour chaque tuile normale
     for (const [tileName, color] of Object.entries(tileColors)) {
       ctx.fillStyle = color
       ctx.fillRect(0, 0, tileSize, tileSize)
@@ -190,6 +196,36 @@ export class LoadingScene extends Phaser.Scene {
 
       // Convertir le canvas en texture Phaser
       this.textures.addCanvas(`tile_${tileName}`, canvas)
+    }
+
+    // Créer un spritesheet fallback pour l'avatar (2 frames)
+    const avatarCanvas = document.createElement('canvas')
+    avatarCanvas.width = FRAME_WIDTH
+    avatarCanvas.height = FRAME_HEIGHT * 2 // 2 frames verticales
+    const avatarCtx = avatarCanvas.getContext('2d')
+
+    if (avatarCtx) {
+      // Frame 0 (haut)
+      avatarCtx.fillStyle = '#ffffff'
+      avatarCtx.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT)
+      avatarCtx.strokeStyle = '#000000'
+      avatarCtx.lineWidth = 1
+      avatarCtx.strokeRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT)
+
+      // Frame 1 (bas) - légèrement différente pour la distinction
+      avatarCtx.fillStyle = '#eeeeee'
+      avatarCtx.fillRect(0, FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT)
+      avatarCtx.strokeStyle = '#000000'
+      avatarCtx.lineWidth = 1
+      avatarCtx.strokeRect(0, FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT)
+
+      // Créer le spritesheet
+      const texture = this.textures.addCanvas('tile_avatar', avatarCanvas)
+      if (texture) {
+        // Ajouter les frames au spritesheet
+        texture.add('frame_0', 0, 0, 0, FRAME_WIDTH, FRAME_HEIGHT)
+        texture.add('frame_1', 0, 0, FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT)
+      }
     }
 
     console.log('✅ Fallback tiles created successfully')

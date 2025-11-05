@@ -29,3 +29,11 @@ export const VIEWPORT_TILES_HEIGHT = 15
  * Camera follow smoothing
  */
 export const CAMERA_LERP = 0.1
+
+/**
+ * Spritesheet frame dimensions
+ * Original tile assets are 32x32 pixels per frame
+ * Tilesets for animations can have multiple frames (e.g. 32x64 for 2 frames)
+ */
+export const FRAME_WIDTH = 32
+export const FRAME_HEIGHT = 32

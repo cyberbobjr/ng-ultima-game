@@ -253,15 +253,23 @@ export class GameScene extends Phaser.Scene {
     // Vérifier si la texture existe, sinon utiliser avatar par défaut
     const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_avatar'
 
-    const sprite = this.add.sprite(position.col * TILE_SIZE + HALF_TILE, position.row * TILE_SIZE + HALF_TILE, finalTileKey)
+    // Pour l'avatar (spritesheet), utiliser la frame 0
+    // Pour les autres tiles (images simples), pas de frame
+    let sprite: Phaser.GameObjects.Sprite
+    if (finalTileKey === 'tile_avatar') {
+      sprite = this.add.sprite(position.col * TILE_SIZE + HALF_TILE, position.row * TILE_SIZE + HALF_TILE, finalTileKey, 0)
+    } else {
+      sprite = this.add.sprite(position.col * TILE_SIZE + HALF_TILE, position.row * TILE_SIZE + HALF_TILE, finalTileKey)
+    }
+
     sprite.setDepth(10) // Les entités au-dessus des tuiles
 
     // Scale sprite to match tile size
-    // Original tiles are 32x32 or 32x64, scale to TILE_SIZE
+    // Original tiles are 32x32 per frame, scale to TILE_SIZE
     sprite.setDisplaySize(TILE_SIZE, TILE_SIZE)
 
-    // Fix texture wrapping - prevent character from appearing twice
-    sprite.setOrigin(0.5, 0.5) // Center the sprite
+    // Center the sprite and use pixel-perfect scaling
+    sprite.setOrigin(0.5, 0.5)
     const texture = this.textures.get(finalTileKey)
     if (texture) {
       texture.setFilter(Phaser.Textures.FilterMode.NEAREST) // Pixel-perfect scaling
@@ -293,7 +301,12 @@ export class GameScene extends Phaser.Scene {
       const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_avatar'
 
       if (sprite.texture.key !== finalTileKey) {
-        sprite.setTexture(finalTileKey)
+        // Pour l'avatar (spritesheet), utiliser la frame 0
+        if (finalTileKey === 'tile_avatar') {
+          sprite.setTexture(finalTileKey, 0)
+        } else {
+          sprite.setTexture(finalTileKey)
+        }
       }
     }
   }
