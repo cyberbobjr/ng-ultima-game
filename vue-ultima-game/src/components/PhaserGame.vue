@@ -42,10 +42,14 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   background-color: #1a1a1a;
+  padding: 1rem;
 }
 
 #phaser-game {
-  /* Le canvas Phaser sera injecté ici */
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 /* Style pour le canvas lui-même (appliqué par Phaser) */
@@ -54,5 +58,9 @@ onUnmounted(() => {
   margin: 0 auto;
   border: 2px solid #444;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
 }
 </style>

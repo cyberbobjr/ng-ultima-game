@@ -8,8 +8,8 @@ import { UIScene } from './scenes/UIScene'
  */
 export const phaserConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO, // Utilise WebGL si disponible, sinon Canvas
-  width: 320, // 20 tiles * 16px
-  height: 320, // 20 tiles * 16px
+  width: 800, // Larger default width
+  height: 600, // Larger default height
   parent: 'phaser-game', // ID de l'élément HTML parent
   backgroundColor: '#000000',
 
@@ -27,10 +27,11 @@ export const phaserConfig: Phaser.Types.Core.GameConfig = {
 
   // Configuration du scaling et de l'affichage
   scale: {
-    mode: Phaser.Scale.FIT, // Adapte le jeu à la taille de l'écran
+    mode: Phaser.Scale.FIT, // Adapte le jeu à la taille du conteneur
     autoCenter: Phaser.Scale.CENTER_BOTH, // Centre le jeu
-    width: 320,
-    height: 320
+    width: 800,
+    height: 600,
+    parent: 'phaser-game'
   },
 
   // Configuration du rendu
