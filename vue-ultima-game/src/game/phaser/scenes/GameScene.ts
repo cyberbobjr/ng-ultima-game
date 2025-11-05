@@ -8,8 +8,10 @@ import { RenderableSystem } from '@/game/ecs/systems/RenderableSystem'
 import { AISystem } from '@/game/ecs/systems/AISystem'
 import { KeyboardInputSystem } from '@/game/ecs/systems/KeyboardInputSystem'
 import { MovementSystem } from '@/game/ecs/systems/MovementSystem'
+import { VisibilitySystem } from '@/game/ecs/systems/VisibilitySystem'
 import type { PositionBehavior } from '@/game/ecs/behaviors/PositionBehavior'
 import { TILE_SIZE, HALF_TILE } from '@/game/constants'
+import { Position } from '@/game/models/Position'
 
 /**
  * GameScene - Scène principale du jeu
@@ -24,6 +26,7 @@ export class GameScene extends Phaser.Scene {
 
   // Phaser objects
   private tileSprites: Phaser.GameObjects.Sprite[][] = []
+  private fogSprites: Phaser.GameObjects.Rectangle[][] = []
 
   // Sprites pour les entités
   private entitySprites: Map<string, Phaser.GameObjects.Sprite> = new Map()
@@ -33,6 +36,10 @@ export class GameScene extends Phaser.Scene {
   private aiSystem!: AISystem
   private keyboardInputSystem!: KeyboardInputSystem
   private movementSystem!: MovementSystem
+  private visibilitySystem!: VisibilitySystem
+
+  // Visibility settings
+  private readonly VISION_RADIUS = 8 // Rayon de vision en tiles
 
   constructor() {
     super({ key: 'GameScene' })
@@ -60,6 +67,9 @@ export class GameScene extends Phaser.Scene {
       // Configurer les contrôles clavier
       this.setupKeyboardControls()
 
+      // Calculer la visibilité initiale
+      this.updateVisibility()
+
       // Lancer l'UI Scene en parallèle
       this.scene.launch('UIScene')
 
@@ -77,6 +87,7 @@ export class GameScene extends Phaser.Scene {
     this.aiSystem = new AISystem()
     this.keyboardInputSystem = new KeyboardInputSystem()
     this.movementSystem = new MovementSystem()
+    this.visibilitySystem = new VisibilitySystem()
   }
 
   /**
@@ -103,10 +114,12 @@ export class GameScene extends Phaser.Scene {
 
     // Détruire les anciens sprites de tuiles si ils existent
     this.clearTileSprites()
+    this.clearFogSprites()
 
     // Créer un sprite pour chaque tuile de la carte
     for (let row = 0; row < height; row++) {
       this.tileSprites[row] = []
+      this.fogSprites[row] = []
 
       for (let col = 0; col < width; col++) {
         const rowData = mapData[row]
@@ -133,6 +146,19 @@ export class GameScene extends Phaser.Scene {
             sprite.setDepth(0) // Les tuiles au fond
             sprite.setDisplaySize(TILE_SIZE, TILE_SIZE) // Scale to tile size
             this.tileSprites[row]![col] = sprite
+
+            // Créer un fog sprite pour cette tuile (depth 5, entre tiles et entités)
+            const fogSprite = this.add.rectangle(
+              col * TILE_SIZE + HALF_TILE,
+              row * TILE_SIZE + HALF_TILE,
+              TILE_SIZE,
+              TILE_SIZE,
+              0x000000,
+              0.7 // Alpha 70% pour l'effet de brouillard
+            )
+            fogSprite.setDepth(5)
+            fogSprite.setVisible(true) // Sera géré par updateVisibility()
+            this.fogSprites[row]![col] = fogSprite
           }
         }
       }
@@ -159,6 +185,20 @@ export class GameScene extends Phaser.Scene {
       }
     }
     this.tileSprites = []
+  }
+
+  /**
+   * Détruit tous les sprites de fog
+   */
+  private clearFogSprites(): void {
+    for (const row of this.fogSprites) {
+      for (const fogSprite of row) {
+        if (fogSprite) {
+          fogSprite.destroy()
+        }
+      }
+    }
+    this.fogSprites = []
   }
 
   /**
@@ -231,6 +271,34 @@ export class GameScene extends Phaser.Scene {
       // Traiter l'input avec le système ECS
       this.keyboardInputSystem.processKeyboardInput(event, [player])
     })
+  }
+
+  /**
+   * Met à jour la visibilité du champ de vision (FOV)
+   */
+  private updateVisibility(): void {
+    const player = this.entityStore.getPlayer()
+    if (!player) return
+
+    const playerPosition = player.getPosition()
+
+    // Calculer le champ de vision
+    const visiblePositions = this.visibilitySystem.calculateFieldOfVision(
+      playerPosition,
+      this.VISION_RADIUS
+    )
+
+    // Mettre à jour les fog sprites
+    for (let row = 0; row < this.fogSprites.length; row++) {
+      for (let col = 0; col < this.fogSprites[row]!.length; col++) {
+        const fogSprite = this.fogSprites[row]![col]
+        if (fogSprite) {
+          const posKey = `${row},${col}`
+          const isVisible = visiblePositions.has(posKey)
+          fogSprite.setVisible(!isVisible) // Masquer le fog si visible, l'afficher sinon
+        }
+      }
+    }
   }
 
   /**
@@ -358,6 +426,9 @@ export class GameScene extends Phaser.Scene {
 
     // Synchroniser les sprites Phaser avec les positions des entités
     this.syncSpritesWithEntities(allEntities)
+
+    // Mettre à jour la visibilité (FOV) après le mouvement
+    this.updateVisibility()
   }
 
   /**
@@ -389,6 +460,9 @@ export class GameScene extends Phaser.Scene {
   shutdown(): void {
     // Détruire tous les sprites de tuiles
     this.clearTileSprites()
+
+    // Détruire tous les fog sprites
+    this.clearFogSprites()
 
     // Détruire tous les sprites d'entités
     for (const [entityId] of this.entitySprites) {
