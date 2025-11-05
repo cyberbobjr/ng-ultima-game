@@ -154,7 +154,7 @@ export class GameScene extends Phaser.Scene {
               TILE_SIZE,
               TILE_SIZE,
               0x000000,
-              0.7 // Alpha 70% pour l'effet de brouillard
+              1.0 // Alpha 100% pour noir complet
             )
             fogSprite.setDepth(5)
             fogSprite.setVisible(true) // Sera géré par updateVisibility()
