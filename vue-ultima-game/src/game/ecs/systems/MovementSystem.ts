@@ -73,10 +73,8 @@ export class MovementSystem {
       // Auto-save après le mouvement
       this._autoSaveEntity(entity)
 
-      // Détection de portail conditionnelle :
-      // - World map : manuel avec touche "E"
-      // - Autres cartes : automatique (sortie de ville/donjon)
-      this._checkPortalAutoActivation(entity)
+      // Détection de bordure pour sortie automatique (sauf sur world map)
+      this._checkBorderExit(entity)
     } else {
       console.log('Blocked!')
     }
@@ -85,25 +83,51 @@ export class MovementSystem {
   }
 
   /**
-   * Vérifie et active automatiquement les portails si on n'est pas sur la world map
+   * Vérifie si l'entité est sur les 2 tiles du bord et déclenche la sortie automatique
+   * Seulement pour les cartes autres que la world map (villes, donjons, etc.)
    */
-  private _checkPortalAutoActivation(entity: Entity): void {
+  private _checkBorderExit(entity: Entity): void {
     const mapStore = useMapStore()
 
-    // Si on est sur la world map, ne rien faire (activation manuelle avec E)
+    // Si on est sur la world map, ne rien faire
     if (mapStore.isCurrentMapWorldMap()) {
       return
     }
 
-    // Pour les autres cartes (villes, donjons), activation automatique
+    // Vérifier si on est sur les 2 tiles du bord
     if (!entity.hasBehavior('position')) return
 
     const positionBehavior = entity.getBehavior('position') as PositionBehavior
-    const portal = mapStore.getPortalForPosition(positionBehavior.position)
+    const position = positionBehavior.position
+    const currentMap = mapStore.getCurrentMap()
 
-    if (portal && this.onPortalDetected) {
-      console.log(`🚶 Sortie automatique via portail: ${portal.destmapid}`)
-      this.onPortalDetected(portal, entity)
+    if (!currentMap) return
+
+    const width = currentMap.width
+    const height = currentMap.height
+
+    // Détection des 2 tiles du bord (row < 2, row >= height-2, col < 2, col >= width-2)
+    const isOnBorder =
+      position.row < 2 ||
+      position.row >= height - 2 ||
+      position.col < 2 ||
+      position.col >= width - 2
+
+    if (isOnBorder) {
+      console.log(`🚪 Sortie automatique : bordure détectée à (${position.row}, ${position.col})`)
+
+      // Trouver le portail de retour vers la world map
+      const currentMapId = currentMap.mapMetaData?.id
+      if (currentMapId !== undefined) {
+        const returnPortal = mapStore.getPortalInformationForMapId(currentMapId, 0) // 0 = world map
+
+        if (returnPortal && this.onPortalDetected) {
+          console.log(`🗺️  Retour à la world map via portail`)
+          this.onPortalDetected(returnPortal, entity)
+        } else {
+          console.warn('⚠️  Aucun portail de retour trouvé vers la world map')
+        }
+      }
     }
   }
 
