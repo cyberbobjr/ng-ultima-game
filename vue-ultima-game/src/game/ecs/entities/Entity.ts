@@ -1,5 +1,5 @@
 import type { IBehavior } from '../../models/interfaces/IBehavior'
-import type { Position } from '../../models/Position'
+import { Position } from '../../models/Position'
 import type { ITile } from '../../models/interfaces/ITile'
 
 /**

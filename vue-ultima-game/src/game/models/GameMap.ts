@@ -1,6 +1,6 @@
-import type { Position } from './Position'
+import { Position } from './Position'
 import type { IMapMetaData } from './interfaces/IMap'
-import type { Entity } from '../ecs/entities/Entity'
+import { Entity } from '../ecs/entities/Entity'
 
 /**
  * Classe représentant une carte du jeu
