@@ -1,18 +1,20 @@
 import Phaser from 'phaser'
-import { TestScene } from './scenes/TestScene'
+import { LoadingScene } from './scenes/LoadingScene'
+import { GameScene } from './scenes/GameScene'
+import { UIScene } from './scenes/UIScene'
 
 /**
  * Configuration principale de Phaser pour le jeu Ultima
  */
 export const phaserConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO, // Utilise WebGL si disponible, sinon Canvas
-  width: 320, // 10 tiles * 32px
-  height: 320, // 10 tiles * 32px
+  width: 320, // 20 tiles * 16px
+  height: 320, // 20 tiles * 16px
   parent: 'phaser-game', // ID de l'élément HTML parent
-  backgroundColor: '#2d2d2d',
+  backgroundColor: '#000000',
 
-  // Scènes du jeu (pour le moment juste la scène de test)
-  scene: [TestScene],
+  // Scènes du jeu (LoadingScene démarre automatiquement)
+  scene: [LoadingScene, GameScene, UIScene],
 
   // Configuration de la physique (arcade par défaut pour les jeux 2D)
   physics: {
