@@ -57,23 +57,26 @@ export class LoadingScene extends Phaser.Scene {
    * Charge tous les assets du jeu
    */
   private loadGameAssets(): void {
+    // NOTE: Si vous voyez des erreurs de chargement, lancez le serveur dev avec:
+    // npm run dev
+
     // Charger les fichiers JSON de configuration
-    // Note: En mode dev, le serveur doit être lancé avec npm run dev
     this.load.json('tiles', '/tiles.json')
     this.load.json('tiles_rules', '/tiles_rules.json')
     this.load.json('maps', '/maps.json')
 
-    // Charger seulement les tuiles essentielles pour éviter les erreurs
-    // Liste réduite aux tuiles les plus communes
+    // Charger seulement les tuiles essentielles
     const essentialTiles = [
       'avatar', 'grass', 'water', 'sea', 'mountains', 'forest',
       'city', 'castle', 'dungeon', 'door', 'bridge'
     ]
 
-    // Charger les tuiles essentielles
     for (const tileName of essentialTiles) {
       this.load.image(`tile_${tileName}`, `/tiles/tile_${tileName}.png`)
     }
+
+    // Si les assets ne se chargent pas, on utilisera des tuiles générées
+    // Cela sera fait dans onLoadComplete si besoin
   }
 
   /**
@@ -106,13 +109,22 @@ export class LoadingScene extends Phaser.Scene {
     this.loadingText.setText('Initializing game...')
 
     try {
+      // Vérifier si les textures PNG ont été chargées
+      const hasRealAssets = this.textures.exists('tile_grass')
+
+      if (!hasRealAssets) {
+        // Les assets n'ont pas été chargés (serveur dev non lancé)
+        console.warn('⚠️  Real assets not loaded. Creating fallback tiles...')
+        console.warn('💡 Tip: Start the dev server with "npm run dev" to load real assets')
+        this.createFallbackTiles()
+      }
+
       // Récupérer les données des tuiles si disponibles
-      // Vérifier que c'est bien un objet JSON et pas du HTML
       const tilesCache = this.cache.json.get('tiles')
       if (tilesCache && typeof tilesCache === 'object' && !Array.isArray(tilesCache)) {
         this.tilesData = tilesCache
       } else {
-        console.warn('Tiles JSON not loaded properly, using defaults')
+        console.warn('Tiles JSON not loaded, using defaults')
         this.tilesData = null
       }
 
@@ -129,12 +141,55 @@ export class LoadingScene extends Phaser.Scene {
       this.loadingText.setText('Error loading game!')
       this.loadingText.setColor('#ff0000')
 
-      // Afficher plus de détails sur l'erreur
       if (error instanceof Error) {
         console.error('Error details:', error.message)
         console.error('Error stack:', error.stack)
       }
     }
+  }
+
+  /**
+   * Crée des tuiles de fallback si les vrais assets ne sont pas disponibles
+   */
+  private createFallbackTiles(): void {
+    const tileSize = 16
+    const canvas = document.createElement('canvas')
+    canvas.width = tileSize
+    canvas.height = tileSize
+    const ctx = canvas.getContext('2d')
+
+    if (!ctx) return
+
+    // Définir les couleurs pour chaque type de tuile
+    const tileColors: { [key: string]: string } = {
+      grass: '#2a7a3a',
+      water: '#4a7ba7',
+      sea: '#2a5a8a',
+      mountains: '#8a7a6a',
+      forest: '#1a5a2a',
+      city: '#aaaaaa',
+      castle: '#8a8a8a',
+      dungeon: '#4a4a4a',
+      door: '#8b7355',
+      bridge: '#6a5a4a',
+      avatar: '#ffffff'
+    }
+
+    // Créer une texture pour chaque tuile
+    for (const [tileName, color] of Object.entries(tileColors)) {
+      ctx.fillStyle = color
+      ctx.fillRect(0, 0, tileSize, tileSize)
+
+      // Ajouter une bordure pour mieux voir les tuiles
+      ctx.strokeStyle = '#000000'
+      ctx.lineWidth = 1
+      ctx.strokeRect(0, 0, tileSize, tileSize)
+
+      // Convertir le canvas en texture Phaser
+      this.textures.addCanvas(`tile_${tileName}`, canvas)
+    }
+
+    console.log('✅ Fallback tiles created successfully')
   }
 
   /**
