@@ -116,17 +116,32 @@ export class MovementSystem {
     if (isOnBorder) {
       console.log(`🚪 Sortie automatique : bordure détectée à (${position.row}, ${position.col})`)
 
-      // Trouver le portail de retour vers la world map
-      const currentMapId = currentMap.mapMetaData?.id
-      if (currentMapId !== undefined) {
-        const returnPortal = mapStore.getPortalInformationForMapId(currentMapId, 0) // 0 = world map
+      // Récupérer la position d'entrée sauvegardée
+      const entryPositionStr = localStorage.getItem('worldmap_entry_position')
+      if (entryPositionStr) {
+        const entryPosition = JSON.parse(entryPositionStr)
+        console.log(`🗺️  Retour à la position d'entrée: (${entryPosition.row}, ${entryPosition.col})`)
 
-        if (returnPortal && this.onPortalDetected) {
-          console.log(`🗺️  Retour à la world map via portail`)
-          this.onPortalDetected(returnPortal, entity)
-        } else {
-          console.warn('⚠️  Aucun portail de retour trouvé vers la world map')
+        // Créer un portail virtuel pour la transition
+        const returnPortal: IPortal = {
+          x: position.col.toString(),
+          y: position.row.toString(),
+          destmapid: '0', // World map
+          startx: entryPosition.col.toString(),
+          starty: entryPosition.row.toString(),
+          action: 'exit',
+          savelocation: 'true',
+          transport: 'foot'
         }
+
+        if (this.onPortalDetected) {
+          this.onPortalDetected(returnPortal, entity)
+        }
+
+        // Nettoyer la position d'entrée sauvegardée
+        localStorage.removeItem('worldmap_entry_position')
+      } else {
+        console.warn('⚠️  Aucune position d\'entrée sauvegardée trouvée')
       }
     }
   }

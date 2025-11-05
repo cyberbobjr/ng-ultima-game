@@ -305,6 +305,22 @@ export class GameScene extends Phaser.Scene {
     const player = this.entityStore.getPlayer()
     if (!player) return
 
+    // Sauvegarder la position actuelle si on est sur la world map
+    // Pour pouvoir y retourner lors de la sortie
+    const currentMap = this.mapStore.getCurrentMap()
+    if (currentMap && this.mapStore.isCurrentMapWorldMap()) {
+      const currentPosition = player.getBehavior('position') as any
+      if (currentPosition) {
+        const entryPosition = {
+          row: currentPosition.position.row,
+          col: currentPosition.position.col,
+          mapId: currentPosition.position.mapId
+        }
+        localStorage.setItem('worldmap_entry_position', JSON.stringify(entryPosition))
+        console.log(`💾 Position d'entrée sauvegardée: (${entryPosition.row}, ${entryPosition.col})`)
+      }
+    }
+
     // Récupérer la position de destination depuis le portail
     const destMapId = parseInt(portal.destmapid, 10)
     const destRow = parseInt(portal.starty, 10) // starty = row
