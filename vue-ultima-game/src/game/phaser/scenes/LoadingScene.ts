@@ -58,50 +58,21 @@ export class LoadingScene extends Phaser.Scene {
    */
   private loadGameAssets(): void {
     // Charger les fichiers JSON de configuration
+    // Note: En mode dev, le serveur doit être lancé avec npm run dev
     this.load.json('tiles', '/tiles.json')
     this.load.json('tiles_rules', '/tiles_rules.json')
     this.load.json('maps', '/maps.json')
 
-    // Charger toutes les tuiles individuelles
-    // Les noms de tuiles sont connus à l'avance
-    const tileNames = [
-      'avatar', 'sea', 'water', 'shallows', 'swamp', 'grass', 'brush', 'forest',
-      'hills', 'mountains', 'dungeon', 'city', 'castle', 'town', 'lcb_west',
-      'lcb_entrance', 'lcb_east', 'ship', 'horse', 'dungeon_floor', 'bridge',
-      'balloon', 'bridge_pieces', 'shrine', 'ruins', 'shipwheel', 'rocks',
-      'corpse', 'stone_wall', 'locked_door', 'door', 'chest', 'ankh', 'brick_floor',
-      'wood_floor', 'brick_wall', 'moongate', 'up_ladder', 'down_ladder',
-      'column', 'solid', 'secret_door', 'altar', 'campfire', 'lava', 'miss_flash',
-      'magic_flash', 'hit_flash', 'poison_field', 'energy_field', 'fire_field',
-      'sleep_field', 'whirlpool', 'storm', 'space', 'black'
+    // Charger seulement les tuiles essentielles pour éviter les erreurs
+    // Liste réduite aux tuiles les plus communes
+    const essentialTiles = [
+      'avatar', 'grass', 'water', 'sea', 'mountains', 'forest',
+      'city', 'castle', 'dungeon', 'door', 'bridge'
     ]
 
-    // Charger les tuiles de base
-    for (const tileName of tileNames) {
+    // Charger les tuiles essentielles
+    for (const tileName of essentialTiles) {
       this.load.image(`tile_${tileName}`, `/tiles/tile_${tileName}.png`)
-    }
-
-    // Charger aussi les lettres A-Z pour les panneaux
-    for (let i = 65; i <= 90; i++) {
-      const letter = String.fromCharCode(i)
-      this.load.image(`tile_${letter}`, `/tiles/tile_${letter}.png`)
-    }
-
-    // Charger les NPCs et monstres
-    const npcTiles = [
-      'guard', 'villager', 'bard', 'bard_singing', 'jester', 'beggar', 'child',
-      'bull', 'lord_british', 'shepherd', 'fighter', 'mage', 'ranger', 'rogue',
-      'paladin', 'druid', 'tinker',
-      // Monstres
-      'orc', 'skeleton', 'troll', 'rat', 'bat', 'spider', 'ghost',
-      'slime', 'dragon', 'balron', 'cyclops', 'daemon', 'ettin', 'gazer',
-      'gremlin', 'headless', 'hydra', 'insect_swarm', 'liche', 'mimic',
-      'nixie', 'phantom', 'python', 'reaper', 'sea_horse', 'sea_serpent',
-      'wisp', 'zorn', 'lava_lizard', 'giant_squid', 'evil_mage'
-    ]
-
-    for (const npcName of npcTiles) {
-      this.load.image(`tile_${npcName}`, `/tiles/tile_${npcName}.png`)
     }
   }
 
@@ -135,8 +106,15 @@ export class LoadingScene extends Phaser.Scene {
     this.loadingText.setText('Initializing game...')
 
     try {
-      // Récupérer les données des tuiles
-      this.tilesData = this.cache.json.get('tiles')
+      // Récupérer les données des tuiles si disponibles
+      // Vérifier que c'est bien un objet JSON et pas du HTML
+      const tilesCache = this.cache.json.get('tiles')
+      if (tilesCache && typeof tilesCache === 'object' && !Array.isArray(tilesCache)) {
+        this.tilesData = tilesCache
+      } else {
+        console.warn('Tiles JSON not loaded properly, using defaults')
+        this.tilesData = null
+      }
 
       // Initialiser les stores
       await this.initializeStores()
@@ -150,6 +128,12 @@ export class LoadingScene extends Phaser.Scene {
       console.error('Error initializing game:', error)
       this.loadingText.setText('Error loading game!')
       this.loadingText.setColor('#ff0000')
+
+      // Afficher plus de détails sur l'erreur
+      if (error instanceof Error) {
+        console.error('Error details:', error.message)
+        console.error('Error stack:', error.stack)
+      }
     }
   }
 
