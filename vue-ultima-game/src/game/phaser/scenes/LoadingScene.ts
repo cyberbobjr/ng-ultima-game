@@ -3,6 +3,9 @@ import { useMapStore } from '@/stores/useMapStore'
 import { useGameStore } from '@/stores/useGameStore'
 import { useEntityStore } from '@/stores/useEntityStore'
 
+// API Configuration - Read from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+
 /**
  * LoadingScene - Scène de chargement des assets du jeu
  * Charge toutes les ressources nécessaires avant de lancer le jeu
@@ -57,13 +60,13 @@ export class LoadingScene extends Phaser.Scene {
    * Charge tous les assets du jeu
    */
   private loadGameAssets(): void {
-    // NOTE: Si vous voyez des erreurs de chargement, lancez le serveur dev avec:
-    // npm run dev
+    // NOTE: Configure VITE_API_BASE_URL in .env to load real assets from backend
+    // Leave empty to use fallback mode (generated tiles/maps)
 
     // Charger les fichiers JSON de configuration
-    this.load.json('tiles', '/tiles.json')
-    this.load.json('tiles_rules', '/tiles_rules.json')
-    this.load.json('maps', '/maps.json')
+    this.load.json('tiles', `${API_BASE_URL}/assets/tiles.json`)
+    this.load.json('tiles_rules', `${API_BASE_URL}/assets/tiles_rules.json`)
+    this.load.json('maps', `${API_BASE_URL}/assets/maps.json`)
 
     // Charger seulement les tuiles essentielles
     const essentialTiles = [
@@ -72,7 +75,7 @@ export class LoadingScene extends Phaser.Scene {
     ]
 
     for (const tileName of essentialTiles) {
-      this.load.image(`tile_${tileName}`, `/tiles/tile_${tileName}.png`)
+      this.load.image(`tile_${tileName}`, `${API_BASE_URL}/assets/tiles/tile_${tileName}.png`)
     }
 
     // Si les assets ne se chargent pas, on utilisera des tuiles générées

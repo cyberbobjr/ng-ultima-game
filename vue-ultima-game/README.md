@@ -44,6 +44,38 @@ See [../backend/README.md](../backend/README.md) for detailed backend documentat
 
 **Note**: The game includes fallback systems that allow it to run even when assets can't be loaded (useful for development without server).
 
+### Environment Configuration
+
+The game uses environment variables to configure the backend API URL:
+
+**1. Copy the example file:**
+```bash
+cp .env.example .env
+```
+
+**2. Configure for your needs:**
+
+**Option A: Use FastAPI Backend** (loads real Ultima assets)
+```bash
+# .env
+VITE_API_BASE_URL=http://localhost:8000
+```
+Then start the backend: `cd ../backend && python main.py`
+
+**Option B: Fallback Mode** (uses generated tiles/maps, no backend needed)
+```bash
+# .env
+VITE_API_BASE_URL=
+```
+
+**Option C: Production Backend**
+```bash
+# .env
+VITE_API_BASE_URL=https://your-api.example.com
+```
+
+**Important**: After changing `.env`, restart the dev server (`npm run dev`).
+
 ### Build for Production
 
 ```bash

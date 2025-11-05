@@ -10,6 +10,9 @@ import type { IMapMetaData } from '@/game/models/interfaces/IMap'
 import type { IPortal } from '@/game/models/interfaces/IPortal'
 import { Entity } from '@/game/ecs/entities/Entity'
 
+// API Configuration - Read from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+
 /**
  * useMapStore - Gère les cartes et les tuiles
  * Remplace MapsService et TilesLoaderService
@@ -43,7 +46,7 @@ export const useMapStore = defineStore('map', () => {
    */
   async function loadMapByFilename(mapFilename: string): Promise<number[][]> {
     try {
-      const response = await fetch(`/assets/maps/${mapFilename}`)
+      const response = await fetch(`${API_BASE_URL}/assets/maps/${mapFilename}`)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const jsonValue = await response.json()
       return jsonValue as number[][]
@@ -89,7 +92,7 @@ export const useMapStore = defineStore('map', () => {
    */
   async function loadAllMaps(): Promise<void> {
     try {
-      const response = await fetch('/assets/maps.json')
+      const response = await fetch(`${API_BASE_URL}/assets/maps.json`)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const jsonValue = await response.json()
       mapsMetaData.value = _.map(jsonValue.maps.map, (map: IMapMetaData) => map)
@@ -273,7 +276,7 @@ export const useMapStore = defineStore('map', () => {
    */
   async function _loadJsonTilesRules(): Promise<void> {
     try {
-      const response = await fetch('/assets/tiles_rules.json')
+      const response = await fetch(`${API_BASE_URL}/assets/tiles_rules.json`)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const jsonValue = await response.json()
       tilesRules.value = jsonValue.tileRules.rule
@@ -303,7 +306,7 @@ export const useMapStore = defineStore('map', () => {
    */
   async function _loadJsonTileDefinition(): Promise<ITileset> {
     try {
-      const response = await fetch('/assets/tiles.json')
+      const response = await fetch(`${API_BASE_URL}/assets/tiles.json`)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const jsonValue = await response.json()
       return jsonValue.tileset as ITileset
@@ -358,7 +361,7 @@ export const useMapStore = defineStore('map', () => {
         numberOfTilesLoaded.value++
         resolve()
       }
-      img.src = `/assets/img/tile_${name}.png`
+      img.src = `${API_BASE_URL}/assets/tiles/tile_${name}.png`
     })
   }
 

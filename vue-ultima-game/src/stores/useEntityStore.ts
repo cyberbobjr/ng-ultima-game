@@ -11,6 +11,9 @@ import type { IVendorItem } from '@/game/models/interfaces/IVendorItem'
 import { TalkBehavior } from '@/game/ecs/behaviors/TalkBehavior'
 import { VendorTalkBehavior } from '@/game/ecs/behaviors/VendorTalkBehavior'
 
+// API Configuration - Read from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+
 /**
  * useEntityStore - Gère toutes les entités du jeu
  * Remplace EntitiesService
@@ -107,7 +110,7 @@ export const useEntityStore = defineStore('entity', () => {
    * @param tlkFilename Nom du fichier de dialogues
    */
   async function _loadTlkFile(tlkFilename: string): Promise<INpc[]> {
-    const response = await fetch(`/assets/npcs/${tlkFilename}`)
+    const response = await fetch(`${API_BASE_URL}/assets/npcs/${tlkFilename}`)
     const jsonValue = await response.json()
     return jsonValue as INpc[]
   }
@@ -117,7 +120,7 @@ export const useEntityStore = defineStore('entity', () => {
    */
   async function _loadVendorFile(): Promise<void> {
     try {
-      const response = await fetch('/assets/npcs/vendors.json')
+      const response = await fetch(`${API_BASE_URL}/assets/npcs/vendors.json`)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const jsonValue = await response.json()
       vendors.value = jsonValue
