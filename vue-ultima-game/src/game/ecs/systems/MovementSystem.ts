@@ -73,8 +73,8 @@ export class MovementSystem {
       // Auto-save après le mouvement
       this._autoSaveEntity(entity)
 
-      // Détecter les portails (entrées de villes/villages)
-      this._checkForPortal(entity)
+      // NOTE: La détection de portail a été retirée du mouvement
+      // Les portails doivent être activés manuellement avec la touche "E"
     } else {
       console.log('Blocked!')
     }
@@ -101,19 +101,26 @@ export class MovementSystem {
   }
 
   /**
-   * Vérifie si l'entité est sur un portail (entrée de ville/village)
+   * Vérifie manuellement si l'entité est sur un portail et l'active
+   * Doit être appelé quand le joueur appuie sur "E"
    */
-  private _checkForPortal(entity: Entity): void {
-    if (!entity.hasBehavior('position')) return
+  checkAndActivatePortal(entity: Entity): boolean {
+    if (!entity.hasBehavior('position')) return false
 
     const mapStore = useMapStore()
     const positionBehavior = entity.getBehavior('position') as PositionBehavior
     const portal = mapStore.getPortalForPosition(positionBehavior.position)
 
-    if (portal && this.onPortalDetected) {
+    if (portal) {
       console.log(`🚪 Portal détecté: ${portal.destmapid} à (${positionBehavior.position.row}, ${positionBehavior.position.col})`)
-      this.onPortalDetected(portal, entity)
+      if (this.onPortalDetected) {
+        this.onPortalDetected(portal, entity)
+      }
+      return true
     }
+
+    console.log('❌ Aucun portail à cette position')
+    return false
   }
 
   /**

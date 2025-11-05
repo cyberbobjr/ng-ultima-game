@@ -267,8 +267,15 @@ export class GameScene extends Phaser.Scene {
       if (!player) return
 
       // Prevent browser from capturing arrow keys (stops page scrolling)
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(event.key)) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'e', 'E'].includes(event.key)) {
         event.preventDefault()
+      }
+
+      // Touche "E" pour entrer dans les portails (villes, donjons, etc.)
+      if (event.key === 'e' || event.key === 'E') {
+        console.log('🔑 Touche E pressée - vérification du portail...')
+        this.movementSystem.checkAndActivatePortal(player)
+        return
       }
 
       // Traiter l'input avec le système ECS
@@ -298,20 +305,23 @@ export class GameScene extends Phaser.Scene {
     const player = this.entityStore.getPlayer()
     if (!player) return
 
-    // Récupérer la position de destination
+    // Récupérer la position de destination depuis le portail
     const destMapId = parseInt(portal.destmapid, 10)
-    const destPosition = this.mapStore.getPositionOfPortal(portal)
+    const destRow = parseInt(portal.starty, 10) // starty = row
+    const destCol = parseInt(portal.startx, 10) // startx = col
+
+    console.log(`📍 Destination: map ${destMapId}, position (${destRow}, ${destCol})`)
 
     // Mettre à jour la position du joueur
     const positionBehavior = player.getBehavior('position') as any
     if (positionBehavior) {
-      positionBehavior.position = new Position(destPosition.row, destPosition.col, destMapId)
+      positionBehavior.position = new Position(destRow, destCol, destMapId)
 
       // Sauvegarder immédiatement la nouvelle position
       const savestateBehavior = player.getBehavior('savestate')
       if (savestateBehavior) {
         ;(savestateBehavior as any).storeKeyValue('position', positionBehavior.position)
-        console.log(`💾 Position sauvegardée: map ${destMapId}, (${destPosition.row}, ${destPosition.col})`)
+        console.log(`💾 Position sauvegardée: map ${destMapId}, (${destRow}, ${destCol})`)
       }
     }
 
