@@ -116,9 +116,16 @@ export const useEntityStore = defineStore('entity', () => {
    * Charge le fichier des vendors
    */
   async function _loadVendorFile(): Promise<void> {
-    const response = await fetch('/assets/npcs/vendors.json')
-    const jsonValue = await response.json()
-    vendors.value = jsonValue
+    try {
+      const response = await fetch('/assets/npcs/vendors.json')
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const jsonValue = await response.json()
+      vendors.value = jsonValue
+    } catch (error) {
+      console.warn('⚠️  Failed to load vendors.json, vendors will be disabled', error)
+      // Vendors are optional, so we can just set an empty array
+      vendors.value = []
+    }
   }
 
   /**

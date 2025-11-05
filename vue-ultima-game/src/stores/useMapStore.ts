@@ -42,9 +42,31 @@ export const useMapStore = defineStore('map', () => {
    * @param mapFilename Nom du fichier de la carte
    */
   async function loadMapByFilename(mapFilename: string): Promise<number[][]> {
-    const response = await fetch(`/assets/maps/${mapFilename}`)
-    const jsonValue = await response.json()
-    return jsonValue as number[][]
+    try {
+      const response = await fetch(`/assets/maps/${mapFilename}`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const jsonValue = await response.json()
+      return jsonValue as number[][]
+    } catch (error) {
+      console.warn(`⚠️  Failed to load ${mapFilename}, generating fallback map`, error)
+      // Generate a simple 32x32 test map with grass, water, and forest
+      const size = 32
+      const fallbackMap: number[][] = []
+      for (let row = 0; row < size; row++) {
+        fallbackMap[row] = []
+        for (let col = 0; col < size; col++) {
+          // Create a pattern: border of water, some forests, mostly grass
+          if (row === 0 || row === size - 1 || col === 0 || col === size - 1) {
+            fallbackMap[row]![col] = 1 // water
+          } else if ((row + col) % 7 === 0) {
+            fallbackMap[row]![col] = 4 // forest
+          } else {
+            fallbackMap[row]![col] = 0 // grass
+          }
+        }
+      }
+      return fallbackMap
+    }
   }
 
   /**
@@ -66,9 +88,27 @@ export const useMapStore = defineStore('map', () => {
    * Charge toutes les métadonnées des cartes
    */
   async function loadAllMaps(): Promise<void> {
-    const response = await fetch('/assets/maps.json')
-    const jsonValue = await response.json()
-    mapsMetaData.value = _.map(jsonValue.maps.map, (map: IMapMetaData) => map)
+    try {
+      const response = await fetch('/assets/maps.json')
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const jsonValue = await response.json()
+      mapsMetaData.value = _.map(jsonValue.maps.map, (map: IMapMetaData) => map)
+    } catch (error) {
+      console.warn('⚠️  Failed to load maps.json, using default world map', error)
+      // Provide a minimal world map metadata as fallback
+      mapsMetaData.value = [{
+        id: 0,
+        fname: 'world.map',
+        width: 32,
+        height: 32,
+        levels: 1,
+        borderbehavior: 'wrap',
+        music: 0,
+        tileset: 'fallback',
+        tilebase: 'fallback',
+        type: 'world'
+      }]
+    }
   }
 
   /**
@@ -231,9 +271,20 @@ export const useMapStore = defineStore('map', () => {
    * Charge les règles des tuiles
    */
   async function _loadJsonTilesRules(): Promise<void> {
-    const response = await fetch('/assets/tiles_rules.json')
-    const jsonValue = await response.json()
-    tilesRules.value = jsonValue.tileRules.rule
+    try {
+      const response = await fetch('/assets/tiles_rules.json')
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const jsonValue = await response.json()
+      tilesRules.value = jsonValue.tileRules.rule
+    } catch (error) {
+      console.warn('⚠️  Failed to load tiles_rules.json, using default rules', error)
+      // Provide basic walkability rules as fallback
+      tilesRules.value = [
+        { name: 'default', cantwalkon: 'none' },
+        { name: 'solid', cantwalkon: 'all' },
+        { name: 'water', cantwalkon: 'all' }
+      ]
+    }
   }
 
   /**
@@ -250,9 +301,31 @@ export const useMapStore = defineStore('map', () => {
    * Charge la définition JSON des tuiles
    */
   async function _loadJsonTileDefinition(): Promise<ITileset> {
-    const response = await fetch('/assets/tiles.json')
-    const jsonValue = await response.json()
-    return jsonValue.tileset as ITileset
+    try {
+      const response = await fetch('/assets/tiles.json')
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const jsonValue = await response.json()
+      return jsonValue.tileset as ITileset
+    } catch (error) {
+      console.warn('⚠️  Failed to load tiles.json, using minimal tileset', error)
+      // Provide minimal tileset definition matching our fallback tiles
+      return {
+        name: 'fallback',
+        tile: [
+          { id: 0, name: 'grass', rule: 'default' },
+          { id: 1, name: 'water', rule: 'water' },
+          { id: 2, name: 'sea', rule: 'water' },
+          { id: 3, name: 'mountains', rule: 'solid' },
+          { id: 4, name: 'forest', rule: 'default' },
+          { id: 5, name: 'city', rule: 'default' },
+          { id: 6, name: 'castle', rule: 'solid' },
+          { id: 7, name: 'dungeon', rule: 'solid' },
+          { id: 8, name: 'door', rule: 'default' },
+          { id: 9, name: 'bridge', rule: 'default' },
+          { id: 10, name: 'avatar', rule: 'default' }
+        ]
+      } as ITileset
+    }
   }
 
   /**

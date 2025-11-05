@@ -21,7 +21,7 @@ npm run dev
    - Open it in your browser
    - The game will start loading automatically
 
-**⚠️ IMPORTANT**: The dev server MUST be running for the game to work. Assets in the `public/` folder are only accessible when the dev server is active.
+**Note**: For best experience with real Ultima assets, the dev server should be running. The game includes fallback systems that allow it to run even when assets can't be loaded (useful for development without server).
 
 ### Build for Production
 
@@ -110,21 +110,23 @@ vue-ultima-game/
 
 ## 🐛 Troubleshooting
 
-### Assets not loading
+### Assets not loading (legacy issue - now fixed)
 
-**Problem**: Console shows errors like "Failed to process file: image 'tile_xxx'"
+**Note**: As of Phase 5.1, the game includes comprehensive fallback systems that allow it to run even without assets.
 
-**Solution**: Make sure the dev server is running with `npm run dev`
+**What happens**: If assets can't be loaded (dev server not running), the game will:
+- Generate colored fallback tiles automatically (11 tile types)
+- Create a 32x32 test map with grass, water, and forests
+- Use default tile rules and map metadata
+- Continue to function normally, though without real Ultima graphics
 
-The dev server must be running for files in the `public/` folder to be accessible.
-Without it, the browser will get 404 errors when trying to load PNG and JSON files.
+**For real assets**: Start the dev server with `npm run dev` to load authentic Ultima IV graphics (150+ PNG tiles, 17 maps, NPC dialogues).
 
-### JSON parsing errors
+### JSON parsing errors (legacy issue - now fixed)
 
-**Problem**: "SyntaxError: Unexpected token '<', "<!DOCTYPE"... is not valid JSON"
+**Note**: As of Phase 5.1, all stores have error handling with fallback data.
 
-**Solution**: This happens when the dev server returns HTML instead of JSON.
-Make sure you've started the dev server with `npm run dev` before opening the game.
+JSON parsing errors are automatically caught and handled gracefully. The game will use fallback data structures and display warnings in the console, but continue to function.
 
 ### Game doesn't start
 
