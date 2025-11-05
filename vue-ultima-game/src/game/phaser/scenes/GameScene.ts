@@ -106,20 +106,29 @@ export class GameScene extends Phaser.Scene {
    * Charge une carte par son ID
    */
   private async loadMap(mapId: number): Promise<void> {
+    console.time(`⏱️  Total loadMap(${mapId})`)
     console.log(`GameScene: Loading map ${mapId}...`)
 
     // Charger la carte via le store
+    console.time('  ↳ mapStore.loadMapByMapId')
     const gameMap = await this.mapStore.loadMapByMapId(mapId)
+    console.timeEnd('  ↳ mapStore.loadMapByMapId')
 
     const mapData = gameMap.mapData
     const width = gameMap.width
     const height = gameMap.height
 
     // Détruire les anciens sprites de tuiles si ils existent
+    console.time('  ↳ clearTileSprites')
     this.clearTileSprites()
+    console.timeEnd('  ↳ clearTileSprites')
+
+    console.time('  ↳ clearFogSprites')
     this.clearFogSprites()
+    console.timeEnd('  ↳ clearFogSprites')
 
     // Créer un sprite pour chaque tuile de la carte
+    console.time(`  ↳ create ${width}x${height} tile+fog sprites`)
     for (let row = 0; row < height; row++) {
       this.tileSprites[row] = []
       this.fogSprites[row] = []
@@ -166,13 +175,17 @@ export class GameScene extends Phaser.Scene {
         }
       }
     }
+    console.timeEnd(`  ↳ create ${width}x${height} tile+fog sprites`)
 
     // Configurer les limites du monde pour la caméra
+    console.time('  ↳ setup camera bounds')
     const worldWidth = width * TILE_SIZE
     const worldHeight = height * TILE_SIZE
     this.cameras.main.setBounds(0, 0, worldWidth, worldHeight)
     this.physics.world.setBounds(0, 0, worldWidth, worldHeight)
+    console.timeEnd('  ↳ setup camera bounds')
 
+    console.timeEnd(`⏱️  Total loadMap(${mapId})`)
     console.log(`GameScene: Map ${mapId} loaded (${width}x${height})`)
   }
 
@@ -300,6 +313,7 @@ export class GameScene extends Phaser.Scene {
    * Effectue la transition vers une nouvelle carte via un portail
    */
   private async transitionToMap(portal: any): Promise<void> {
+    console.time(`🚪 Total transitionToMap to ${portal.destmapid}`)
     console.log(`🚪 Entering portal to map ${portal.destmapid}`)
 
     const player = this.entityStore.getPlayer()
@@ -345,14 +359,21 @@ export class GameScene extends Phaser.Scene {
     await this.loadMap(destMapId)
 
     // Recréer les entités pour la nouvelle carte
+    console.time('  ↳ createEntitiesForCurrentMap')
     await this.createEntitiesForCurrentMap()
+    console.timeEnd('  ↳ createEntitiesForCurrentMap')
 
     // Recentrer la caméra sur le joueur
+    console.time('  ↳ centerCameraOnPlayer')
     this.centerCameraOnPlayer()
+    console.timeEnd('  ↳ centerCameraOnPlayer')
 
     // Mettre à jour la visibilité
+    console.time('  ↳ updateVisibility')
     this.updateVisibility()
+    console.timeEnd('  ↳ updateVisibility')
 
+    console.timeEnd(`🚪 Total transitionToMap to ${portal.destmapid}`)
     console.log(`✅ Transition terminée vers la carte ${destMapId}`)
   }
 
@@ -372,6 +393,8 @@ export class GameScene extends Phaser.Scene {
     )
 
     // Mettre à jour les fog sprites
+    const totalFogSprites = this.fogSprites.length * (this.fogSprites[0]?.length || 0)
+    console.time(`    ↳ update ${totalFogSprites} fog sprites`)
     for (let row = 0; row < this.fogSprites.length; row++) {
       for (let col = 0; col < this.fogSprites[row]!.length; col++) {
         const fogSprite = this.fogSprites[row]![col]
@@ -382,6 +405,7 @@ export class GameScene extends Phaser.Scene {
         }
       }
     }
+    console.timeEnd(`    ↳ update ${totalFogSprites} fog sprites`)
   }
 
   /**
