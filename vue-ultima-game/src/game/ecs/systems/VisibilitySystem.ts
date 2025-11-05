@@ -19,84 +19,74 @@ export class VisibilitySystem {
   calculateFieldOfVision(center: Position, radius: number = 8): Set<string> {
     this.visiblePositions.clear()
 
-    // La position centrale est toujours visible
-    this.visiblePositions.add(this.positionToKey(center))
-
-    // Calculer la vision dans 8 octants (shadowcasting)
-    for (let octant = 0; octant < 8; octant++) {
-      this.castShadows(center, radius, octant)
+    // Marquer toutes les tiles dans le rayon comme visibles d'abord
+    // Puis appliquer le shadowcasting pour bloquer les zones derrière les obstacles
+    for (let row = -radius; row <= radius; row++) {
+      for (let col = -radius; col <= radius; col++) {
+        const distance = Math.sqrt(row * row + col * col)
+        if (distance <= radius) {
+          const pos = new Position(center.row + row, center.col + col, center.mapId)
+          if (!this.mapStore.isPositionOutOfBounds(pos)) {
+            this.visiblePositions.add(this.positionToKey(pos))
+          }
+        }
+      }
     }
 
+    // Maintenant appliquer le shadowcasting pour bloquer les zones derrière les obstacles
+    for (let octant = 0; octant < 8; octant++) {
+      this.castShadow(center, radius, octant)
+    }
+
+    console.log(`FOV: ${this.visiblePositions.size} tiles visibles (radius: ${radius})`)
     return this.visiblePositions
   }
 
   /**
-   * Shadowcasting pour un octant
+   * Cast les ombres pour un octant spécifique
    */
-  private castShadows(center: Position, radius: number, octant: number): void {
-    this.scanOctant(center, radius, octant, 1, 0.0, 1.0)
-  }
+  private castShadow(center: Position, radius: number, octant: number): void {
+    const shadows: Array<{ start: number; end: number }> = []
 
-  /**
-   * Scan récursif d'un octant avec shadowcasting
-   */
-  private scanOctant(
-    center: Position,
-    radius: number,
-    octant: number,
-    row: number,
-    startSlope: number,
-    endSlope: number
-  ): void {
-    if (startSlope >= endSlope) return
+    for (let distance = 1; distance <= radius; distance++) {
+      for (let offset = -distance; offset <= distance; offset++) {
+        const pos = this.transformOctant(center, offset, -distance, octant)
 
-    let nextStartSlope = startSlope
-    let blocked = false
-
-    for (let distance = row; distance <= radius && !blocked; distance++) {
-      const deltaY = -distance
-
-      for (let deltaX = Math.floor(deltaY * startSlope); deltaX <= Math.ceil(deltaY * endSlope); deltaX++) {
-        const currentPos = this.transformOctant(center, deltaX, deltaY, octant)
-
-        // Vérifier si la position est dans les limites
-        if (this.mapStore.isPositionOutOfBounds(currentPos)) {
+        if (this.mapStore.isPositionOutOfBounds(pos)) {
           continue
         }
 
-        // Calculer la pente
-        const leftSlope = (deltaX - 0.5) / (deltaY + 0.5)
-        const rightSlope = (deltaX + 0.5) / (deltaY - 0.5)
+        // Calculer l'angle de cette cellule
+        const angle = Math.atan2(offset, distance)
 
-        if (startSlope >= rightSlope) {
-          continue
-        } else if (endSlope <= leftSlope) {
-          break
-        }
-
-        // La tile est visible
-        this.visiblePositions.add(this.positionToKey(currentPos))
-
-        // Vérifier si la tile bloque la vision
-        const isOpaque = this.mapStore.isTileAtPositionIsOpaque(currentPos)
-
-        if (blocked) {
-          // On était déjà bloqué
-          if (isOpaque) {
-            nextStartSlope = rightSlope
-            continue
-          } else {
-            blocked = false
-            startSlope = nextStartSlope
+        // Vérifier si cette cellule est dans une ombre
+        let inShadow = false
+        for (const shadow of shadows) {
+          if (angle >= shadow.start && angle <= shadow.end) {
+            inShadow = true
+            break
           }
-        } else {
-          // Pas encore bloqué
-          if (isOpaque && distance < radius) {
-            blocked = true
-            nextStartSlope = rightSlope
+        }
 
-            // Scan récursif de la prochaine rangée
-            this.scanOctant(center, radius, octant, distance + 1, startSlope, leftSlope)
+        if (inShadow) {
+          // Cette tile est dans l'ombre, la retirer
+          this.visiblePositions.delete(this.positionToKey(pos))
+        } else {
+          // Vérifier si cette tile bloque la lumière
+          if (this.mapStore.isTileAtPositionIsOpaque(pos)) {
+            // Ajouter une ombre
+            const angleSize = Math.atan2(0.5, distance)
+            shadows.push({
+              start: angle - angleSize,
+              end: angle + angleSize
+            })
+
+            // Debug
+            const tileIndex = this.mapStore.getTileIndexAtPosition(pos)
+            const tile = this.mapStore.getTileByIndex(tileIndex)
+            if (tile && octant === 0 && distance <= 3) {
+              console.log(`Ombre créée par ${tile.name} à (${pos.row},${pos.col}), angle: ${angle.toFixed(2)}`)
+            }
           }
         }
       }
@@ -113,35 +103,35 @@ export class VisibilitySystem {
     switch (octant) {
       case 0:
         row = center.row + dy
-        col = center.col - dx
+        col = center.col + dx
         break
       case 1:
-        row = center.row - dx
+        row = center.row + dx
         col = center.col + dy
         break
       case 2:
-        row = center.row - dx
+        row = center.row + dx
         col = center.col - dy
         break
       case 3:
         row = center.row + dy
-        col = center.col + dx
+        col = center.col - dx
         break
       case 4:
         row = center.row - dy
-        col = center.col + dx
+        col = center.col - dx
         break
       case 5:
-        row = center.row + dx
-        col = center.col + dy
+        row = center.row - dx
+        col = center.col - dy
         break
       case 6:
-        row = center.row + dx
-        col = center.col - dy
+        row = center.row - dx
+        col = center.col + dy
         break
       case 7:
         row = center.row - dy
-        col = center.col - dx
+        col = center.col + dx
         break
       default:
         row = center.row
