@@ -124,6 +124,11 @@ export class GameScene extends Phaser.Scene {
             // Vérifier si la texture existe, sinon utiliser grass
             const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_grass'
 
+            // Log si une texture est manquante (seulement pour les premières occurrences)
+            if (!this.textures.exists(tileKey) && tileKey !== 'tile_grass') {
+              console.warn(`⚠️  Texture missing: ${tileKey} (index ${tileIndex}) at (${row},${col}), using grass`)
+            }
+
             const sprite = this.add.sprite(col * TILE_SIZE + HALF_TILE, row * TILE_SIZE + HALF_TILE, finalTileKey)
             sprite.setDepth(0) // Les tuiles au fond
             sprite.setDisplaySize(TILE_SIZE, TILE_SIZE) // Scale to tile size

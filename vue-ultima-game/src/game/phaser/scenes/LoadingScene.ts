@@ -69,24 +69,43 @@ export class LoadingScene extends Phaser.Scene {
     this.load.json('tiles_rules', `${API_BASE_URL}/assets/tiles_rules.json`)
     this.load.json('maps', `${API_BASE_URL}/assets/maps.json`)
 
-    // Charger les tuiles essentielles
-    const essentialTiles = [
-      'grass', 'water', 'sea', 'mountains', 'forest',
-      'city', 'castle', 'dungeon', 'door', 'bridge'
-    ]
+    // Écouter la fin du chargement de tiles.json pour charger toutes les tiles
+    this.load.once('filecomplete-json-tiles', () => {
+      this.loadAllTilesFromJson()
+    })
+  }
 
-    for (const tileName of essentialTiles) {
-      this.load.image(`tile_${tileName}`, `${API_BASE_URL}/assets/tiles/tile_${tileName}.png`)
+  /**
+   * Charge toutes les tiles définies dans tiles.json
+   */
+  private loadAllTilesFromJson(): void {
+    const tilesData = this.cache.json.get('tiles')
+    if (!tilesData || !tilesData.tileset || !tilesData.tileset.tile) {
+      console.warn('⚠️  tiles.json not loaded properly, using fallback tiles')
+      return
     }
 
-    // Charger l'avatar comme spritesheet (32x64 = 2 frames de 32x32 pour l'animation)
-    this.load.spritesheet('tile_avatar', `${API_BASE_URL}/assets/tiles/tile_avatar.png`, {
-      frameWidth: FRAME_WIDTH,
-      frameHeight: FRAME_HEIGHT
-    })
+    const tiles = tilesData.tileset.tile
+    console.log(`📦 Loading ${tiles.length} tiles from tileset...`)
 
-    // Si les assets ne se chargent pas, on utilisera des tuiles générées
-    // Cela sera fait dans onLoadComplete si besoin
+    for (const tile of tiles) {
+      const tileName = tile.name
+      const frames = parseInt(tile.frames || '0', 10)
+
+      // Si le tile a plusieurs frames, charger comme spritesheet
+      if (frames > 0) {
+        this.load.spritesheet(`tile_${tileName}`, `${API_BASE_URL}/assets/tiles/tile_${tileName}.png`, {
+          frameWidth: FRAME_WIDTH,
+          frameHeight: FRAME_HEIGHT
+        })
+      } else {
+        // Sinon charger comme image simple
+        this.load.image(`tile_${tileName}`, `${API_BASE_URL}/assets/tiles/tile_${tileName}.png`)
+      }
+    }
+
+    // Démarrer le chargement des tiles
+    this.load.start()
   }
 
   /**
@@ -108,8 +127,9 @@ export class LoadingScene extends Phaser.Scene {
    * Gère les erreurs de chargement
    */
   private onLoadError(file: Phaser.Loader.File): void {
-    console.warn(`Failed to load: ${file.key}`, file.src)
+    console.warn(`⚠️  Failed to load: ${file.key} from ${file.src}`)
     // Continue loading even if some assets fail
+    // Missing tile textures will fallback to grass in GameScene
   }
 
   /**
@@ -172,16 +192,24 @@ export class LoadingScene extends Phaser.Scene {
 
     // Définir les couleurs pour chaque type de tuile
     const tileColors: { [key: string]: string } = {
-      grass: '#2a7a3a',
-      water: '#4a7ba7',
       sea: '#2a5a8a',
-      mountains: '#8a7a6a',
+      water: '#4a7ba7',
+      shallows: '#6a9bc7',
+      swamp: '#5a6a3a',
+      grass: '#2a7a3a',
+      brush: '#3a8a4a',
       forest: '#1a5a2a',
+      hills: '#7a6a5a',
+      mountains: '#8a7a6a',
+      dungeon: '#4a4a4a',
       city: '#aaaaaa',
       castle: '#8a8a8a',
-      dungeon: '#4a4a4a',
-      door: '#8b7355',
-      bridge: '#6a5a4a'
+      town: '#9a9a9a',
+      bridge: '#6a5a4a',
+      ship: '#8b7355',
+      horse: '#a0826d',
+      balloon: '#ff6b6b',
+      door: '#8b7355'
     }
 
     // Créer une texture pour chaque tuile normale
