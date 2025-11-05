@@ -4,7 +4,7 @@ RPG game inspired by Ultima IV, migrated from Angular to Vue.js 3 with Phaser 3 
 
 ## 🚀 Quick Start
 
-### Development Mode
+### Option 1: Using Vite Dev Server (Recommended for Development)
 
 1. **Install dependencies** (if not already done):
 ```bash
@@ -21,7 +21,28 @@ npm run dev
    - Open it in your browser
    - The game will start loading automatically
 
-**Note**: For best experience with real Ultima assets, the dev server should be running. The game includes fallback systems that allow it to run even when assets can't be loaded (useful for development without server).
+### Option 2: Using Python Backend (Recommended for Production)
+
+For serving assets to a production build or when you don't want to run the full Vite dev server:
+
+**Terminal 1 - Start Backend:**
+```bash
+cd ../backend
+./start.sh  # Or: python main.py
+```
+
+Backend will run at http://localhost:8000
+
+**Terminal 2 - Configure & Build Frontend:**
+```bash
+# Update asset URLs to use backend (or configure via env vars)
+npm run build
+# Serve dist folder with any static server
+```
+
+See [../backend/README.md](../backend/README.md) for detailed backend documentation.
+
+**Note**: The game includes fallback systems that allow it to run even when assets can't be loaded (useful for development without server).
 
 ### Build for Production
 

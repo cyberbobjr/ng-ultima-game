@@ -1,0 +1,10 @@
+# FastAPI backend dependencies for Ultima IV Assets Server
+
+# Core Framework
+fastapi==0.109.0
+
+# ASGI Server
+uvicorn[standard]==0.27.0
+
+# Additional utilities
+python-multipart==0.0.6  # For form data support (optional)
