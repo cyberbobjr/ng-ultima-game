@@ -26,7 +26,9 @@ export class GameScene extends Phaser.Scene {
 
   // Phaser objects
   private tileSprites: Phaser.GameObjects.Sprite[][] = []
-  private fogSprites: Phaser.GameObjects.Rectangle[][] = []
+  private fogGraphics: Phaser.GameObjects.Graphics | null = null
+  private currentMapWidth: number = 0
+  private currentMapHeight: number = 0
 
   // Sprites pour les entités
   private entitySprites: Map<string, Phaser.GameObjects.Sprite> = new Map()
@@ -117,21 +119,27 @@ export class GameScene extends Phaser.Scene {
     const mapData = gameMap.mapData
     const width = gameMap.width
     const height = gameMap.height
+    this.currentMapWidth = width
+    this.currentMapHeight = height
 
     // Détruire les anciens sprites de tuiles si ils existent
     console.time('  ↳ clearTileSprites')
     this.clearTileSprites()
     console.timeEnd('  ↳ clearTileSprites')
 
-    console.time('  ↳ clearFogSprites')
-    this.clearFogSprites()
-    console.timeEnd('  ↳ clearFogSprites')
+    // Créer ou réinitialiser le fog graphics
+    console.time('  ↳ create fog graphics')
+    if (this.fogGraphics) {
+      this.fogGraphics.destroy()
+    }
+    this.fogGraphics = this.add.graphics()
+    this.fogGraphics.setDepth(5) // Entre tiles et entités
+    console.timeEnd('  ↳ create fog graphics')
 
     // Créer un sprite pour chaque tuile de la carte
-    console.time(`  ↳ create ${width}x${height} tile+fog sprites`)
+    console.time(`  ↳ create ${width}x${height} tile sprites`)
     for (let row = 0; row < height; row++) {
       this.tileSprites[row] = []
-      this.fogSprites[row] = []
 
       for (let col = 0; col < width; col++) {
         const rowData = mapData[row]
@@ -158,24 +166,11 @@ export class GameScene extends Phaser.Scene {
             sprite.setDepth(0) // Les tuiles au fond
             sprite.setDisplaySize(TILE_SIZE, TILE_SIZE) // Scale to tile size
             this.tileSprites[row]![col] = sprite
-
-            // Créer un fog sprite pour cette tuile (depth 5, entre tiles et entités)
-            const fogSprite = this.add.rectangle(
-              col * TILE_SIZE + HALF_TILE,
-              row * TILE_SIZE + HALF_TILE,
-              TILE_SIZE,
-              TILE_SIZE,
-              0x000000,
-              1.0 // Alpha 100% pour noir complet
-            )
-            fogSprite.setDepth(5)
-            fogSprite.setVisible(true) // Sera géré par updateVisibility()
-            this.fogSprites[row]![col] = fogSprite
           }
         }
       }
     }
-    console.timeEnd(`  ↳ create ${width}x${height} tile+fog sprites`)
+    console.timeEnd(`  ↳ create ${width}x${height} tile sprites`)
 
     // Configurer les limites du monde pour la caméra
     console.time('  ↳ setup camera bounds')
@@ -203,19 +198,6 @@ export class GameScene extends Phaser.Scene {
     this.tileSprites = []
   }
 
-  /**
-   * Détruit tous les sprites de fog
-   */
-  private clearFogSprites(): void {
-    for (const row of this.fogSprites) {
-      for (const fogSprite of row) {
-        if (fogSprite) {
-          fogSprite.destroy()
-        }
-      }
-    }
-    this.fogSprites = []
-  }
 
   /**
    * Crée toutes les entités présentes sur la carte actuelle
@@ -381,6 +363,8 @@ export class GameScene extends Phaser.Scene {
    * Met à jour la visibilité du champ de vision (FOV)
    */
   private updateVisibility(): void {
+    if (!this.fogGraphics) return
+
     const player = this.entityStore.getPlayer()
     if (!player) return
 
@@ -392,20 +376,32 @@ export class GameScene extends Phaser.Scene {
       this.VISION_RADIUS
     )
 
-    // Mettre à jour les fog sprites
-    const totalFogSprites = this.fogSprites.length * (this.fogSprites[0]?.length || 0)
-    console.time(`    ↳ update ${totalFogSprites} fog sprites`)
-    for (let row = 0; row < this.fogSprites.length; row++) {
-      for (let col = 0; col < this.fogSprites[row]!.length; col++) {
-        const fogSprite = this.fogSprites[row]![col]
-        if (fogSprite) {
-          const posKey = `${row},${col}`
-          const isVisible = visiblePositions.has(posKey)
-          fogSprite.setVisible(!isVisible) // Masquer le fog si visible, l'afficher sinon
-        }
+    // Redessiner le fog en utilisant Graphics (beaucoup plus rapide)
+    // Stratégie: dessiner toute la carte en noir, puis "découper" les zones visibles
+    this.fogGraphics.clear()
+    this.fogGraphics.fillStyle(0x000000, 1.0) // Noir complet
+
+    // Dessiner un grand rectangle noir sur toute la carte
+    this.fogGraphics.fillRect(
+      0,
+      0,
+      this.currentMapWidth * TILE_SIZE,
+      this.currentMapHeight * TILE_SIZE
+    )
+
+    // "Découper" les zones visibles en les dessinant en transparent
+    // On utilise globalCompositeOperation pour effacer
+    this.fogGraphics.fillStyle(0x000000, 0.0) // Transparent
+    for (const posKey of visiblePositions) {
+      const parts = posKey.split(',')
+      if (parts.length === 2 && parts[0] && parts[1]) {
+        const row = parseInt(parts[0], 10)
+        const col = parseInt(parts[1], 10)
+
+        // Dessiner un carré transparent (efface le noir)
+        this.fogGraphics.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
       }
     }
-    console.timeEnd(`    ↳ update ${totalFogSprites} fog sprites`)
   }
 
   /**
@@ -568,8 +564,11 @@ export class GameScene extends Phaser.Scene {
     // Détruire tous les sprites de tuiles
     this.clearTileSprites()
 
-    // Détruire tous les fog sprites
-    this.clearFogSprites()
+    // Détruire le fog graphics
+    if (this.fogGraphics) {
+      this.fogGraphics.destroy()
+      this.fogGraphics = null
+    }
 
     // Détruire tous les sprites d'entités
     for (const [entityId] of this.entitySprites) {
