@@ -376,30 +376,64 @@ export class GameScene extends Phaser.Scene {
       this.VISION_RADIUS
     )
 
-    // Redessiner le fog en utilisant Graphics (beaucoup plus rapide)
-    // Stratégie: dessiner toute la carte en noir, puis "découper" les zones visibles
+    // Redessiner le fog en utilisant Graphics avec batching pour la performance
     this.fogGraphics.clear()
+
+    // Optimisation: utiliser beginPath/closePath pour batching des rectangles
     this.fogGraphics.fillStyle(0x000000, 1.0) // Noir complet
 
-    // Dessiner un grand rectangle noir sur toute la carte
-    this.fogGraphics.fillRect(
-      0,
-      0,
-      this.currentMapWidth * TILE_SIZE,
-      this.currentMapHeight * TILE_SIZE
-    )
+    // Stratégie optimisée: calculer la bounding box autour du joueur
+    // et ne dessiner le fog que dans cette zone + le reste de la carte en gros blocs
+    const visionRadius = this.VISION_RADIUS
+    const minRow = Math.max(0, playerPosition.row - visionRadius - 1)
+    const maxRow = Math.min(this.currentMapHeight - 1, playerPosition.row + visionRadius + 1)
+    const minCol = Math.max(0, playerPosition.col - visionRadius - 1)
+    const maxCol = Math.min(this.currentMapWidth - 1, playerPosition.col + visionRadius + 1)
 
-    // "Découper" les zones visibles en les dessinant en transparent
-    // On utilise globalCompositeOperation pour effacer
-    this.fogGraphics.fillStyle(0x000000, 0.0) // Transparent
-    for (const posKey of visiblePositions) {
-      const parts = posKey.split(',')
-      if (parts.length === 2 && parts[0] && parts[1]) {
-        const row = parseInt(parts[0], 10)
-        const col = parseInt(parts[1], 10)
+    // Zone 1: Top band (tout en noir)
+    if (minRow > 0) {
+      this.fogGraphics.fillRect(0, 0, this.currentMapWidth * TILE_SIZE, minRow * TILE_SIZE)
+    }
 
-        // Dessiner un carré transparent (efface le noir)
-        this.fogGraphics.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+    // Zone 2: Bottom band (tout en noir)
+    if (maxRow < this.currentMapHeight - 1) {
+      this.fogGraphics.fillRect(
+        0,
+        (maxRow + 1) * TILE_SIZE,
+        this.currentMapWidth * TILE_SIZE,
+        (this.currentMapHeight - maxRow - 1) * TILE_SIZE
+      )
+    }
+
+    // Zone 3: Left band (dans la zone centrale)
+    if (minCol > 0) {
+      this.fogGraphics.fillRect(
+        0,
+        minRow * TILE_SIZE,
+        minCol * TILE_SIZE,
+        (maxRow - minRow + 1) * TILE_SIZE
+      )
+    }
+
+    // Zone 4: Right band (dans la zone centrale)
+    if (maxCol < this.currentMapWidth - 1) {
+      this.fogGraphics.fillRect(
+        (maxCol + 1) * TILE_SIZE,
+        minRow * TILE_SIZE,
+        (this.currentMapWidth - maxCol - 1) * TILE_SIZE,
+        (maxRow - minRow + 1) * TILE_SIZE
+      )
+    }
+
+    // Zone 5: Zone centrale autour du joueur - dessiner tile par tile uniquement ici
+    for (let row = minRow; row <= maxRow; row++) {
+      for (let col = minCol; col <= maxCol; col++) {
+        const posKey = `${row},${col}`
+        const isVisible = visiblePositions.has(posKey)
+
+        if (!isVisible) {
+          this.fogGraphics.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+        }
       }
     }
   }
