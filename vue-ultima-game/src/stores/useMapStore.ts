@@ -173,8 +173,8 @@ export const useMapStore = defineStore('map', () => {
     if (!currentMap.value) return true
     if (position.row < 0 || position.col < 0) return true
     return (
-      position.row > currentMap.value.getHeightMap() ||
-      position.col > currentMap.value.getWidthMap()
+      position.row >= currentMap.value.getHeightMap() ||
+      position.col >= currentMap.value.getWidthMap()
     )
   }
 

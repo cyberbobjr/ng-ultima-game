@@ -42,6 +42,7 @@ export class GameScene extends Phaser.Scene {
 
   // Visibility settings
   private readonly VISION_RADIUS = 8 // Rayon de vision en tiles
+  private debugLogCounter = 0 // Pour limiter les logs de debug
 
   constructor() {
     super({ key: 'GameScene' })
@@ -363,26 +364,44 @@ export class GameScene extends Phaser.Scene {
    * Met à jour la visibilité du champ de vision (FOV)
    */
   private updateVisibility(): void {
-    if (!this.fogGraphics) return
+    if (!this.fogGraphics) {
+      console.warn('⚠️  fogGraphics is null!')
+      return
+    }
 
     const player = this.entityStore.getPlayer()
-    if (!player) return
+    if (!player) {
+      console.warn('⚠️  No player found!')
+      return
+    }
 
     const playerPosition = player.getPosition()
-    console.log(`👁️  FOV Update: Player at (${playerPosition.row}, ${playerPosition.col}) on map ${playerPosition.mapId}`)
-    console.log(`📏 Map dimensions: ${this.currentMapWidth}x${this.currentMapHeight}`)
+
+    // Limiter les logs de debug (seulement toutes les 120 frames = ~2 secondes à 60 FPS)
+    const shouldLog = this.debugLogCounter % 120 === 0
+    this.debugLogCounter++
+
+    if (shouldLog) {
+      console.log(`👁️  FOV Update: Player at (${playerPosition.row}, ${playerPosition.col}) on map ${playerPosition.mapId}`)
+      console.log(`📏 Map dimensions: ${this.currentMapWidth}x${this.currentMapHeight}`)
+    }
 
     // Calculer le champ de vision
     const visiblePositions = this.visibilitySystem.calculateFieldOfVision(
       playerPosition,
       this.VISION_RADIUS
     )
-    console.log(`✨ Visible tiles: ${visiblePositions.size}`)
 
-    // Log quelques positions visibles pour debug
-    if (visiblePositions.size > 0) {
-      const first5 = Array.from(visiblePositions).slice(0, 5)
-      console.log(`   First 5 visible positions: ${first5.join(', ')}`)
+    if (shouldLog) {
+      console.log(`✨ Visible tiles: ${visiblePositions.size}`)
+
+      // Log quelques positions visibles pour debug
+      if (visiblePositions.size > 0) {
+        const first5 = Array.from(visiblePositions).slice(0, 5)
+        console.log(`   First 5 visible positions: ${first5.join(', ')}`)
+      } else {
+        console.error('❌ NO VISIBLE TILES! This is the bug!')
+      }
     }
 
     // Redessiner le fog en utilisant Graphics avec batching pour la performance
@@ -398,7 +417,10 @@ export class GameScene extends Phaser.Scene {
     const maxRow = Math.min(this.currentMapHeight - 1, playerPosition.row + visionRadius + 1)
     const minCol = Math.max(0, playerPosition.col - visionRadius - 1)
     const maxCol = Math.min(this.currentMapWidth - 1, playerPosition.col + visionRadius + 1)
-    console.log(`📦 FOV bounds: rows ${minRow}-${maxRow}, cols ${minCol}-${maxCol}`)
+
+    if (shouldLog) {
+      console.log(`📦 FOV bounds: rows ${minRow}-${maxRow}, cols ${minCol}-${maxCol}`)
+    }
 
     // Zone 1: Top band (tout en noir)
     if (minRow > 0) {
