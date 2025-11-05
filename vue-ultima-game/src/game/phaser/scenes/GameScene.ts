@@ -369,12 +369,21 @@ export class GameScene extends Phaser.Scene {
     if (!player) return
 
     const playerPosition = player.getPosition()
+    console.log(`👁️  FOV Update: Player at (${playerPosition.row}, ${playerPosition.col}) on map ${playerPosition.mapId}`)
+    console.log(`📏 Map dimensions: ${this.currentMapWidth}x${this.currentMapHeight}`)
 
     // Calculer le champ de vision
     const visiblePositions = this.visibilitySystem.calculateFieldOfVision(
       playerPosition,
       this.VISION_RADIUS
     )
+    console.log(`✨ Visible tiles: ${visiblePositions.size}`)
+
+    // Log quelques positions visibles pour debug
+    if (visiblePositions.size > 0) {
+      const first5 = Array.from(visiblePositions).slice(0, 5)
+      console.log(`   First 5 visible positions: ${first5.join(', ')}`)
+    }
 
     // Redessiner le fog en utilisant Graphics avec batching pour la performance
     this.fogGraphics.clear()
@@ -389,6 +398,7 @@ export class GameScene extends Phaser.Scene {
     const maxRow = Math.min(this.currentMapHeight - 1, playerPosition.row + visionRadius + 1)
     const minCol = Math.max(0, playerPosition.col - visionRadius - 1)
     const maxCol = Math.min(this.currentMapWidth - 1, playerPosition.col + visionRadius + 1)
+    console.log(`📦 FOV bounds: rows ${minRow}-${maxRow}, cols ${minCol}-${maxCol}`)
 
     // Zone 1: Top band (tout en noir)
     if (minRow > 0) {
