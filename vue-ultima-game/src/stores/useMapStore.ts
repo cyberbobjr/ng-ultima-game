@@ -107,7 +107,7 @@ export const useMapStore = defineStore('map', () => {
         tileset: 'fallback',
         tilebase: 'fallback',
         type: 'world'
-      }]
+      } as any] // Cast to handle string/number ID mismatch in original data
     }
   }
 
@@ -116,7 +116,8 @@ export const useMapStore = defineStore('map', () => {
    * @param id ID de la carte
    */
   function getMapMetadataByMapId(id: number): IMapMetaData | undefined {
-    return _.find(mapsMetaData.value, { id: id.toString() } as any)
+    // Try both string and number ID formats (real data uses strings, fallback uses numbers)
+    return _.find(mapsMetaData.value, (map: any) => map.id == id || map.id === id.toString())
   }
 
   /**
