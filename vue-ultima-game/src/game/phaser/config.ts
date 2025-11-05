@@ -27,10 +27,10 @@ export const phaserConfig: Phaser.Types.Core.GameConfig = {
 
   // Configuration du scaling et de l'affichage
   scale: {
-    mode: Phaser.Scale.FIT, // Adapte le jeu à la taille du conteneur
-    autoCenter: Phaser.Scale.CENTER_BOTH, // Centre le jeu
-    width: 800,
-    height: 600,
+    mode: Phaser.Scale.RESIZE, // Resize canvas to fill container
+    autoCenter: Phaser.Scale.NO_CENTER,
+    width: '100%',
+    height: '100%',
     parent: 'phaser-game'
   },
 

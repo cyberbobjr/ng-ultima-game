@@ -36,31 +36,22 @@ onUnmounted(() => {
 
 <style scoped>
 .phaser-game-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
   height: 100%;
-  background-color: #1a1a1a;
-  padding: 1rem;
+  background-color: #0a0a0a;
+  position: relative;
 }
 
 #phaser-game {
   width: 100%;
   height: 100%;
-  max-width: 100%;
-  max-height: 100%;
 }
 
 /* Style pour le canvas lui-même (appliqué par Phaser) */
 :deep(canvas) {
+  width: 100% !important;
+  height: 100% !important;
   display: block;
-  margin: 0 auto;
-  border: 2px solid #444;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  max-width: 100% !important;
-  max-height: 100% !important;
-  width: auto !important;
-  height: auto !important;
+  border: none;
 }
 </style>
