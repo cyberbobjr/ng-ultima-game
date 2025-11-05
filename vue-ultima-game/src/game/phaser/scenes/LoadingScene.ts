@@ -11,6 +11,7 @@ export class LoadingScene extends Phaser.Scene {
   private loadingText!: Phaser.GameObjects.Text
   private progressBar!: Phaser.GameObjects.Graphics
   private progressBox!: Phaser.GameObjects.Graphics
+  private tilesData: any = null
 
   constructor() {
     super({ key: 'LoadingScene' })
@@ -23,6 +24,7 @@ export class LoadingScene extends Phaser.Scene {
     // Écouter les événements de chargement
     this.load.on('progress', this.onLoadProgress, this)
     this.load.on('complete', this.onLoadComplete, this)
+    this.load.on('loaderror', this.onLoadError, this)
 
     // Charger les assets du jeu
     this.loadGameAssets()
@@ -55,60 +57,51 @@ export class LoadingScene extends Phaser.Scene {
    * Charge tous les assets du jeu
    */
   private loadGameAssets(): void {
-    // Note: Les tilesets et autres assets seront chargés via les stores
-    // Pour l'instant, on simule un chargement minimal
-    // Dans les phases futures, nous chargerons les vrais assets depuis les fichiers JSON
+    // Charger les fichiers JSON de configuration
+    this.load.json('tiles', '/tiles.json')
+    this.load.json('tiles_rules', '/tiles_rules.json')
+    this.load.json('maps', '/maps.json')
 
-    // Charger un tileset de test (sera remplacé par les vrais tilesets)
-    // this.load.image('tiles', '/assets/tiles.png')
+    // Charger toutes les tuiles individuelles
+    // Les noms de tuiles sont connus à l'avance
+    const tileNames = [
+      'avatar', 'sea', 'water', 'shallows', 'swamp', 'grass', 'brush', 'forest',
+      'hills', 'mountains', 'dungeon', 'city', 'castle', 'town', 'lcb_west',
+      'lcb_entrance', 'lcb_east', 'ship', 'horse', 'dungeon_floor', 'bridge',
+      'balloon', 'bridge_pieces', 'shrine', 'ruins', 'shipwheel', 'rocks',
+      'corpse', 'stone_wall', 'locked_door', 'door', 'chest', 'ankh', 'brick_floor',
+      'wood_floor', 'brick_wall', 'moongate', 'up_ladder', 'down_ladder',
+      'column', 'solid', 'secret_door', 'altar', 'campfire', 'lava', 'miss_flash',
+      'magic_flash', 'hit_flash', 'poison_field', 'energy_field', 'fire_field',
+      'sleep_field', 'whirlpool', 'storm', 'space', 'black'
+    ]
 
-    // Pour l'instant, créer des tuiles de test avec des formes géométriques
-    this.createTestTiles()
-  }
+    // Charger les tuiles de base
+    for (const tileName of tileNames) {
+      this.load.image(`tile_${tileName}`, `/tiles/tile_${tileName}.png`)
+    }
 
-  /**
-   * Crée des tuiles de test pour le développement
-   */
-  private createTestTiles(): void {
-    // Créer un canvas pour générer des tuiles de test
-    const tileSize = 16
-    const tilesPerRow = 16
-    const canvas = document.createElement('canvas')
-    canvas.width = tileSize * tilesPerRow
-    canvas.height = tileSize * tilesPerRow
-    const ctx = canvas.getContext('2d')
+    // Charger aussi les lettres A-Z pour les panneaux
+    for (let i = 65; i <= 90; i++) {
+      const letter = String.fromCharCode(i)
+      this.load.image(`tile_${letter}`, `/tiles/tile_${letter}.png`)
+    }
 
-    if (ctx) {
-      // Générer quelques tuiles de test avec différentes couleurs
-      const colors = [
-        '#1a472a', // Herbe (vert foncé)
-        '#2a7a3a', // Herbe (vert clair)
-        '#4a4a4a', // Pierre
-        '#8b7355', // Terre
-        '#4a7ba7', // Eau
-        '#ffffff', // Blanc (avatar)
-        '#ff0000', // Rouge
-        '#ffaa00'  // Orange
-      ]
+    // Charger les NPCs et monstres
+    const npcTiles = [
+      'guard', 'villager', 'bard', 'bard_singing', 'jester', 'beggar', 'child',
+      'bull', 'lord_british', 'shepherd', 'fighter', 'mage', 'ranger', 'rogue',
+      'paladin', 'druid', 'tinker',
+      // Monstres
+      'orc', 'skeleton', 'troll', 'rat', 'bat', 'spider', 'ghost',
+      'slime', 'dragon', 'balron', 'cyclops', 'daemon', 'ettin', 'gazer',
+      'gremlin', 'headless', 'hydra', 'insect_swarm', 'liche', 'mimic',
+      'nixie', 'phantom', 'python', 'reaper', 'sea_horse', 'sea_serpent',
+      'wisp', 'zorn', 'lava_lizard', 'giant_squid', 'evil_mage'
+    ]
 
-      for (let i = 0; i < colors.length && i < tilesPerRow * tilesPerRow; i++) {
-        const x = (i % tilesPerRow) * tileSize
-        const y = Math.floor(i / tilesPerRow) * tileSize
-
-        const color = colors[i]
-        if (color) {
-          ctx.fillStyle = color
-          ctx.fillRect(x, y, tileSize, tileSize)
-        }
-
-        // Ajouter une bordure pour mieux voir les tuiles
-        ctx.strokeStyle = '#000000'
-        ctx.lineWidth = 1
-        ctx.strokeRect(x, y, tileSize, tileSize)
-      }
-
-      // Convertir le canvas en texture Phaser
-      this.textures.addCanvas('tileset', canvas)
+    for (const npcName of npcTiles) {
+      this.load.image(`tile_${npcName}`, `/tiles/tile_${npcName}.png`)
     }
   }
 
@@ -128,12 +121,23 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   /**
+   * Gère les erreurs de chargement
+   */
+  private onLoadError(file: Phaser.Loader.File): void {
+    console.warn(`Failed to load: ${file.key}`, file.src)
+    // Continue loading even if some assets fail
+  }
+
+  /**
    * Appelé quand le chargement est terminé
    */
   private async onLoadComplete(): Promise<void> {
     this.loadingText.setText('Initializing game...')
 
     try {
+      // Récupérer les données des tuiles
+      this.tilesData = this.cache.json.get('tiles')
+
       // Initialiser les stores
       await this.initializeStores()
 

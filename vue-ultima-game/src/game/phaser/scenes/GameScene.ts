@@ -22,9 +22,7 @@ export class GameScene extends Phaser.Scene {
   private gameStore = useGameStore()
 
   // Phaser objects
-  private tilemap!: Phaser.Tilemaps.Tilemap
-  private tileset!: Phaser.Tilemaps.Tileset
-  private groundLayer!: Phaser.Tilemaps.TilemapLayer
+  private tileSprites: Phaser.GameObjects.Sprite[][] = []
 
   // Sprites pour les entités
   private entitySprites: Map<string, Phaser.GameObjects.Sprite> = new Map()
@@ -57,6 +55,9 @@ export class GameScene extends Phaser.Scene {
 
       // Configurer la caméra
       this.setupCamera()
+
+      // Configurer les contrôles clavier
+      this.setupKeyboardControls()
 
       // Lancer l'UI Scene en parallèle
       this.scene.launch('UIScene')
@@ -95,46 +96,62 @@ export class GameScene extends Phaser.Scene {
     // Charger la carte via le store
     const gameMap = await this.mapStore.loadMapByMapId(mapId)
 
-    // Créer le tilemap Phaser
     const mapData = gameMap.mapData
     const width = gameMap.width
     const height = gameMap.height
 
-    // Créer un tilemap vide
-    this.tilemap = this.make.tilemap({
-      tileWidth: 16,
-      tileHeight: 16,
-      width: width,
-      height: height
-    })
+    // Détruire les anciens sprites de tuiles si ils existent
+    this.clearTileSprites()
 
-    // Ajouter le tileset
-    // Note: Le nom 'tileset' correspond à la texture créée dans LoadingScene
-    this.tileset = this.tilemap.addTilesetImage('tileset', 'tileset', 16, 16, 0, 0)!
+    // Créer un sprite pour chaque tuile de la carte
+    for (let row = 0; row < height; row++) {
+      this.tileSprites[row] = []
 
-    // Créer la couche de tuiles
-    const layer = this.tilemap.createBlankLayer('ground', this.tileset, 0, 0, width, height)
+      for (let col = 0; col < width; col++) {
+        const rowData = mapData[row]
+        if (rowData && rowData[col] !== undefined) {
+          const tileIndex = rowData[col]
 
-    if (layer) {
-      this.groundLayer = layer
+          if (tileIndex !== undefined) {
+            // Récupérer le nom de la tuile depuis le store
+            const tile = this.mapStore.getTileByIndex(tileIndex)
+            const tileName = tile?.name || 'grass' // Fallback sur grass
 
-      // Remplir la couche avec les données de la carte
-      for (let row = 0; row < height; row++) {
-        for (let col = 0; col < width; col++) {
-          const rowData = mapData[row]
-          if (rowData && rowData[col] !== undefined) {
-            const tileIndex = rowData[col]
-            if (tileIndex !== undefined) {
-              // Phaser utilise des indices 1-based pour les tuiles, 0 = pas de tuile
-              // Nos données sont 0-based, donc on ajoute 1
-              this.groundLayer.putTileAt(tileIndex > 0 ? tileIndex : 1, col, row)
-            }
+            // Créer un sprite pour cette tuile
+            const tileKey = `tile_${tileName}`
+
+            // Vérifier si la texture existe, sinon utiliser grass
+            const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_grass'
+
+            const sprite = this.add.sprite(col * 16 + 8, row * 16 + 8, finalTileKey)
+            sprite.setDepth(0) // Les tuiles au fond
+            this.tileSprites[row]![col] = sprite
           }
         }
       }
     }
 
+    // Configurer les limites du monde pour la caméra
+    const worldWidth = width * 16
+    const worldHeight = height * 16
+    this.cameras.main.setBounds(0, 0, worldWidth, worldHeight)
+    this.physics.world.setBounds(0, 0, worldWidth, worldHeight)
+
     console.log(`GameScene: Map ${mapId} loaded (${width}x${height})`)
+  }
+
+  /**
+   * Détruit tous les sprites de tuiles
+   */
+  private clearTileSprites(): void {
+    for (const row of this.tileSprites) {
+      for (const sprite of row) {
+        if (sprite) {
+          sprite.destroy()
+        }
+      }
+    }
+    this.tileSprites = []
   }
 
   /**
@@ -167,13 +184,7 @@ export class GameScene extends Phaser.Scene {
       return
     }
 
-    // Définir les limites de la caméra sur la carte
-    const currentMap = this.mapStore.getCurrentMap()
-    if (currentMap && this.tilemap) {
-      const mapWidth = currentMap.width * 16
-      const mapHeight = currentMap.height * 16
-      this.cameras.main.setBounds(0, 0, mapWidth, mapHeight)
-    }
+    // Les limites de la caméra ont déjà été définies dans loadMap()
 
     // Suivre le joueur
     const playerSprite = this.getOrCreateEntitySprite(player)
@@ -197,6 +208,20 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
+   * Configure les contrôles clavier
+   */
+  private setupKeyboardControls(): void {
+    // Écouter les événements clavier globaux
+    this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
+      const player = this.entityStore.getPlayer()
+      if (!player) return
+
+      // Traiter l'input avec le système ECS
+      this.keyboardInputSystem.processKeyboardInput(event, [player])
+    })
+  }
+
+  /**
    * Récupère ou crée un sprite pour une entité
    */
   private getOrCreateEntitySprite(entity: Entity): Phaser.GameObjects.Sprite | null {
@@ -214,13 +239,15 @@ export class GameScene extends Phaser.Scene {
       return null
     }
 
-    // Pour l'instant, utiliser un carré blanc pour le joueur
-    // TODO Phase 5: Utiliser les vraies tuiles depuis le tileset
-    const sprite = this.add.sprite(position.col * 16 + 8, position.row * 16 + 8, 'tileset')
+    // Récupérer le nom de la tuile
+    const tileName = tile.name || 'avatar'
+    const tileKey = `tile_${tileName}`
 
-    // Définir le frame (tuile) à afficher
-    // Pour le test, utiliser la tuile 5 (blanc) pour le joueur
-    sprite.setFrame(5)
+    // Vérifier si la texture existe, sinon utiliser avatar par défaut
+    const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_avatar'
+
+    const sprite = this.add.sprite(position.col * 16 + 8, position.row * 16 + 8, finalTileKey)
+    sprite.setDepth(10) // Les entités au-dessus des tuiles
 
     // Sauvegarder le sprite
     this.entitySprites.set(entity.id, sprite)
@@ -240,7 +267,17 @@ export class GameScene extends Phaser.Scene {
     // Mettre à jour la position du sprite
     sprite.setPosition(position.col * 16 + 8, position.row * 16 + 8)
 
-    // TODO Phase 5: Mettre à jour le frame selon la tuile de l'entité
+    // Mettre à jour la texture si la tuile de l'entité a changé
+    const tile = entity.getEntityTile()
+    if (tile) {
+      const tileName = tile.name || 'avatar'
+      const tileKey = `tile_${tileName}`
+      const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_avatar'
+
+      if (sprite.texture.key !== finalTileKey) {
+        sprite.setTexture(finalTileKey)
+      }
+    }
   }
 
   /**
@@ -272,8 +309,7 @@ export class GameScene extends Phaser.Scene {
     const allEntities = player ? [player, ...entities] : entities
 
     // Mettre à jour les systèmes ECS
-    // TODO Phase 5: Passer les inputs clavier au KeyboardInputSystem
-    // this.keyboardInputSystem.processInput(allEntities)
+    // Note: Keyboard input is handled via event listeners in setupKeyboardControls()
 
     // Mettre à jour l'IA
     this.aiSystem.processAiBehavior(allEntities)
@@ -315,7 +351,10 @@ export class GameScene extends Phaser.Scene {
    * Nettoie la scène
    */
   shutdown(): void {
-    // Détruire tous les sprites
+    // Détruire tous les sprites de tuiles
+    this.clearTileSprites()
+
+    // Détruire tous les sprites d'entités
     for (const [entityId] of this.entitySprites) {
       this.destroyEntitySprite(entityId)
     }
