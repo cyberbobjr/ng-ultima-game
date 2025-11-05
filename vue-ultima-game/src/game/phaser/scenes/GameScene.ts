@@ -125,6 +125,7 @@ export class GameScene extends Phaser.Scene {
 
             const sprite = this.add.sprite(col * 16 + 8, row * 16 + 8, finalTileKey)
             sprite.setDepth(0) // Les tuiles au fond
+            sprite.setDisplaySize(16, 16) // Scale to 16x16 grid
             this.tileSprites[row]![col] = sprite
           }
         }
@@ -216,6 +217,11 @@ export class GameScene extends Phaser.Scene {
       const player = this.entityStore.getPlayer()
       if (!player) return
 
+      // Prevent browser from capturing arrow keys (stops page scrolling)
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(event.key)) {
+        event.preventDefault()
+      }
+
       // Traiter l'input avec le système ECS
       this.keyboardInputSystem.processKeyboardInput(event, [player])
     })
@@ -248,6 +254,10 @@ export class GameScene extends Phaser.Scene {
 
     const sprite = this.add.sprite(position.col * 16 + 8, position.row * 16 + 8, finalTileKey)
     sprite.setDepth(10) // Les entités au-dessus des tuiles
+
+    // Scale sprite to match tile size (16x16)
+    // Original tiles are 32x32 or 32x64, we need them to display as 16x16
+    sprite.setDisplaySize(16, 16)
 
     // Sauvegarder le sprite
     this.entitySprites.set(entity.id, sprite)

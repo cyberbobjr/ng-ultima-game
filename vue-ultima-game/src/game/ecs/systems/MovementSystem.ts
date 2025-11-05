@@ -3,6 +3,7 @@ import type { Entity } from '../entities/Entity'
 import type { MovableBehavior } from '../behaviors/MovableBehavior'
 import type { PositionBehavior } from '../behaviors/PositionBehavior'
 import { Position } from '../../models/Position'
+import { useMapStore } from '@/stores/useMapStore'
 
 const NORMAL_MOVE_SPEED = 1
 
@@ -65,13 +66,24 @@ export class MovementSystem {
 
   /**
    * Vérifie si on peut marcher à une position de destination
-   * Version simplifiée pour Phase 2
    */
   private _canWalkAtDestinationPosition(
     entity: Entity,
     destinationPosition: Position,
     allEntities: Entity[]
   ): boolean {
+    const mapStore = useMapStore()
+
+    // Vérifier si la position est hors limites
+    if (mapStore.isPositionOutOfBounds(destinationPosition)) {
+      return false
+    }
+
+    // Vérifier la walkability de la tuile
+    if (!mapStore.isTileAtPositionIsWalkable(destinationPosition)) {
+      return false
+    }
+
     // Vérifier les collisions avec les autres entités
     if (this._isEntityCollidable(entity)) {
       const collidableEntities = this._getEntityCollidableAtPosition(
@@ -83,8 +95,6 @@ export class MovementSystem {
       }
     }
 
-    // TODO Phase 3: Vérifier la walkability via MapStore
-    // Pour Phase 2, on autorise tous les mouvements
     return true
   }
 

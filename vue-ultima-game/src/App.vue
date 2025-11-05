@@ -1,81 +1,73 @@
 <script setup lang="ts">
 import PhaserGame from './components/PhaserGame.vue'
+import CharacterSheet from './components/CharacterSheet.vue'
+import InfoPanel from './components/InfoPanel.vue'
 </script>
 
 <template>
-  <div class="app-container">
-    <header>
-      <h1>🎮 Ultima Game - Migration Vue.js + Phaser</h1>
-      <p class="status">Phase 1 : Projet initialisé avec succès ✅</p>
-    </header>
+  <div class="game-layout">
+    <!-- Left Panel: Character Sheet -->
+    <aside class="character-panel">
+      <CharacterSheet />
+    </aside>
 
-    <main>
+    <!-- Center: Game Canvas -->
+    <main class="game-main">
       <PhaserGame />
     </main>
 
-    <footer>
-      <p>
-        <strong>Technologies:</strong> Vue.js 3 + TypeScript + Phaser 3 + Pinia + Vite
-      </p>
-      <p class="info">
-        Le canvas Phaser devrait s'afficher ci-dessus avec une grille de tuiles de test
-      </p>
-    </footer>
+    <!-- Right Panel: Info/Log -->
+    <aside class="info-panel">
+      <InfoPanel />
+    </aside>
   </div>
 </template>
 
 <style scoped>
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+.game-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  height: 100vh;
+  background: #000000;
   color: #ffffff;
+  gap: 2px;
+  overflow: hidden;
 }
 
-header {
-  text-align: center;
-  padding: 2rem 1rem 1rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom: 2px solid #444;
+.character-panel {
+  background: #1a1a1a;
+  border-right: 2px solid #444;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
-header h1 {
-  margin: 0 0 0.5rem;
-  font-size: 2rem;
-  color: #00ff00;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-}
-
-.status {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #ffcc00;
-}
-
-main {
-  flex: 1;
+.game-main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem 1rem;
+  background: #0a0a0a;
+  position: relative;
 }
 
-footer {
-  text-align: center;
+.info-panel {
+  background: #1a1a1a;
+  border-left: 2px solid #444;
+  overflow-y: auto;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-top: 2px solid #444;
-  font-size: 0.9rem;
 }
 
-footer p {
-  margin: 0.5rem 0;
-}
+/* Responsive: Stack vertically on small screens */
+@media (max-width: 1024px) {
+  .game-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
 
-.info {
-  color: #aaa;
-  font-style: italic;
+  .character-panel,
+  .info-panel {
+    border: none;
+    border-bottom: 2px solid #444;
+  }
 }
 </style>
 
