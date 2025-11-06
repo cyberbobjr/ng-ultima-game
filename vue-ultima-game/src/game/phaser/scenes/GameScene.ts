@@ -307,6 +307,11 @@ export class GameScene extends Phaser.Scene {
    * Configure les contrôles clavier
    */
   private setupKeyboardControls(): void {
+    // Configurer le callback pour l'activation des portails
+    this.keyboardInputSystem.setOnPortalActivationRequested((entity) => {
+      this.movementSystem.checkAndActivatePortal(entity)
+    })
+
     // Écouter les événements clavier globaux
     this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
       const player = this.entityStore.getPlayer()
@@ -317,14 +322,7 @@ export class GameScene extends Phaser.Scene {
         event.preventDefault()
       }
 
-      // Touche "E" pour entrer dans les portails (villes, donjons, etc.)
-      if (event.key === 'e' || event.key === 'E') {
-        console.log('🔑 Touche E pressée - vérification du portail...')
-        this.movementSystem.checkAndActivatePortal(player)
-        return
-      }
-
-      // Traiter l'input avec le système ECS
+      // Traiter TOUTES les touches via le système ECS (y compris "E")
       this.keyboardInputSystem.processKeyboardInput(event, [player])
     })
   }
