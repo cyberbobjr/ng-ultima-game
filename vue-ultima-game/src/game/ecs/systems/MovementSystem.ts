@@ -188,6 +188,39 @@ export class MovementSystem {
   }
 
   /**
+   * Tente d'ouvrir une porte à la position actuelle de l'entité
+   * Vérifie les 4 directions autour du joueur (haut, bas, gauche, droite)
+   * Doit être appelé quand le joueur appuie sur "O"
+   */
+  checkAndOpenDoor(entity: Entity): boolean {
+    if (!entity.hasBehavior('position')) return false
+
+    const mapStore = useMapStore()
+    const positionBehavior = entity.getBehavior('position') as PositionBehavior
+    const currentPos = positionBehavior.position
+
+    // Vérifier les 4 directions autour du joueur
+    const directions = [
+      currentPos.getVectorUp(),    // Haut
+      currentPos.getVectorDown(),  // Bas
+      currentPos.getVectorLeft(),  // Gauche
+      currentPos.getVectorRight()  // Droite
+    ]
+
+    for (const direction of directions) {
+      if (mapStore.isTileAtPositionIsClosedDoor(direction)) {
+        console.log(`🚪 Porte fermée trouvée à (${direction.row}, ${direction.col}) - Ouverture...`)
+        mapStore.openDoorAtPosition(direction)
+        console.log('✅ Porte ouverte!')
+        return true
+      }
+    }
+
+    console.log('❌ Aucune porte fermée à proximité')
+    return false
+  }
+
+  /**
    * Vérifie si on peut marcher à une position de destination
    */
   private _canWalkAtDestinationPosition(

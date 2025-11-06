@@ -26,14 +26,22 @@ const KEY_ESC = 'Escape'
  * - EntitiesService → useEntityStore
  */
 export class KeyboardInputSystem {
-  // Callback pour l'activation des portails
+  // Callbacks pour les actions clavier
   private onPortalActivationRequested?: (entity: Entity) => void
+  private onDoorOpenRequested?: (entity: Entity) => void
 
   /**
    * Configure le callback pour l'activation des portails
    */
   setOnPortalActivationRequested(callback: (entity: Entity) => void): void {
     this.onPortalActivationRequested = callback
+  }
+
+  /**
+   * Configure le callback pour l'ouverture des portes
+   */
+  setOnDoorOpenRequested(callback: (entity: Entity) => void): void {
+    this.onDoorOpenRequested = callback
   }
 
   /**
@@ -73,8 +81,11 @@ export class KeyboardInputSystem {
         break
 
       case KEY_OPEN:
-        // TODO: Implémenter l'ouverture des portes (Phase 3)
-        console.log('Open pressed - doors will be implemented in Phase 3')
+        // Ouvrir une porte via le callback
+        console.log('🔑 Touche O pressée - vérification des portes...')
+        if (this.onDoorOpenRequested) {
+          this.onDoorOpenRequested(entity)
+        }
         break
 
       case KEY_TALK:

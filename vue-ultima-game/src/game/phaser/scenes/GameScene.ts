@@ -219,6 +219,60 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
+   * Rafraîchit les sprites de tiles pour refléter les changements dans la carte
+   * (par exemple après l'ouverture d'une porte)
+   */
+  private refreshTileSprites(): void {
+    const currentMap = this.mapStore.getCurrentMap()
+    if (!currentMap) return
+
+    const mapData = currentMap.mapData
+    const width = currentMap.width
+    const height = currentMap.height
+
+    console.log('🔄 Rafraîchissement des sprites de tiles...')
+
+    // Cache pour éviter les lookups répétés
+    const tileCache = new Map<number, string>()
+
+    // Parcourir tous les sprites et mettre à jour leur texture si nécessaire
+    for (let row = 0; row < height && row < this.tileSprites.length; row++) {
+      for (let col = 0; col < width && this.tileSprites[row] && col < this.tileSprites[row]!.length; col++) {
+        const sprite = this.tileSprites[row]![col]
+        if (!sprite) continue
+
+        const rowData = mapData[row]
+        if (rowData && rowData[col] !== undefined) {
+          const tileIndex = rowData[col]
+
+          if (tileIndex !== undefined) {
+            // Récupérer le nom de la tuile (avec cache)
+            let tileKey: string
+            if (tileCache.has(tileIndex)) {
+              tileKey = tileCache.get(tileIndex)!
+            } else {
+              const tile = this.mapStore.getTileByIndex(tileIndex)
+              const tileName = tile?.name || 'grass'
+              tileKey = `tile_${tileName}`
+              tileCache.set(tileIndex, tileKey)
+            }
+
+            const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_grass'
+
+            // Mettre à jour la texture si elle a changé
+            if (sprite.texture.key !== finalTileKey) {
+              sprite.setTexture(finalTileKey)
+              console.log(`  ✅ Tile (${row},${col}) mise à jour: ${sprite.texture.key} → ${finalTileKey}`)
+            }
+          }
+        }
+      }
+    }
+
+    console.log('✅ Rafraîchissement terminé')
+  }
+
+  /**
    * Détruit tous les sprites de tuiles
    * NOUVELLE APPROCHE: Cacher immédiatement, détruire paresseusement plus tard
    */
@@ -307,9 +361,18 @@ export class GameScene extends Phaser.Scene {
    * Configure les contrôles clavier
    */
   private setupKeyboardControls(): void {
-    // Configurer le callback pour l'activation des portails
+    // Configurer le callback pour l'activation des portails (touche E)
     this.keyboardInputSystem.setOnPortalActivationRequested((entity) => {
       this.movementSystem.checkAndActivatePortal(entity)
+    })
+
+    // Configurer le callback pour l'ouverture des portes (touche O)
+    this.keyboardInputSystem.setOnDoorOpenRequested((entity) => {
+      const doorOpened = this.movementSystem.checkAndOpenDoor(entity)
+      if (doorOpened) {
+        // Rafraîchir l'affichage de la carte pour montrer la porte ouverte
+        this.refreshTileSprites()
+      }
     })
 
     // Écouter les événements clavier globaux
@@ -318,11 +381,11 @@ export class GameScene extends Phaser.Scene {
       if (!player) return
 
       // Prevent browser from capturing arrow keys (stops page scrolling)
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'e', 'E'].includes(event.key)) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'e', 'E', 'o', 'O'].includes(event.key)) {
         event.preventDefault()
       }
 
-      // Traiter TOUTES les touches via le système ECS (y compris "E")
+      // Traiter TOUTES les touches via le système ECS (y compris "E" et "O")
       this.keyboardInputSystem.processKeyboardInput(event, [player])
     })
   }
