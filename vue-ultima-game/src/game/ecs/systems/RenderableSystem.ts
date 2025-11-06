@@ -13,11 +13,25 @@ export class RenderableSystem {
   processTick(entities: Entity[]): void {
     // Appeler performance.now() UNE SEULE FOIS au lieu de N fois
     const now = performance.now()
+
+    // BENCHMARK: Mesurer le temps de la boucle
+    const beforeLoop = performance.now()
+    let renderableEntityCount = 0
+    let tickTimeTotal = 0
+
     entities.forEach((entity: Entity) => {
       if (entity.hasBehavior('renderable')) {
+        renderableEntityCount++
+        const beforeTick = performance.now()
         const renderableBehavior = entity.getBehavior('renderable') as RenderableBehavior
         renderableBehavior.tick(now)
+        tickTimeTotal += performance.now() - beforeTick
       }
     })
+
+    const loopTime = performance.now() - beforeLoop
+    if (loopTime > 50) {  // Log seulement si > 50ms
+      console.log(`🔍 RenderableSystem: ${renderableEntityCount} entities, loop ${loopTime.toFixed(2)}ms, tick total ${tickTimeTotal.toFixed(2)}ms`)
+    }
   }
 }

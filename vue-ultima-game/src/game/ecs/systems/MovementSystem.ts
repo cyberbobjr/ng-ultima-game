@@ -40,16 +40,28 @@ export class MovementSystem {
    * @param entities Liste des entités
    */
   processMovementsBehavior(entities: Entity[]): void {
-    // OPTIMISATION: Créer une Map spatiale UNE FOIS pour toutes les collisions
-    // Au lieu de filtrer 30 entités pour chaque mouvement (10 NPCs × 30 = 300 checks)
-    // On fait un lookup O(1) dans la Map
+    // BENCHMARK: Mesurer le temps de construction de la spatial map
+    const beforeSpatialMap = performance.now()
     const spatialMap = this._buildSpatialMap(entities)
+    const spatialMapTime = performance.now() - beforeSpatialMap
+
+    // BENCHMARK: Mesurer le temps de traitement des mouvements
+    const beforeMovements = performance.now()
+    let movingEntityCount = 0
 
     entities.forEach((entity: Entity) => {
       if (entity.hasBehavior('movable') && this._isEntityMoving(entity)) {
+        movingEntityCount++
         this._processMovementsForEntity(entity, entities, spatialMap)
       }
     })
+
+    const movementsTime = performance.now() - beforeMovements
+    const totalTime = spatialMapTime + movementsTime
+
+    if (totalTime > 50) {  // Log seulement si > 50ms
+      console.log(`🔍 MovementSystem: spatial map ${spatialMapTime.toFixed(2)}ms, ${movingEntityCount} movements ${movementsTime.toFixed(2)}ms, total ${totalTime.toFixed(2)}ms`)
+    }
   }
 
   /**
