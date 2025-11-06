@@ -143,6 +143,10 @@ export class GameScene extends Phaser.Scene {
 
     // Créer un sprite pour chaque tuile de la carte
     console.time(`  ↳ create ${width}x${height} tile sprites`)
+
+    // Cache pour les tiles déjà lookup (optimisation importante)
+    const tileCache = new Map<number, string>()
+
     for (let row = 0; row < height; row++) {
       this.tileSprites[row] = []
 
@@ -152,19 +156,24 @@ export class GameScene extends Phaser.Scene {
           const tileIndex = rowData[col]
 
           if (tileIndex !== undefined) {
-            // Récupérer le nom de la tuile depuis le store
-            const tile = this.mapStore.getTileByIndex(tileIndex)
-            const tileName = tile?.name || 'grass' // Fallback sur grass
-
-            // Créer un sprite pour cette tuile
-            const tileKey = `tile_${tileName}`
+            // Utiliser le cache pour éviter les lookups répétés
+            let tileKey: string
+            if (tileCache.has(tileIndex)) {
+              tileKey = tileCache.get(tileIndex)!
+            } else {
+              // Récupérer le nom de la tuile depuis le store (seulement la première fois)
+              const tile = this.mapStore.getTileByIndex(tileIndex)
+              const tileName = tile?.name || 'grass' // Fallback sur grass
+              tileKey = `tile_${tileName}`
+              tileCache.set(tileIndex, tileKey)
+            }
 
             // Vérifier si la texture existe, sinon utiliser grass
             const finalTileKey = this.textures.exists(tileKey) ? tileKey : 'tile_grass'
 
-            // Log si une texture est manquante (seulement pour les premières occurrences)
-            if (!this.textures.exists(tileKey) && tileKey !== 'tile_grass') {
-              console.warn(`⚠️  Texture missing: ${tileKey} (index ${tileIndex}) at (${row},${col}), using grass`)
+            // Log si une texture est manquante (seulement la première fois)
+            if (!this.textures.exists(tileKey) && tileKey !== 'tile_grass' && !tileCache.has(-1)) {
+              console.warn(`⚠️  Texture missing: ${tileKey} (index ${tileIndex}), using grass`)
             }
 
             const sprite = this.add.sprite(col * TILE_SIZE + HALF_TILE, row * TILE_SIZE + HALF_TILE, finalTileKey)
