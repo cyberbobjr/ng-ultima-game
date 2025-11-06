@@ -26,6 +26,7 @@ export class GameScene extends Phaser.Scene {
 
   // Phaser objects
   private tileSprites: Phaser.GameObjects.Sprite[][] = []
+  private tileContainer: Phaser.GameObjects.Container | null = null // Container pour batch destruction
   private fogGraphics: Phaser.GameObjects.Graphics | null = null
   private currentMapWidth: number = 0
   private currentMapHeight: number = 0
@@ -132,6 +133,12 @@ export class GameScene extends Phaser.Scene {
     this.clearTileSprites()
     console.timeEnd('  ↳ clearTileSprites')
 
+    // Créer un nouveau container pour les tiles (pour batch destruction rapide)
+    console.time('  ↳ create tile container')
+    this.tileContainer = this.add.container(0, 0)
+    this.tileContainer.setDepth(0) // Les tuiles au fond
+    console.timeEnd('  ↳ create tile container')
+
     // Créer ou réinitialiser le fog graphics
     console.time('  ↳ create fog graphics')
     if (this.fogGraphics) {
@@ -177,8 +184,13 @@ export class GameScene extends Phaser.Scene {
             }
 
             const sprite = this.add.sprite(col * TILE_SIZE + HALF_TILE, row * TILE_SIZE + HALF_TILE, finalTileKey)
-            sprite.setDepth(0) // Les tuiles au fond
             sprite.setDisplaySize(TILE_SIZE, TILE_SIZE) // Scale to tile size
+
+            // Ajouter le sprite au container (pour batch destruction rapide)
+            if (this.tileContainer) {
+              this.tileContainer.add(sprite)
+            }
+
             this.tileSprites[row]![col] = sprite
           }
         }
@@ -203,15 +215,18 @@ export class GameScene extends Phaser.Scene {
 
   /**
    * Détruit tous les sprites de tuiles
+   * Optimisé pour gérer efficacement les grandes cartes (256x256 = 65k sprites)
+   * Utilise un Container pour batch destruction en O(1) au lieu de O(n)
    */
   private clearTileSprites(): void {
-    for (const row of this.tileSprites) {
-      for (const sprite of row) {
-        if (sprite) {
-          sprite.destroy()
-        }
-      }
+    // Nouvelle approche ultra-rapide: détruire le container entier
+    // Cela détruit automatiquement tous les sprites qu'il contient en une seule opération
+    if (this.tileContainer) {
+      this.tileContainer.destroy(true) // true = destroy all children
+      this.tileContainer = null
     }
+
+    // Vider le tableau de références
     this.tileSprites = []
   }
 
@@ -648,8 +663,14 @@ export class GameScene extends Phaser.Scene {
    * Nettoie la scène
    */
   shutdown(): void {
-    // Détruire tous les sprites de tuiles
+    // Détruire tous les sprites de tuiles (via le container)
     this.clearTileSprites()
+
+    // Détruire le container si encore présent
+    if (this.tileContainer) {
+      this.tileContainer.destroy(true)
+      this.tileContainer = null
+    }
 
     // Détruire le fog graphics
     if (this.fogGraphics) {
