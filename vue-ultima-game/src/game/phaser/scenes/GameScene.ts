@@ -45,6 +45,7 @@ export class GameScene extends Phaser.Scene {
   // Visibility settings
   private readonly VISION_RADIUS = 8 // Rayon de vision en tiles
   private debugLogCounter = 0 // Pour limiter les logs de debug
+  private lastPlayerPosition: { row: number; col: number; mapId: number } | null = null // Pour détecter les mouvements
 
   constructor() {
     super({ key: 'GameScene' })
@@ -429,6 +430,14 @@ export class GameScene extends Phaser.Scene {
     this.updateVisibility()
     console.timeEnd('  ↳ updateVisibility')
 
+    // Mettre à jour la dernière position du joueur après la transition
+    const currentPos = player.getPosition()
+    this.lastPlayerPosition = {
+      row: currentPos.row,
+      col: currentPos.col,
+      mapId: currentPos.mapId
+    }
+
     console.timeEnd(`🚪 Total transitionToMap to ${portal.destmapid}`)
     console.log(`✅ Transition terminée vers la carte ${destMapId}`)
   }
@@ -674,8 +683,22 @@ export class GameScene extends Phaser.Scene {
     // Synchroniser les sprites Phaser avec les positions des entités
     this.syncSpritesWithEntities(allEntities)
 
-    // Mettre à jour la visibilité (FOV) après le mouvement
-    this.updateVisibility()
+    // Mettre à jour la visibilité (FOV) SEULEMENT si le joueur a bougé
+    // Optimisation: évite de recalculer la FOV 60 fois/sec quand le joueur est immobile
+    const currentPos = player.getPosition()
+    if (
+      !this.lastPlayerPosition ||
+      this.lastPlayerPosition.row !== currentPos.row ||
+      this.lastPlayerPosition.col !== currentPos.col ||
+      this.lastPlayerPosition.mapId !== currentPos.mapId
+    ) {
+      this.updateVisibility()
+      this.lastPlayerPosition = {
+        row: currentPos.row,
+        col: currentPos.col,
+        mapId: currentPos.mapId
+      }
+    }
   }
 
   /**

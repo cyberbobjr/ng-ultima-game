@@ -38,7 +38,8 @@ export class VisibilitySystem {
       this.castShadow(center, radius, octant)
     }
 
-    console.log(`FOV: ${this.visiblePositions.size} tiles visibles (radius: ${radius})`)
+    // Log uniquement si activé en mode debug
+    // console.log(`FOV: ${this.visiblePositions.size} tiles visibles (radius: ${radius})`)
     return this.visiblePositions
   }
 
@@ -80,13 +81,6 @@ export class VisibilitySystem {
               start: angle - angleSize,
               end: angle + angleSize
             })
-
-            // Debug
-            const tileIndex = this.mapStore.getTileIndexAtPosition(pos)
-            const tile = this.mapStore.getTileByIndex(tileIndex)
-            if (tile && octant === 0 && distance <= 3) {
-              console.log(`Ombre créée par ${tile.name} à (${pos.row},${pos.col}), angle: ${angle.toFixed(2)}`)
-            }
           }
         }
       }
