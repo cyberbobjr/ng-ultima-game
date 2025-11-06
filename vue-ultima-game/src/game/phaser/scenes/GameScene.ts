@@ -395,13 +395,23 @@ export class GameScene extends Phaser.Scene {
       }
     })
 
+    // Configurer le callback pour monter (touche K)
+    this.keyboardInputSystem.setOnKlimbRequested((entity) => {
+      this.movementSystem.checkAndKlimb(entity)
+    })
+
+    // Configurer le callback pour descendre (touche D)
+    this.keyboardInputSystem.setOnDescendRequested((entity) => {
+      this.movementSystem.checkAndDescend(entity)
+    })
+
     // Écouter les événements clavier globaux
     this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
       const player = this.entityStore.getPlayer()
       if (!player) return
 
       // Prevent browser from capturing arrow keys (stops page scrolling)
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'e', 'E', 'o', 'O', 't', 'T'].includes(event.key)) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'e', 'E', 'o', 'O', 't', 'T', 'k', 'K', 'd', 'D'].includes(event.key)) {
         event.preventDefault()
       }
 

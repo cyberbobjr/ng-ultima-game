@@ -16,8 +16,8 @@ For your pleasure, I used the Ultima 4 tiles and game concept. This is an ongoin
 - **E**: Enter portals (cities, dungeons) on the world map
 - **O**: Open/close doors
 - **T**: Talk to NPCs
-- **K**: Klimb (coming soon)
-- **D**: Descend (coming soon)
+- **K**: Klimb (climb ladders, stairs to go up)
+- **D**: Descend (go down stairs, holes, pits)
 
 ![logo](https://github.com/cyberbobjr/ng-ultima-game/blob/9b48fee3e44404c69cb3259154019f527d0f4f9c/docs/ng-ultima-poc.gif?raw=true "screenshot")
 
@@ -93,19 +93,21 @@ Before running the tests make sure you are serving the app via `ng serve`.
 - ✅ Simili responsive (for width only)
 - ✅ Loading screen with progress bar
 
-**Phase 3 - Dialogue System (Just Implemented):**
+**Phase 3 - Advanced Interactions:**
 - ✅ Talk to NPCs with 'T' key
 - ✅ Find NPCs in 4 directions (up, down, left, right)
 - ✅ Conversation system with useTalkingStore
 - ✅ Support for 'talk' and 'vendortalk' behaviors
+- ✅ Klimb system with 'K' key (climb ladders, stairs to upper levels)
+- ✅ Descend system with 'D' key (go down stairs, holes to lower levels)
+- ✅ Portal action detection (klimb/descend portals)
+- ✅ Contextual messages ("Klimb what?", "Descend what?")
 
 ### 🚧 In Progress / Coming Soon
 
-**Phase 3 - Advanced Interactions:**
-- 🚧 Klimb system ('K' key) - for climbing ladders/mountains
-- 🚧 Descend system ('D' key) - for going down stairs/holes
-- 🚧 Full conversation tree implementation
-- 🚧 Vendor dialogue system
+**Phase 3 - Enhancements:**
+- 🚧 Full conversation tree implementation with keywords
+- 🚧 Vendor dialogue system (buy/sell)
 - 🚧 Quest system integration
 
 **Future Features:**

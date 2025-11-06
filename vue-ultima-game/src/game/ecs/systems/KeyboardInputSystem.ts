@@ -30,6 +30,8 @@ export class KeyboardInputSystem {
   private onPortalActivationRequested?: (entity: Entity) => void
   private onDoorOpenRequested?: (entity: Entity) => void
   private onTalkRequested?: (entity: Entity) => void
+  private onKlimbRequested?: (entity: Entity) => void
+  private onDescendRequested?: (entity: Entity) => void
 
   /**
    * Configure le callback pour l'activation des portails
@@ -50,6 +52,20 @@ export class KeyboardInputSystem {
    */
   setOnTalkRequested(callback: (entity: Entity) => void): void {
     this.onTalkRequested = callback
+  }
+
+  /**
+   * Configure le callback pour monter (klimb)
+   */
+  setOnKlimbRequested(callback: (entity: Entity) => void): void {
+    this.onKlimbRequested = callback
+  }
+
+  /**
+   * Configure le callback pour descendre (descend)
+   */
+  setOnDescendRequested(callback: (entity: Entity) => void): void {
+    this.onDescendRequested = callback
   }
 
   /**
@@ -105,13 +121,19 @@ export class KeyboardInputSystem {
         break
 
       case KEY_KLIMB:
-        // TODO: Implémenter klimb (Phase 3)
-        console.log('Klimb pressed - will be implemented in Phase 3')
+        // Monter (escaliers, échelles) via le callback
+        console.log('🔑 Touche K pressée - tentative de monter...')
+        if (this.onKlimbRequested) {
+          this.onKlimbRequested(entity)
+        }
         break
 
       case KEY_DESCEND:
-        // TODO: Implémenter descend (Phase 3)
-        console.log('Descend pressed - will be implemented in Phase 3')
+        // Descendre (escaliers, trous) via le callback
+        console.log('🔑 Touche D pressée - tentative de descendre...')
+        if (this.onDescendRequested) {
+          this.onDescendRequested(entity)
+        }
         break
     }
   }

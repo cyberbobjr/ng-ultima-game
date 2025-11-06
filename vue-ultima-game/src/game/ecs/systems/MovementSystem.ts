@@ -5,6 +5,7 @@ import type { PositionBehavior } from '../behaviors/PositionBehavior'
 import type { SavestateBehavior } from '../behaviors/SavestateBehavior'
 import { Position } from '../../models/Position'
 import { useMapStore } from '@/stores/useMapStore'
+import { useUIStore } from '@/stores/useUIStore'
 import type { IPortal } from '@/game/models/interfaces/IPortal'
 
 const NORMAL_MOVE_SPEED = 1
@@ -269,6 +270,76 @@ export class MovementSystem {
 
     console.log('❌ Aucun NPC à proximité')
     return null
+  }
+
+  /**
+   * Vérifie si l'entité est sur un portail "klimb" et effectue la montée
+   * Doit être appelé quand le joueur appuie sur "K"
+   * @param entity L'entité qui veut grimper
+   * @returns true si un portail klimb a été trouvé et activé
+   */
+  checkAndKlimb(entity: Entity): boolean {
+    if (!entity.hasBehavior('position')) return false
+
+    const mapStore = useMapStore()
+    const uiStore = useUIStore()
+    const positionBehavior = entity.getBehavior('position') as PositionBehavior
+    const portal = mapStore.getPortalForPosition(positionBehavior.position)
+
+    if (portal && portal.action === 'klimb') {
+      console.log(`🪜 Klimb détecté: destination map ${portal.destmapid}`)
+
+      // Afficher le message du portail si disponible
+      if (portal.message) {
+        uiStore.addTextToInformation(portal.message)
+      }
+
+      // Déclencher la transition de carte via le callback
+      if (this.onPortalDetected) {
+        this.onPortalDetected(portal, entity)
+      }
+
+      return true
+    }
+
+    // Aucun portail klimb à cette position
+    uiStore.addTextToInformation('Klimb what?')
+    return false
+  }
+
+  /**
+   * Vérifie si l'entité est sur un portail "descend" et effectue la descente
+   * Doit être appelé quand le joueur appuie sur "D"
+   * @param entity L'entité qui veut descendre
+   * @returns true si un portail descend a été trouvé et activé
+   */
+  checkAndDescend(entity: Entity): boolean {
+    if (!entity.hasBehavior('position')) return false
+
+    const mapStore = useMapStore()
+    const uiStore = useUIStore()
+    const positionBehavior = entity.getBehavior('position') as PositionBehavior
+    const portal = mapStore.getPortalForPosition(positionBehavior.position)
+
+    if (portal && portal.action === 'descend') {
+      console.log(`🪜 Descend détecté: destination map ${portal.destmapid}`)
+
+      // Afficher le message du portail si disponible
+      if (portal.message) {
+        uiStore.addTextToInformation(portal.message)
+      }
+
+      // Déclencher la transition de carte via le callback
+      if (this.onPortalDetected) {
+        this.onPortalDetected(portal, entity)
+      }
+
+      return true
+    }
+
+    // Aucun portail descend à cette position
+    uiStore.addTextToInformation('Descend what?')
+    return false
   }
 
   /**
