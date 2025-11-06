@@ -185,7 +185,12 @@ export const useMapStore = defineStore('map', () => {
     if (isPositionOutOfBounds(position)) return false
     const tileIndex = getTileIndexAtPosition(position)
     const tile = getTileByIndex(tileIndex)
-    return tile ? isTileWalkable(tile.name) : false
+    if (!tile) return false
+
+    // Vérifier directement sur la tile au lieu d'appeler getTileByName()
+    const rule = _getRuleName(tile.rule)
+    const cantwalkon = _.get(rule, 'cantwalkon')
+    return cantwalkon !== 'all'
   }
 
   /**
@@ -194,7 +199,8 @@ export const useMapStore = defineStore('map', () => {
   function isTileAtPositionIsOpaque(position: Position): boolean {
     const tileIndex = getTileIndexAtPosition(position)
     const tile = getTileByIndex(tileIndex)
-    return tile ? isTileOpaque(tile.name) : false
+    // Vérifier directement au lieu de rappeler getTileByName()
+    return tile ? _.has(tile, 'opaque') : false
   }
 
   /**
@@ -203,7 +209,11 @@ export const useMapStore = defineStore('map', () => {
   function isTileAtPositionIsClosedDoor(position: Position): boolean {
     const tileIndex = getTileIndexAtPosition(position)
     const tile = getTileByIndex(tileIndex)
-    return tile ? isTileClosedDoor(tile.name) : false
+    if (!tile) return false
+
+    // Vérifier directement sur la tile au lieu d'appeler getTileByName()
+    const rule = _getRuleName(tile.rule)
+    return _.has(rule, 'door')
   }
 
   /**
@@ -212,7 +222,11 @@ export const useMapStore = defineStore('map', () => {
   function isTileAtPositionIsTalkOver(position: Position): boolean {
     const tileIndex = getTileIndexAtPosition(position)
     const tile = getTileByIndex(tileIndex)
-    return tile ? isTileTalkOver(tile.name) : false
+    if (!tile) return false
+
+    // Vérifier directement sur la tile au lieu d'appeler getTileByName()
+    const rule = _getRuleName(tile.rule)
+    return _.has(rule, 'talkover')
   }
 
   /**
