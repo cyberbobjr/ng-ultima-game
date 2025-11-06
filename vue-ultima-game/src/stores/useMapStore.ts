@@ -413,10 +413,15 @@ export const useMapStore = defineStore('map', () => {
    */
   function isTileClosedDoor(tileName: string): boolean {
     const tile = getTileByName(tileName)
-    if (!tile) return false
+    if (!tile) {
+      console.log(`🔍 isTileClosedDoor("${tileName}"): tile not found`)
+      return false
+    }
 
     const rule = _getRuleName(tile.rule)
-    return _.has(rule, 'door')
+    const hasDoor = _.has(rule, 'door')
+    console.log(`🔍 isTileClosedDoor("${tileName}"): tile.rule="${tile.rule}", hasDoor=${hasDoor}, rule=`, rule)
+    return hasDoor
   }
 
   /**

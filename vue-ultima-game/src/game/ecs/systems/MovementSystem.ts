@@ -199,6 +199,8 @@ export class MovementSystem {
     const positionBehavior = entity.getBehavior('position') as PositionBehavior
     const currentPos = positionBehavior.position
 
+    console.log(`🔍 Position du joueur: (${currentPos.row}, ${currentPos.col})`)
+
     // Vérifier les 4 directions autour du joueur
     const directions = [
       currentPos.getVectorUp(),    // Haut
@@ -208,6 +210,10 @@ export class MovementSystem {
     ]
 
     for (const direction of directions) {
+      const tileIndex = mapStore.getTileIndexAtPosition(direction)
+      const tile = mapStore.getTileByIndex(tileIndex)
+      console.log(`🔍 Direction (${direction.row}, ${direction.col}): tile="${tile?.name}", index=${tileIndex}`)
+
       if (mapStore.isTileAtPositionIsClosedDoor(direction)) {
         console.log(`🚪 Porte fermée trouvée à (${direction.row}, ${direction.col}) - Ouverture...`)
         mapStore.openDoorAtPosition(direction)
