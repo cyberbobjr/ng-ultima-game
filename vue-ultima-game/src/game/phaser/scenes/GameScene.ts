@@ -60,8 +60,12 @@ export class GameScene extends Phaser.Scene {
       // Créer ou charger le joueur
       await this.createPlayer()
 
-      // Charger la carte initiale
-      await this.loadMap(0) // Carte 0 par défaut
+      // Charger la carte où le joueur est actuellement
+      // (peut être différente de la world map si le joueur était dans une ville/donjon)
+      const player = this.entityStore.getPlayer()
+      const playerMapId = player?.getPosition()?.mapId ?? 0
+      console.log(`🗺️  Chargement de la carte initiale: map ${playerMapId}`)
+      await this.loadMap(playerMapId)
 
       // Créer les entités sur la carte
       await this.createEntitiesForCurrentMap()
@@ -216,18 +220,56 @@ export class GameScene extends Phaser.Scene {
   /**
    * Détruit tous les sprites de tuiles
    * Optimisé pour gérer efficacement les grandes cartes (256x256 = 65k sprites)
-   * Utilise un Container pour batch destruction en O(1) au lieu de O(n)
+   * Destruction asynchrone pour ne pas bloquer l'UI
    */
   private clearTileSprites(): void {
-    // Nouvelle approche ultra-rapide: détruire le container entier
-    // Cela détruit automatiquement tous les sprites qu'il contient en une seule opération
     if (this.tileContainer) {
-      this.tileContainer.destroy(true) // true = destroy all children
+      // Retirer tous les sprites du container et de la display list SANS les détruire
+      // Ceci rend immédiatement la carte invisible
+      this.tileContainer.removeAll()
+
+      // Détruire le container (maintenant vide, devrait être rapide)
+      this.tileContainer.destroy()
       this.tileContainer = null
     }
 
-    // Vider le tableau de références
+    // Collecter toutes les références aux sprites
+    const spritesToDestroy: Phaser.GameObjects.Sprite[] = []
+    for (const row of this.tileSprites) {
+      for (const sprite of row) {
+        if (sprite) {
+          spritesToDestroy.push(sprite)
+        }
+      }
+    }
+
+    // Vider immédiatement le tableau de références
     this.tileSprites = []
+
+    // Détruire les sprites de manière asynchrone par lots de 1000
+    // pour ne pas bloquer l'UI
+    if (spritesToDestroy.length > 0) {
+      const batchSize = 1000
+      let index = 0
+
+      const destroyBatch = () => {
+        const end = Math.min(index + batchSize, spritesToDestroy.length)
+        for (let i = index; i < end; i++) {
+          spritesToDestroy[i]!.destroy()
+        }
+        index = end
+
+        if (index < spritesToDestroy.length) {
+          // Continuer la destruction au prochain frame
+          setTimeout(destroyBatch, 0)
+        } else {
+          console.log(`✅ ${spritesToDestroy.length} sprites détruits (async)`)
+        }
+      }
+
+      // Démarrer la destruction asynchrone
+      setTimeout(destroyBatch, 0)
+    }
   }
 
 
