@@ -107,12 +107,12 @@ export class MovementSystem {
     const width = currentMap.width
     const height = currentMap.height
 
-    // Détection des 2 tiles du bord (row < 2, row >= height-2, col < 2, col >= width-2)
+    // Détection de la tile du bord (row < 1, row >= height-1, col < 1, col >= width-1)
     const isOnBorder =
-      position.row < 2 ||
-      position.row >= height - 2 ||
-      position.col < 2 ||
-      position.col >= width - 2
+      position.row < 1 ||
+      position.row >= height - 1 ||
+      position.col < 1 ||
+      position.col >= width - 1
 
     if (isOnBorder) {
       console.log(`🚪 Sortie automatique : bordure détectée à (${position.row}, ${position.col})`)

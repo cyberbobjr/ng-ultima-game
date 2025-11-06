@@ -89,7 +89,7 @@
 ### Map Transitions
 - [x] Portal detection on movement
 - [x] Manual portal activation with 'E' key (enter cities/dungeons)
-- [x] Automatic exit from cities (2 tiles from border)
+- [x] Automatic exit from cities (1 tile from border) **Updated 2025-11-06**
 - [x] Save/load world map entry positions
 - [x] Fix race condition (black screen during map loading)
 
@@ -108,30 +108,31 @@
   - [x] Detect NPCs in 4 directions
   - [x] Support 'talk' and 'vendortalk' behaviors
   - [x] Integration with useTalkingStore
+- [x] Klimb system with 'K' key
+  - [x] Implement `checkAndKlimb()` in MovementSystem
+  - [x] Detect portals with action="klimb"
+  - [x] Trigger map transition to upper level
+  - [x] Add callback in KeyboardInputSystem
+  - [x] Wire callback in GameScene
+  - [x] Display contextual messages ("Klimb what?")
+- [x] Descend system with 'D' key
+  - [x] Implement `checkAndDescend()` in MovementSystem
+  - [x] Detect portals with action="descend"
+  - [x] Trigger map transition to lower level
+  - [x] Add callback in KeyboardInputSystem
+  - [x] Wire callback in GameScene
+  - [x] Display contextual messages ("Descend what?")
 
 ---
 
-## 🚧 Phase 6: Advanced Interactions (IN PROGRESS)
-
-### Klimb System (K key)
-- [ ] Implement `checkAndKlimb()` in MovementSystem
-- [ ] Detect climbable tiles (ladders, stairs up)
-- [ ] Trigger map transition to upper level
-- [ ] Add callback in KeyboardInputSystem
-- [ ] Wire callback in GameScene
-
-### Descend System (D key)
-- [ ] Implement `checkAndDescend()` in MovementSystem
-- [ ] Detect descendable tiles (stairs down, holes, pits)
-- [ ] Trigger map transition to lower level
-- [ ] Add callback in KeyboardInputSystem
-- [ ] Wire callback in GameScene
+## 🚧 Phase 6: Conversation & Quest Systems (IN PROGRESS)
 
 ### Conversation Enhancement
-- [ ] Full conversation tree implementation
-- [ ] Keyword-based dialogue responses
-- [ ] Vendor dialogue system integration
-- [ ] Quest system hooks
+- [ ] Full conversation tree implementation with branching
+- [ ] Keyword-based dialogue responses (parse user input)
+- [ ] Vendor dialogue system integration (buy/sell)
+- [ ] Quest system hooks and tracking
+- [ ] Dialogue history and state persistence
 
 ---
 
@@ -204,19 +205,26 @@
 - ✅ Architecture violation: E key in GameScene → Refactored to KeyboardInputSystem callbacks
 - ✅ Door detection using wrong positions → Fixed with addVector() for absolute positions
 - ✅ Door opening not working visually → Fixed by replacing with brick_floor instead of door tile
+- ✅ UIScene Phaser crash on klimb/descend → Added scene state checks and try-catch in text updates
+- ✅ "Cannot read properties of null (reading 'drawImage')" error → Protected updateInfoDisplay and updateStatsDisplay
 
 ### Open Issues
 - None currently
+
+### Recent Changes (2025-11-06)
+- 🔧 **Border exit detection**: Changed from 2 tiles to 1 tile from edge
+- 🔧 **UIScene robustness**: Added scene state validation before updating Phaser text objects
+- 🔧 **Error handling**: Wrapped text updates in try-catch to prevent crashes during map transitions
 
 ---
 
 ## 🎯 Next Immediate Tasks (Priority Order)
 
-1. **Implement Klimb (K key)** - For climbing ladders/stairs to upper levels
-2. **Implement Descend (D key)** - For going down stairs/holes to lower levels
-3. **Test klimb/descend** with existing dungeon maps
-4. **Full conversation tree** - Keyword-based responses
-5. **Inventory system basics** - Get (G) and Use (U) items
+1. **Full conversation tree** - Keyword-based dialogue system with branching
+2. **Vendor dialogue system** - Buy/sell items integration
+3. **Inventory system basics** - Get (G) and Use (U) items
+4. **Combat system** - Attack (A) and enemy encounters
+5. **Magic system** - Cast (C) spells
 
 ---
 
@@ -229,11 +237,11 @@
 | Phase 3: Pinia Stores | ✅ Complete | 100% |
 | Phase 4: Phaser Integration | ✅ Complete | 100% |
 | Phase 5: Core Gameplay | ✅ Complete | 100% |
-| Phase 6: Advanced Interactions | 🚧 In Progress | 60% |
+| Phase 6: Conversation & Quests | 🚧 In Progress | 15% |
 | Phase 7: Game Systems | 📋 Not Started | 0% |
 | Phase 8: Advanced Features | 📋 Not Started | 0% |
 
-**Overall Project Completion: ~65%**
+**Overall Project Completion: ~67%**
 
 ---
 
@@ -291,4 +299,5 @@ keyboardInputSystem.setOnDoorOpenRequested((entity) => {
 
 ---
 
-**Last Commit:** `e4160a5` - Fix: Door opening now replaces with brick_floor (walkable)
+**Last Commit:** `9ad18fb` - Feature: Implement Klimb and Descend systems + TODO.md
+**Last Updated:** 2025-11-06

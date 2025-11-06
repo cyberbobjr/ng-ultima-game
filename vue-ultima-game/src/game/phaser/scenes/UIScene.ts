@@ -199,22 +199,32 @@ export class UIScene extends Phaser.Scene {
    * Met à jour l'affichage des messages d'information
    */
   private updateInfoDisplay(messages: Array<{ text: string; color: string }>): void {
+    // Vérifier que la scène est active avant de mettre à jour les textes
+    if (!this.scene.isActive() || !this.scene.isVisible()) {
+      return
+    }
+
     // Afficher les 5 derniers messages
     const lastMessages = messages.slice(-5)
 
     for (let i = 0; i < this.infoTexts.length; i++) {
       const text = this.infoTexts[i]
-      if (!text) continue
+      if (!text || !text.scene) continue
 
-      if (i < lastMessages.length) {
-        const message = lastMessages[i]
-        if (message) {
-          text.setText(message.text)
-          text.setColor(message.color)
-          text.setVisible(true)
+      try {
+        if (i < lastMessages.length) {
+          const message = lastMessages[i]
+          if (message) {
+            text.setText(message.text)
+            text.setColor(message.color)
+            text.setVisible(true)
+          }
+        } else {
+          text.setVisible(false)
         }
-      } else {
-        text.setVisible(false)
+      } catch (error) {
+        // Ignorer les erreurs de rendu Phaser pendant les transitions
+        console.warn('UIScene: Failed to update text', error)
       }
     }
   }
@@ -223,27 +233,37 @@ export class UIScene extends Phaser.Scene {
    * Met à jour l'affichage des statistiques
    */
   private updateStatsDisplay(): void {
-    const player = this.playerStore.getPlayer()
-
-    if (!player) {
-      this.statsText.setText('No player')
+    // Vérifier que la scène est active avant de mettre à jour les textes
+    if (!this.scene.isActive() || !this.scene.isVisible() || !this.statsText || !this.statsText.scene) {
       return
     }
 
-    // Récupérer les informations du joueur
-    const position = player.getPosition()
-    const partySize = this.partyStore.partySize
+    try {
+      const player = this.playerStore.getPlayer()
 
-    // Construire le texte des stats
-    let statsText = `Player: ${player.name}\n`
-    statsText += `Pos: (${position.col}, ${position.row})\n`
-    statsText += `Map: ${position.mapId}\n`
+      if (!player) {
+        this.statsText.setText('No player')
+        return
+      }
 
-    if (partySize > 1) {
-      statsText += `Party: ${partySize} members`
+      // Récupérer les informations du joueur
+      const position = player.getPosition()
+      const partySize = this.partyStore.partySize
+
+      // Construire le texte des stats
+      let statsText = `Player: ${player.name}\n`
+      statsText += `Pos: (${position.col}, ${position.row})\n`
+      statsText += `Map: ${position.mapId}\n`
+
+      if (partySize > 1) {
+        statsText += `Party: ${partySize} members`
+      }
+
+      this.statsText.setText(statsText)
+    } catch (error) {
+      // Ignorer les erreurs de rendu Phaser pendant les transitions
+      console.warn('UIScene: Failed to update stats', error)
     }
-
-    this.statsText.setText(statsText)
   }
 
   /**
