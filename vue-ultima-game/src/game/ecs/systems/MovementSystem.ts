@@ -107,12 +107,14 @@ export class MovementSystem {
     const width = currentMap.width
     const height = currentMap.height
 
-    // Détection de la tile du bord (row < 1, row >= height-1, col < 1, col >= width-1)
+    // Détection à 1 tile du bord (distance maximale de 1)
+    // Inclut le bord lui-même (distance 0) et la tile adjacente (distance 1)
+    // Pour une carte 32x32 : rows 0,1 (haut) et 30,31 (bas)
     const isOnBorder =
-      position.row < 1 ||
-      position.row >= height - 1 ||
-      position.col < 1 ||
-      position.col >= width - 1
+      position.row <= 1 ||
+      position.row >= height - 2 ||
+      position.col <= 1 ||
+      position.col >= width - 2
 
     if (isOnBorder) {
       console.log(`🚪 Sortie automatique : bordure détectée à (${position.row}, ${position.col})`)
