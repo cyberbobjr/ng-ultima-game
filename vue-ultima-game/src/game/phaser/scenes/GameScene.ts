@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   // Phaser objects
   private tileSprites: Phaser.GameObjects.Sprite[][] = []
   private tileContainer: Phaser.GameObjects.Container | null = null // Container pour batch destruction
+  private oldTileContainers: Phaser.GameObjects.Container[] = [] // Conteneurs à détruire plus tard
   private fogGraphics: Phaser.GameObjects.Graphics | null = null
   private currentMapWidth: number = 0
   private currentMapHeight: number = 0
@@ -45,7 +46,6 @@ export class GameScene extends Phaser.Scene {
   // Visibility settings
   private readonly VISION_RADIUS = 8 // Rayon de vision en tiles
   private debugLogCounter = 0 // Pour limiter les logs de debug
-  private lastPlayerPosition: { row: number; col: number; mapId: number } | null = null // Pour détecter les mouvements
 
   constructor() {
     super({ key: 'GameScene' })
@@ -220,57 +220,33 @@ export class GameScene extends Phaser.Scene {
 
   /**
    * Détruit tous les sprites de tuiles
-   * Optimisé pour gérer efficacement les grandes cartes (256x256 = 65k sprites)
-   * Destruction asynchrone pour ne pas bloquer l'UI
+   * NOUVELLE APPROCHE: Cacher immédiatement, détruire paresseusement plus tard
    */
   private clearTileSprites(): void {
     if (this.tileContainer) {
-      // Retirer tous les sprites du container et de la display list SANS les détruire
-      // Ceci rend immédiatement la carte invisible
-      this.tileContainer.removeAll()
+      // ÉTAPE 1: Rendre le container invisible IMMÉDIATEMENT (pas de délai visuel)
+      this.tileContainer.setVisible(false)
 
-      // Détruire le container (maintenant vide, devrait être rapide)
-      this.tileContainer.destroy()
+      // ÉTAPE 2: Mettre le container dans la liste de nettoyage
+      this.oldTileContainers.push(this.tileContainer)
       this.tileContainer = null
-    }
 
-    // Collecter toutes les références aux sprites
-    const spritesToDestroy: Phaser.GameObjects.Sprite[] = []
-    for (const row of this.tileSprites) {
-      for (const sprite of row) {
-        if (sprite) {
-          spritesToDestroy.push(sprite)
+      // ÉTAPE 3: Si on a plus de 2 anciens containers, détruire le plus vieux
+      // Ceci limite la mémoire utilisée tout en évitant le blocage
+      if (this.oldTileContainers.length > 2) {
+        const oldestContainer = this.oldTileContainers.shift()
+        if (oldestContainer) {
+          // Détruire sans bloquer avec un petit délai
+          setTimeout(() => {
+            oldestContainer.destroy(true)
+            console.log('🗑️ Ancien container détruit')
+          }, 100)
         }
       }
     }
 
-    // Vider immédiatement le tableau de références
+    // Vider le tableau de références
     this.tileSprites = []
-
-    // Détruire les sprites de manière asynchrone par lots de 1000
-    // pour ne pas bloquer l'UI
-    if (spritesToDestroy.length > 0) {
-      const batchSize = 1000
-      let index = 0
-
-      const destroyBatch = () => {
-        const end = Math.min(index + batchSize, spritesToDestroy.length)
-        for (let i = index; i < end; i++) {
-          spritesToDestroy[i]!.destroy()
-        }
-        index = end
-
-        if (index < spritesToDestroy.length) {
-          // Continuer la destruction au prochain frame
-          setTimeout(destroyBatch, 0)
-        } else {
-          console.log(`✅ ${spritesToDestroy.length} sprites détruits (async)`)
-        }
-      }
-
-      // Démarrer la destruction asynchrone
-      setTimeout(destroyBatch, 0)
-    }
   }
 
 
@@ -429,14 +405,6 @@ export class GameScene extends Phaser.Scene {
     console.time('  ↳ updateVisibility')
     this.updateVisibility()
     console.timeEnd('  ↳ updateVisibility')
-
-    // Mettre à jour la dernière position du joueur après la transition
-    const currentPos = player.getPosition()
-    this.lastPlayerPosition = {
-      row: currentPos.row,
-      col: currentPos.col,
-      mapId: currentPos.mapId
-    }
 
     console.timeEnd(`🚪 Total transitionToMap to ${portal.destmapid}`)
     console.log(`✅ Transition terminée vers la carte ${destMapId}`)
@@ -683,22 +651,9 @@ export class GameScene extends Phaser.Scene {
     // Synchroniser les sprites Phaser avec les positions des entités
     this.syncSpritesWithEntities(allEntities)
 
-    // Mettre à jour la visibilité (FOV) SEULEMENT si le joueur a bougé
-    // Optimisation: évite de recalculer la FOV 60 fois/sec quand le joueur est immobile
-    const currentPos = player.getPosition()
-    if (
-      !this.lastPlayerPosition ||
-      this.lastPlayerPosition.row !== currentPos.row ||
-      this.lastPlayerPosition.col !== currentPos.col ||
-      this.lastPlayerPosition.mapId !== currentPos.mapId
-    ) {
-      this.updateVisibility()
-      this.lastPlayerPosition = {
-        row: currentPos.row,
-        col: currentPos.col,
-        mapId: currentPos.mapId
-      }
-    }
+    // Mettre à jour la visibilité (FOV) après le mouvement
+    // Note: Les logs de debug ont été retirés, donc pas de spam console
+    this.updateVisibility()
   }
 
   /**
