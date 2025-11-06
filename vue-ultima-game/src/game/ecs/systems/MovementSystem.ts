@@ -40,11 +40,38 @@ export class MovementSystem {
    * @param entities Liste des entités
    */
   processMovementsBehavior(entities: Entity[]): void {
+    // OPTIMISATION: Créer une Map spatiale UNE FOIS pour toutes les collisions
+    // Au lieu de filtrer 30 entités pour chaque mouvement (10 NPCs × 30 = 300 checks)
+    // On fait un lookup O(1) dans la Map
+    const spatialMap = this._buildSpatialMap(entities)
+
     entities.forEach((entity: Entity) => {
       if (entity.hasBehavior('movable') && this._isEntityMoving(entity)) {
-        this._processMovementsForEntity(entity, entities)
+        this._processMovementsForEntity(entity, entities, spatialMap)
       }
     })
+  }
+
+  /**
+   * Construit une Map spatiale: "row,col" → entités à cette position
+   * Permet des lookups O(1) au lieu de filter O(n) pour les collisions
+   */
+  private _buildSpatialMap(entities: Entity[]): Map<string, Entity[]> {
+    const spatialMap = new Map<string, Entity[]>()
+
+    for (const entity of entities) {
+      if (!entity.hasBehavior('position')) continue
+
+      const pos = entity.getPosition()
+      const key = `${pos.row},${pos.col}`
+
+      if (!spatialMap.has(key)) {
+        spatialMap.set(key, [])
+      }
+      spatialMap.get(key)!.push(entity)
+    }
+
+    return spatialMap
   }
 
   /**
@@ -65,14 +92,18 @@ export class MovementSystem {
   /**
    * Traite le mouvement d'une entité spécifique
    */
-  private _processMovementsForEntity(entity: Entity, allEntities: Entity[]): void {
+  private _processMovementsForEntity(
+    entity: Entity,
+    allEntities: Entity[],
+    spatialMap: Map<string, Entity[]>
+  ): void {
     // BENCHMARK: Seulement pour le joueur
     const isPlayer = entity.name === 'Avatar'
     const startTime = isPlayer ? performance.now() : 0
 
     const destinationPosition = this._getDestinationPositionForEntity(entity)
 
-    if (this._canWalkAtDestinationPosition(entity, destinationPosition, allEntities)) {
+    if (this._canWalkAtDestinationPosition(entity, destinationPosition, allEntities, spatialMap)) {
       this._moveEntity(entity)
 
       if (isPlayer) {
@@ -338,7 +369,8 @@ export class MovementSystem {
   private _canWalkAtDestinationPosition(
     entity: Entity,
     destinationPosition: Position,
-    allEntities: Entity[]
+    allEntities: Entity[],
+    spatialMap: Map<string, Entity[]>
   ): boolean {
     const mapStore = useMapStore()
 
@@ -354,9 +386,9 @@ export class MovementSystem {
 
     // Vérifier les collisions avec les autres entités
     if (this._isEntityCollidable(entity)) {
-      const collidableEntities = this._getEntityCollidableAtPosition(
+      const collidableEntities = this._getEntityCollidableAtPositionFast(
         destinationPosition,
-        allEntities
+        spatialMap
       )
       if (collidableEntities.length > 0) {
         return false
@@ -374,19 +406,19 @@ export class MovementSystem {
   }
 
   /**
-   * Récupère les entités avec collision à une position
+   * Récupère les entités avec collision à une position en utilisant la spatial map
+   * OPTIMISATION: O(1) lookup au lieu de O(n) filter
    */
-  private _getEntityCollidableAtPosition(
+  private _getEntityCollidableAtPositionFast(
     position: Position,
-    allEntities: Entity[]
+    spatialMap: Map<string, Entity[]>
   ): Entity[] {
-    const entitiesAtPosition = allEntities.filter((entity) => {
-      if (!entity.hasBehavior('position')) return false
-      const pos = entity.getPosition()
-      return pos.isEqual(position)
-    })
+    const key = `${position.row},${position.col}`
+    const entitiesAtPosition = spatialMap.get(key) || []
 
-    return _.filter(entitiesAtPosition, (entity: Entity) => {
+    // Filtrer seulement les entités collidables parmi celles à cette position
+    // C'est typiquement 0-2 entités au lieu de 30, donc très rapide
+    return entitiesAtPosition.filter((entity: Entity) => {
       return this._isEntityCollidable(entity)
     })
   }
