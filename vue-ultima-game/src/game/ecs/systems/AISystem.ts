@@ -11,18 +11,13 @@ export class AISystem {
    * @param entities Liste des entités à traiter
    */
   processAiBehavior(entities: Entity[]): void {
+    // Appeler performance.now() UNE SEULE FOIS au lieu de N fois
+    const now = performance.now()
     entities.forEach((entity: Entity) => {
       if (entity.hasBehavior('aimovement') && entity.hasBehavior('movable')) {
-        this._processAiEntityMovements(entity)
+        const aiMovementBehavior = entity.getBehavior('aimovement') as AiMovementBehavior
+        aiMovementBehavior.tick(now)
       }
     })
-  }
-
-  /**
-   * Traite le mouvement AI d'une entité spécifique
-   */
-  private _processAiEntityMovements(entity: Entity): void {
-    const aiMovementBehavior = entity.getBehavior('aimovement') as AiMovementBehavior
-    aiMovementBehavior.tick(performance.now())
   }
 }

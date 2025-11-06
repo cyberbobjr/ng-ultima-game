@@ -11,10 +11,12 @@ export class RenderableSystem {
    * @param entities Liste des entités à traiter
    */
   processTick(entities: Entity[]): void {
+    // Appeler performance.now() UNE SEULE FOIS au lieu de N fois
+    const now = performance.now()
     entities.forEach((entity: Entity) => {
       if (entity.hasBehavior('renderable')) {
         const renderableBehavior = entity.getBehavior('renderable') as RenderableBehavior
-        renderableBehavior.tick(performance.now())
+        renderableBehavior.tick(now)
       }
     })
   }

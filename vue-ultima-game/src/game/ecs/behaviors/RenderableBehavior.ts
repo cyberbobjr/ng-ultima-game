@@ -12,10 +12,13 @@ export class RenderableBehavior implements IBehavior {
   name = 'renderable'
   tile: ITile
   lastPerformanceNow: number = 0
+  private _isAnimated: boolean = false  // Cache pour éviter _.has() à chaque frame
 
   constructor(tile: ITile) {
     this.tile = tile
     this.tile.currentFrame = 0
+    // Cacher si la tile est animée une seule fois au lieu de vérifier à chaque frame
+    this._isAnimated = !!(tile.frames && (tile as any).animation === 'frame')
   }
 
   tick(performanceNow: number): any {
@@ -41,11 +44,7 @@ export class RenderableBehavior implements IBehavior {
    * @returns true si la tuile a plusieurs frames
    */
   private _isAnimatedTile(): boolean {
-    return (
-      _.has(this.tile, 'frames') &&
-      _.has(this.tile, 'animation') &&
-      (this.tile as any).animation === 'frame'
-    )
+    return this._isAnimated  // Utilise le cache au lieu de _.has()
   }
 
   /**
