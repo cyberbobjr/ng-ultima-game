@@ -75,8 +75,9 @@ export class VisibilitySystem {
         } else {
           // Vérifier si cette tile bloque la lumière
           if (this.mapStore.isTileAtPositionIsOpaque(pos)) {
-            // Ajouter une ombre
-            const angleSize = Math.atan2(0.5, distance)
+            // Ajouter une ombre - utiliser 0.7 au lieu de 0.5 pour mieux bloquer les diagonales
+            // Ceci empêche de voir à travers les coins de murs adjacents
+            const angleSize = Math.atan2(0.7, distance)
             shadows.push({
               start: angle - angleSize,
               end: angle + angleSize

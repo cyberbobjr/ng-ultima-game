@@ -25,6 +25,7 @@ export const useMapStore = defineStore('map', () => {
   // État - Tiles
   const tileset = ref<Tileset | null>(null)
   const tilesRules = ref<any>(null)
+  const tilesRulesCache = ref<Map<string, any>>(new Map()) // Cache pour accès O(1)
   const numberOfTilesLoaded = ref(0)
   const totalTilesToLoad = ref(0)
 
@@ -340,6 +341,23 @@ export const useMapStore = defineStore('map', () => {
         { name: 'water', cantwalkon: 'all' }
       ]
     }
+
+    // Construire le cache pour accès O(1)
+    _buildTilesRulesCache()
+  }
+
+  /**
+   * Construit un cache Map pour les rules (accès O(1) au lieu de O(n))
+   */
+  function _buildTilesRulesCache(): void {
+    tilesRulesCache.value.clear()
+    if (tilesRules.value && Array.isArray(tilesRules.value)) {
+      for (const rule of tilesRules.value) {
+        if (rule && rule.name) {
+          tilesRulesCache.value.set(rule.name, rule)
+        }
+      }
+    }
   }
 
   /**
@@ -496,10 +514,10 @@ export const useMapStore = defineStore('map', () => {
   }
 
   /**
-   * Récupère une règle par nom
+   * Récupère une règle par nom (utilise le cache pour O(1))
    */
   function _getRuleName(ruleName: string): any {
-    return _.find(tilesRules.value, { name: ruleName })
+    return tilesRulesCache.value.get(ruleName)
   }
 
   return {
