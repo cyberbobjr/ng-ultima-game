@@ -74,10 +74,10 @@ export class MovementSystem {
       // Auto-save après le mouvement
       this._autoSaveEntity(entity)
 
-      // Détection de bordure pour sortie automatique (sauf sur world map)
-      this._checkBorderExit(entity)
-    } else {
-      console.log('Blocked!')
+      // Détection de bordure pour sortie automatique - UNIQUEMENT pour le joueur
+      if (entity.name === 'Avatar') {
+        this._checkBorderExit(entity)
+      }
     }
 
     this._setEntityStay(entity)
@@ -117,13 +117,10 @@ export class MovementSystem {
       position.col >= width - 2
 
     if (isOnBorder) {
-      console.log(`🚪 Sortie automatique : bordure détectée à (${position.row}, ${position.col})`)
-
       // Récupérer la position d'entrée sauvegardée
       const entryPositionStr = localStorage.getItem('worldmap_entry_position')
       if (entryPositionStr) {
         const entryPosition = JSON.parse(entryPositionStr)
-        console.log(`🗺️  Retour à la position d'entrée: (${entryPosition.row}, ${entryPosition.col})`)
 
         // Créer un portail virtuel pour la transition
         const returnPortal: IPortal = {
@@ -143,8 +140,6 @@ export class MovementSystem {
 
         // Nettoyer la position d'entrée sauvegardée
         localStorage.removeItem('worldmap_entry_position')
-      } else {
-        console.warn('⚠️  Aucune position d\'entrée sauvegardée trouvée')
       }
     }
   }
@@ -158,12 +153,6 @@ export class MovementSystem {
       const positionBehavior = entity.getBehavior('position') as PositionBehavior
 
       savestateBehavior.storeKeyValue('position', positionBehavior.position)
-
-      // Debug log uniquement pour le joueur
-      if (entity.name === 'Avatar') {
-        const pos = positionBehavior.position
-        console.log(`💾 Auto-save: Player position saved (${pos.row}, ${pos.col}) on map ${pos.mapId}`)
-      }
     }
   }
 
@@ -179,14 +168,12 @@ export class MovementSystem {
     const portal = mapStore.getPortalForPosition(positionBehavior.position)
 
     if (portal) {
-      console.log(`🚪 Entrée manuelle via portail (touche E): destination map ${portal.destmapid}`)
       if (this.onPortalDetected) {
         this.onPortalDetected(portal, entity)
       }
       return true
     }
 
-    console.log('❌ Aucun portail à cette position')
     return false
   }
 
@@ -215,9 +202,7 @@ export class MovementSystem {
 
     for (const direction of directions) {
       if (mapStore.isTileAtPositionIsClosedDoor(direction)) {
-        console.log(`🚪 Porte fermée trouvée à (${direction.row}, ${direction.col}) - Ouverture...`)
         mapStore.openDoorAtPosition(direction, onDoorClosed)
-        console.log('✅ Porte ouverte!')
         return true
       }
     }
@@ -265,12 +250,10 @@ export class MovementSystem {
       })
 
       if (npc) {
-        console.log(`💬 NPC trouvé à (${direction.row}, ${direction.col}): ${npc.name}`)
         return npc
       }
     }
 
-    console.log('❌ Aucun NPC à proximité')
     return null
   }
 
@@ -457,7 +440,6 @@ export class MovementSystem {
    */
   private _displayInformation(entity: Entity, textToDisplay: string): void {
     if (entity.isDisplayInfo) {
-      console.log(textToDisplay)
       // TODO Phase 3: useUIStore().addLogInformation(textToDisplay)
     }
   }
