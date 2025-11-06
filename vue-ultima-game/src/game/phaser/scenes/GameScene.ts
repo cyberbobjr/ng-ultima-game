@@ -422,8 +422,16 @@ export class GameScene extends Phaser.Scene {
         event.preventDefault()
       }
 
+      // BENCHMARK: Timestamp au moment de l'appui sur la touche
+      const keyPressTime = performance.now()
+      console.log(`⏱️ [1] Key pressed (${event.key}) at ${keyPressTime.toFixed(2)}ms`)
+
       // Traiter TOUTES les touches via le système ECS (y compris "E" et "O")
       this.keyboardInputSystem.processKeyboardInput(event, [player])
+
+      // BENCHMARK: Temps après traitement de l'input
+      const afterInputProcessing = performance.now()
+      console.log(`⏱️ [2] Input processed in ${(afterInputProcessing - keyPressTime).toFixed(2)}ms`)
     })
   }
 
@@ -742,6 +750,9 @@ export class GameScene extends Phaser.Scene {
    * Boucle de mise à jour du jeu
    */
   update(time: number, delta: number): void {
+    // BENCHMARK: Timestamp au début du update
+    const updateStartTime = performance.now()
+
     // Récupérer toutes les entités à mettre à jour
     const player = this.entityStore.getPlayer()
     if (!player) return
@@ -762,7 +773,9 @@ export class GameScene extends Phaser.Scene {
     this.aiSystem.processAiBehavior(allEntities)
 
     // Mettre à jour les mouvements
+    const beforeMovement = performance.now()
     this.movementSystem.processMovementsBehavior(allEntities)
+    const afterMovement = performance.now()
 
     // Mettre à jour le rendu (tick d'animation)
     this.renderableSystem.processTick(allEntities)
@@ -779,7 +792,17 @@ export class GameScene extends Phaser.Scene {
       playerPosition.mapId !== this.lastPlayerPosition.mapId
 
     if (hasPlayerMoved) {
+      console.log(`⏱️ [4] Player movement detected in update() at ${beforeMovement.toFixed(2)}ms`)
+      console.log(`⏱️ [5] processMovementsBehavior took ${(afterMovement - beforeMovement).toFixed(2)}ms`)
+
+      const beforeFOV = performance.now()
       this.updateVisibility()
+      const afterFOV = performance.now()
+
+      console.log(`⏱️ [6] FOV update took ${(afterFOV - beforeFOV).toFixed(2)}ms`)
+      console.log(`⏱️ [7] TOTAL update() took ${(afterFOV - updateStartTime).toFixed(2)}ms`)
+      console.log(`⏱️ ========================================`)
+
       this.lastPlayerPosition = {
         row: playerPosition.row,
         col: playerPosition.col,

@@ -66,10 +66,19 @@ export class MovementSystem {
    * Traite le mouvement d'une entité spécifique
    */
   private _processMovementsForEntity(entity: Entity, allEntities: Entity[]): void {
+    // BENCHMARK: Seulement pour le joueur
+    const isPlayer = entity.name === 'Avatar'
+    const startTime = isPlayer ? performance.now() : 0
+
     const destinationPosition = this._getDestinationPositionForEntity(entity)
 
     if (this._canWalkAtDestinationPosition(entity, destinationPosition, allEntities)) {
       this._moveEntity(entity)
+
+      if (isPlayer) {
+        const afterMove = performance.now()
+        console.log(`⏱️ [3] Movement executed in ${(afterMove - startTime).toFixed(2)}ms`)
+      }
 
       // Auto-save après le mouvement
       this._autoSaveEntity(entity)
