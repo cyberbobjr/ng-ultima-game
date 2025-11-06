@@ -217,20 +217,49 @@ export const useMapStore = defineStore('map', () => {
 
   /**
    * Ouvre une porte à une position donnée
+   * La porte est remplacée par un sol (brick_floor) temporairement
+   * Puis se referme automatiquement après 1.5 secondes
+   * @param position Position de la porte
+   * @param onDoorClosed Callback optionnel appelé quand la porte se referme
    */
-  function openDoorAtPosition(position: Position): void {
+  function openDoorAtPosition(position: Position, onDoorClosed?: () => void): void {
     if (!currentMap.value || !tileset.value) return
 
     const tileIndex = getTileIndexAtPosition(position)
     const tile = getTileByIndex(tileIndex)
 
     if (tile && isTileClosedDoor(tile.name)) {
-      // Trouver la tuile "porte ouverte"
-      const openDoorTile = getTileByName('door')
-      if (openDoorTile) {
-        const newTileIndex = tileset.value.getTileIndexByName('door')
-        currentMap.value.setTileIndexAtPosition(newTileIndex, position)
+      try {
+        // Remplacer la porte par un sol (brick_floor) pour que le joueur puisse passer
+        const floorTileIndex = tileset.value.getTileIndexByName('brick_floor')
+        currentMap.value.setTileIndexAtPosition(floorTileIndex, position)
+
+        // Refermer la porte automatiquement après 1.5 secondes
+        setTimeout(() => {
+          closeDoorAtPosition(position)
+          // Notifier que la porte s'est refermée (pour refresh de l'affichage)
+          if (onDoorClosed) {
+            onDoorClosed()
+          }
+        }, 1500)
+      } catch (error) {
+        console.error('Erreur lors de l\'ouverture de la porte:', error)
       }
+    }
+  }
+
+  /**
+   * Ferme une porte à une position donnée
+   * Remet la tile "door" (porte fermée)
+   */
+  function closeDoorAtPosition(position: Position): void {
+    if (!currentMap.value || !tileset.value) return
+
+    try {
+      const doorTileIndex = tileset.value.getTileIndexByName('door')
+      currentMap.value.setTileIndexAtPosition(doorTileIndex, position)
+    } catch (error) {
+      console.error('Erreur lors de la fermeture de la porte:', error)
     }
   }
 

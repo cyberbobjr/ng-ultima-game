@@ -369,7 +369,13 @@ export class GameScene extends Phaser.Scene {
 
     // Configurer le callback pour l'ouverture des portes (touche O)
     this.keyboardInputSystem.setOnDoorOpenRequested((entity) => {
-      const doorOpened = this.movementSystem.checkAndOpenDoor(entity)
+      // Passer un callback pour rafraîchir l'affichage quand la porte se referme
+      const onDoorClosed = () => {
+        console.log('🔄 Porte refermée - rafraîchissement de l\'affichage')
+        this.refreshTileSprites()
+      }
+
+      const doorOpened = this.movementSystem.checkAndOpenDoor(entity, onDoorClosed)
       if (doorOpened) {
         // Rafraîchir l'affichage de la carte pour montrer la porte ouverte
         this.refreshTileSprites()
