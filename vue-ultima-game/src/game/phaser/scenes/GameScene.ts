@@ -619,6 +619,44 @@ export class GameScene extends Phaser.Scene {
         }
       }
     }
+
+    // Mettre à jour la visibilité des sprites d'entités
+    this.updateEntityVisibility(visiblePositions)
+  }
+
+  /**
+   * Met à jour la visibilité des sprites d'entités basée sur le FOV
+   */
+  private updateEntityVisibility(visiblePositions: Set<string>): void {
+    const currentMap = this.mapStore.getCurrentMap()
+    if (!currentMap) return
+
+    const mapId = currentMap.mapMetaData?.id
+    if (mapId === undefined) return
+
+    const entities = this.entityStore.getEntitiesForMapId(mapId)
+    const player = this.entityStore.getPlayer()
+
+    // Pour chaque entité (NPC), vérifier si elle est visible
+    for (const entity of entities) {
+      const sprite = this.entitySprites.get(entity.id)
+      if (!sprite) continue
+
+      const position = entity.getPosition()
+      const posKey = `${position.row},${position.col}`
+      const isVisible = visiblePositions.has(posKey)
+
+      // Afficher/cacher le sprite selon la visibilité
+      sprite.setVisible(isVisible)
+    }
+
+    // S'assurer que le joueur est TOUJOURS visible
+    if (player) {
+      const playerSprite = this.entitySprites.get(player.id)
+      if (playerSprite) {
+        playerSprite.setVisible(true)
+      }
+    }
   }
 
   /**
