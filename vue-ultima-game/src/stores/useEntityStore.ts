@@ -40,9 +40,12 @@ export const useEntityStore = defineStore('entity', () => {
    * @param mapId ID de la carte
    */
   function addEntityForMapId(entity: Entity, mapId: number): void {
-    const entities = getEntitiesForMapId(mapId)
+    const normalizedMapId = Number(mapId)
+    const entities = getEntitiesForMapId(normalizedMapId)
     entities.push(entity)
-    entitiesForAllMaps.value.set(mapId, entities)
+    entitiesForAllMaps.value.set(normalizedMapId, entities)
+
+    console.log(`➕ addEntityForMapId: Added ${entity.name} to map ${normalizedMapId} (now ${entities.length} entities)`)
   }
 
   /**
@@ -65,7 +68,13 @@ export const useEntityStore = defineStore('entity', () => {
    * @param mapId ID de la carte
    */
   function getEntitiesForMapId(mapId: number): Entity[] {
-    let entities = entitiesForAllMaps.value.get(Number(mapId))
+    const normalizedMapId = Number(mapId)
+    let entities = entitiesForAllMaps.value.get(normalizedMapId)
+
+    // Debug log
+    console.log(`🔍 getEntitiesForMapId(${mapId}): normalized=${normalizedMapId}, found ${entities?.length || 0} entities`)
+    console.log(`   Available map IDs in store:`, Array.from(entitiesForAllMaps.value.keys()))
+
     if (!entities) {
       entities = []
     }
