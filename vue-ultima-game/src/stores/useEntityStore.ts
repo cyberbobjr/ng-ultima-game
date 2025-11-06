@@ -140,14 +140,19 @@ export const useEntityStore = defineStore('entity', () => {
     maps: Array<IMapMetaData>,
     entityFactory: any
   ): Promise<void> {
+    console.log(`📋 EntityStore: Loading entities for ${maps.length} maps...`)
+
     const promises = _.map(maps, async (map: IMapMetaData) => {
       if (map.city) {
+        console.log(`  Loading NPCs for map ${map.id} (${map.city.tlkfname})...`)
         const talks = await _loadTlkFile(map.city.tlkfname)
+        console.log(`    Found ${talks.length} NPCs in ${map.city.tlkfname}`)
         _createNpcsFromTalks(talks, map, entityFactory)
       }
     })
 
     await Promise.all(promises)
+    console.log(`✅ EntityStore: All entities loaded`)
   }
 
   /**
@@ -158,7 +163,9 @@ export const useEntityStore = defineStore('entity', () => {
     mapMetaData: IMapMetaData,
     entityFactory: any
   ): void {
-    _.map(npcs, (npc: INpc) => {
+    console.log(`      Creating ${npcs.length} NPCs for map ${mapMetaData.id}...`)
+
+    _.map(npcs, (npc: INpc, index: number) => {
       let name = ''
       const entityPosition = new Position(npc.y_pos1, npc.x_pos1, mapMetaData.id)
 
@@ -170,6 +177,7 @@ export const useEntityStore = defineStore('entity', () => {
 
       // Créer le NPC via la factory
       const entity = entityFactory.createNpc(entityPosition, npc.tile1, name, npc.move)
+      console.log(`        NPC ${index}: ${name} at (${npc.y_pos1}, ${npc.x_pos1}), tile: ${npc.tile1}`)
 
       // Ajouter le behavior de conversation
       if (_.has(npc, 'talks') && _.size(npc.talks) > 0) {
@@ -186,6 +194,8 @@ export const useEntityStore = defineStore('entity', () => {
 
       addEntityForMapId(entity, mapMetaData.id)
     })
+
+    console.log(`      ✅ ${npcs.length} NPCs added to map ${mapMetaData.id}`)
   }
 
   /**
