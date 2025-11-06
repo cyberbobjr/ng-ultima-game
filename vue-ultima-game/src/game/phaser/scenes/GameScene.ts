@@ -318,11 +318,16 @@ export class GameScene extends Phaser.Scene {
     const mapId = currentMap.mapMetaData?.id
     if (mapId === undefined) return
 
-    // Charger les entités depuis le store
-    // TODO Phase 5: Implémenter le chargement des NPCs depuis les données
-    // Pour l'instant, on n'a que le joueur
+    // Récupérer les entités de cette carte
+    const entities = this.entityStore.getEntitiesForMapId(mapId)
+    console.log(`GameScene: ${entities.length} entities loaded for map ${mapId}`)
 
-    console.log(`GameScene: Entities loaded for map ${mapId}`)
+    // Debug: afficher les informations de chaque entité
+    entities.forEach((entity, index) => {
+      const position = entity.getPosition()
+      const tile = entity.getEntityTile()
+      console.log(`  Entity ${index}: ${entity.name} at (${position.row}, ${position.col}), tile: ${tile?.name || 'NO TILE'}`)
+    })
   }
 
   /**
