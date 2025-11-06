@@ -29,6 +29,7 @@ export class KeyboardInputSystem {
   // Callbacks pour les actions clavier
   private onPortalActivationRequested?: (entity: Entity) => void
   private onDoorOpenRequested?: (entity: Entity) => void
+  private onTalkRequested?: (entity: Entity) => void
 
   /**
    * Configure le callback pour l'activation des portails
@@ -42,6 +43,13 @@ export class KeyboardInputSystem {
    */
   setOnDoorOpenRequested(callback: (entity: Entity) => void): void {
     this.onDoorOpenRequested = callback
+  }
+
+  /**
+   * Configure le callback pour parler avec les NPCs
+   */
+  setOnTalkRequested(callback: (entity: Entity) => void): void {
+    this.onTalkRequested = callback
   }
 
   /**
@@ -89,8 +97,11 @@ export class KeyboardInputSystem {
         break
 
       case KEY_TALK:
-        // TODO: Implémenter les dialogues (Phase 3)
-        console.log('Talk pressed - conversations will be implemented in Phase 3')
+        // Parler avec un NPC via le callback
+        console.log('🔑 Touche T pressée - recherche de NPC...')
+        if (this.onTalkRequested) {
+          this.onTalkRequested(entity)
+        }
         break
 
       case KEY_KLIMB:

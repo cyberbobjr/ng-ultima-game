@@ -221,6 +221,54 @@ export class MovementSystem {
   }
 
   /**
+   * Cherche un NPC à proximité du joueur pour parler
+   * Vérifie les 4 directions autour du joueur (haut, bas, gauche, droite)
+   * Doit être appelé quand le joueur appuie sur "T"
+   * @param entity L'entité qui veut parler (le joueur)
+   * @param allEntities Liste de toutes les entités sur la carte
+   * @returns L'entité NPC trouvée, ou null si aucun NPC n'est à proximité
+   */
+  findNpcToTalkTo(entity: Entity, allEntities: Entity[]): Entity | null {
+    if (!entity.hasBehavior('position')) return null
+
+    const positionBehavior = entity.getBehavior('position') as PositionBehavior
+    const currentPos = positionBehavior.position
+
+    // Vérifier les 4 directions autour du joueur
+    const directions = [
+      currentPos.getVectorUp(),    // Haut
+      currentPos.getVectorDown(),  // Bas
+      currentPos.getVectorLeft(),  // Gauche
+      currentPos.getVectorRight()  // Droite
+    ]
+
+    // Chercher un NPC dans ces directions
+    for (const direction of directions) {
+      const npc = allEntities.find((e) => {
+        if (!e.hasBehavior('position')) return false
+        if (e === entity) return false // Pas soi-même
+
+        const npcPos = (e.getBehavior('position') as PositionBehavior).position
+
+        // Vérifier si le NPC est à cette position
+        if (npcPos.row === direction.row && npcPos.col === direction.col && npcPos.mapId === direction.mapId) {
+          // Vérifier si le NPC a un behavior de conversation
+          return e.hasBehavior('talk') || e.hasBehavior('vendortalk')
+        }
+        return false
+      })
+
+      if (npc) {
+        console.log(`💬 NPC trouvé à (${direction.row}, ${direction.col}): ${npc.name}`)
+        return npc
+      }
+    }
+
+    console.log('❌ Aucun NPC à proximité')
+    return null
+  }
+
+  /**
    * Vérifie si on peut marcher à une position de destination
    */
   private _canWalkAtDestinationPosition(

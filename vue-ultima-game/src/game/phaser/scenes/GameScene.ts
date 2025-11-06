@@ -3,6 +3,7 @@ import { useMapStore } from '@/stores/useMapStore'
 import { useEntityStore } from '@/stores/useEntityStore'
 import { usePlayerStore } from '@/stores/usePlayerStore'
 import { useGameStore } from '@/stores/useGameStore'
+import { useTalkingStore } from '@/stores/useTalkingStore'
 import { Entity } from '@/game/ecs/entities/Entity'
 import { RenderableSystem } from '@/game/ecs/systems/RenderableSystem'
 import { AISystem } from '@/game/ecs/systems/AISystem'
@@ -375,13 +376,26 @@ export class GameScene extends Phaser.Scene {
       }
     })
 
+    // Configurer le callback pour parler avec les NPCs (touche T)
+    this.keyboardInputSystem.setOnTalkRequested((entity) => {
+      const currentMap = this.mapStore.getCurrentMap()
+      const entities = this.entityStore.getEntitiesForMapId(currentMap?.mapMetaData?.id ?? 0)
+      const allEntities = [entity, ...entities]
+
+      const npc = this.movementSystem.findNpcToTalkTo(entity, allEntities)
+      if (npc) {
+        const talkingStore = useTalkingStore()
+        talkingStore.startNewConversation(entity, npc)
+      }
+    })
+
     // Écouter les événements clavier globaux
     this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
       const player = this.entityStore.getPlayer()
       if (!player) return
 
       // Prevent browser from capturing arrow keys (stops page scrolling)
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'e', 'E', 'o', 'O'].includes(event.key)) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'e', 'E', 'o', 'O', 't', 'T'].includes(event.key)) {
         event.preventDefault()
       }
 
