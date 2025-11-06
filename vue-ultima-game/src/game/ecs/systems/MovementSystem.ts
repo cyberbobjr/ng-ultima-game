@@ -199,21 +199,16 @@ export class MovementSystem {
     const positionBehavior = entity.getBehavior('position') as PositionBehavior
     const currentPos = positionBehavior.position
 
-    console.log(`🔍 Position du joueur: (${currentPos.row}, ${currentPos.col})`)
-
     // Vérifier les 4 directions autour du joueur
+    // IMPORTANT: addVector() pour obtenir les positions absolues, pas les vecteurs relatifs
     const directions = [
-      currentPos.getVectorUp(),    // Haut
-      currentPos.getVectorDown(),  // Bas
-      currentPos.getVectorLeft(),  // Gauche
-      currentPos.getVectorRight()  // Droite
+      currentPos.addVector(currentPos.getVectorUp()),    // Haut
+      currentPos.addVector(currentPos.getVectorDown()),  // Bas
+      currentPos.addVector(currentPos.getVectorLeft()),  // Gauche
+      currentPos.addVector(currentPos.getVectorRight())  // Droite
     ]
 
     for (const direction of directions) {
-      const tileIndex = mapStore.getTileIndexAtPosition(direction)
-      const tile = mapStore.getTileByIndex(tileIndex)
-      console.log(`🔍 Direction (${direction.row}, ${direction.col}): tile="${tile?.name}", index=${tileIndex}`)
-
       if (mapStore.isTileAtPositionIsClosedDoor(direction)) {
         console.log(`🚪 Porte fermée trouvée à (${direction.row}, ${direction.col}) - Ouverture...`)
         mapStore.openDoorAtPosition(direction)
@@ -222,7 +217,6 @@ export class MovementSystem {
       }
     }
 
-    console.log('❌ Aucune porte fermée à proximité')
     return false
   }
 
@@ -241,11 +235,12 @@ export class MovementSystem {
     const currentPos = positionBehavior.position
 
     // Vérifier les 4 directions autour du joueur
+    // IMPORTANT: addVector() pour obtenir les positions absolues, pas les vecteurs relatifs
     const directions = [
-      currentPos.getVectorUp(),    // Haut
-      currentPos.getVectorDown(),  // Bas
-      currentPos.getVectorLeft(),  // Gauche
-      currentPos.getVectorRight()  // Droite
+      currentPos.addVector(currentPos.getVectorUp()),    // Haut
+      currentPos.addVector(currentPos.getVectorDown()),  // Bas
+      currentPos.addVector(currentPos.getVectorLeft()),  // Gauche
+      currentPos.addVector(currentPos.getVectorRight())  // Droite
     ]
 
     // Chercher un NPC dans ces directions
