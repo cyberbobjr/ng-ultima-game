@@ -46,6 +46,7 @@ export class GameScene extends Phaser.Scene {
 
   // Visibility settings
   private readonly VISION_RADIUS = 8 // Rayon de vision en tiles
+  private lastPlayerPosition: { row: number; col: number; mapId: number } | null = null // Pour tracker les changements de position
 
   constructor() {
     super({ key: 'GameScene' })
@@ -82,6 +83,16 @@ export class GameScene extends Phaser.Scene {
 
       // Calculer la visibilité initiale
       this.updateVisibility()
+
+      // Initialiser le tracker de position après le premier calcul de FOV
+      if (player) {
+        const playerPosition = player.getPosition()
+        this.lastPlayerPosition = {
+          row: playerPosition.row,
+          col: playerPosition.col,
+          mapId: playerPosition.mapId
+        }
+      }
 
       // Lancer l'UI Scene en parallèle
       this.scene.launch('UIScene')
@@ -488,9 +499,17 @@ export class GameScene extends Phaser.Scene {
     this.centerCameraOnPlayer()
     console.timeEnd('  ↳ centerCameraOnPlayer')
 
-    // Mettre à jour la visibilité
+    // Mettre à jour la visibilité et réinitialiser le tracker de position
     console.time('  ↳ updateVisibility')
     this.updateVisibility()
+
+    // Initialiser le tracker de position après le calcul du FOV
+    const newPlayerPosition = player.getPosition()
+    this.lastPlayerPosition = {
+      row: newPlayerPosition.row,
+      col: newPlayerPosition.col,
+      mapId: newPlayerPosition.mapId
+    }
     console.timeEnd('  ↳ updateVisibility')
 
     console.timeEnd(`🚪 Total transitionToMap to ${portal.destmapid}`)
@@ -751,9 +770,22 @@ export class GameScene extends Phaser.Scene {
     // Synchroniser les sprites Phaser avec les positions des entités
     this.syncSpritesWithEntities(allEntities)
 
-    // Mettre à jour la visibilité (FOV) après le mouvement
-    // Note: Les logs de debug ont été retirés, donc pas de spam console
-    this.updateVisibility()
+    // Mettre à jour la visibilité (FOV) SEULEMENT si le joueur a bougé
+    // Ceci améliore drastiquement la performance en évitant de recalculer le FOV à chaque frame
+    const playerPosition = player.getPosition()
+    const hasPlayerMoved = !this.lastPlayerPosition ||
+      playerPosition.row !== this.lastPlayerPosition.row ||
+      playerPosition.col !== this.lastPlayerPosition.col ||
+      playerPosition.mapId !== this.lastPlayerPosition.mapId
+
+    if (hasPlayerMoved) {
+      this.updateVisibility()
+      this.lastPlayerPosition = {
+        row: playerPosition.row,
+        col: playerPosition.col,
+        mapId: playerPosition.mapId
+      }
+    }
   }
 
   /**
