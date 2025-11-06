@@ -319,15 +319,7 @@ export class GameScene extends Phaser.Scene {
     if (mapId === undefined) return
 
     // Récupérer les entités de cette carte
-    const entities = this.entityStore.getEntitiesForMapId(mapId)
-    console.log(`GameScene: ${entities.length} entities loaded for map ${mapId}`)
-
-    // Debug: afficher les informations de chaque entité
-    entities.forEach((entity, index) => {
-      const position = entity.getPosition()
-      const tile = entity.getEntityTile()
-      console.log(`  Entity ${index}: ${entity.name} at (${position.row}, ${position.col}), tile: ${tile?.name || 'NO TILE'}`)
-    })
+    this.entityStore.getEntitiesForMapId(mapId)
   }
 
   /**

@@ -98,7 +98,6 @@ export class KeyboardInputSystem {
 
       case KEY_ENTER:
         // Activer le portail via le callback
-        console.log('🔑 Touche E pressée - vérification du portail...')
         if (this.onPortalActivationRequested) {
           this.onPortalActivationRequested(entity)
         }
@@ -106,7 +105,6 @@ export class KeyboardInputSystem {
 
       case KEY_OPEN:
         // Ouvrir une porte via le callback
-        console.log('🔑 Touche O pressée - vérification des portes...')
         if (this.onDoorOpenRequested) {
           this.onDoorOpenRequested(entity)
         }
@@ -114,7 +112,6 @@ export class KeyboardInputSystem {
 
       case KEY_TALK:
         // Parler avec un NPC via le callback
-        console.log('🔑 Touche T pressée - recherche de NPC...')
         if (this.onTalkRequested) {
           this.onTalkRequested(entity)
         }
@@ -122,7 +119,6 @@ export class KeyboardInputSystem {
 
       case KEY_KLIMB:
         // Monter (escaliers, échelles) via le callback
-        console.log('🔑 Touche K pressée - tentative de monter...')
         if (this.onKlimbRequested) {
           this.onKlimbRequested(entity)
         }
@@ -130,7 +126,6 @@ export class KeyboardInputSystem {
 
       case KEY_DESCEND:
         // Descendre (escaliers, trous) via le callback
-        console.log('🔑 Touche D pressée - tentative de descendre...')
         if (this.onDescendRequested) {
           this.onDescendRequested(entity)
         }

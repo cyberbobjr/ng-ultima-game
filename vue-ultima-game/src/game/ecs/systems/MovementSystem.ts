@@ -289,8 +289,6 @@ export class MovementSystem {
     const portal = mapStore.getPortalForPosition(positionBehavior.position)
 
     if (portal && portal.action === 'klimb') {
-      console.log(`🪜 Klimb détecté: destination map ${portal.destmapid}`)
-
       // Afficher le message du portail si disponible
       if (portal.message) {
         uiStore.addTextToInformation(portal.message)
@@ -324,8 +322,6 @@ export class MovementSystem {
     const portal = mapStore.getPortalForPosition(positionBehavior.position)
 
     if (portal && portal.action === 'descend') {
-      console.log(`🪜 Descend détecté: destination map ${portal.destmapid}`)
-
       // Afficher le message du portail si disponible
       if (portal.message) {
         uiStore.addTextToInformation(portal.message)
