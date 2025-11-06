@@ -770,7 +770,9 @@ export class GameScene extends Phaser.Scene {
     // Note: Keyboard input is handled via event listeners in setupKeyboardControls()
 
     // Mettre à jour l'IA
+    const beforeAI = performance.now()
     this.aiSystem.processAiBehavior(allEntities)
+    const afterAI = performance.now()
 
     // Mettre à jour les mouvements
     const beforeMovement = performance.now()
@@ -778,10 +780,14 @@ export class GameScene extends Phaser.Scene {
     const afterMovement = performance.now()
 
     // Mettre à jour le rendu (tick d'animation)
+    const beforeRenderable = performance.now()
     this.renderableSystem.processTick(allEntities)
+    const afterRenderable = performance.now()
 
     // Synchroniser les sprites Phaser avec les positions des entités
+    const beforeSync = performance.now()
     this.syncSpritesWithEntities(allEntities)
+    const afterSync = performance.now()
 
     // Mettre à jour la visibilité (FOV) SEULEMENT si le joueur a bougé
     // Ceci améliore drastiquement la performance en évitant de recalculer le FOV à chaque frame
@@ -793,7 +799,10 @@ export class GameScene extends Phaser.Scene {
 
     if (hasPlayerMoved) {
       console.log(`⏱️ [4] Player movement detected in update() at ${beforeMovement.toFixed(2)}ms`)
-      console.log(`⏱️ [5] processMovementsBehavior took ${(afterMovement - beforeMovement).toFixed(2)}ms`)
+      console.log(`⏱️ [5a] AI system took ${(afterAI - beforeAI).toFixed(2)}ms`)
+      console.log(`⏱️ [5b] Movement system took ${(afterMovement - beforeMovement).toFixed(2)}ms`)
+      console.log(`⏱️ [5c] Renderable system took ${(afterRenderable - beforeRenderable).toFixed(2)}ms`)
+      console.log(`⏱️ [5d] Sync sprites took ${(afterSync - beforeSync).toFixed(2)}ms`)
 
       const beforeFOV = performance.now()
       this.updateVisibility()
