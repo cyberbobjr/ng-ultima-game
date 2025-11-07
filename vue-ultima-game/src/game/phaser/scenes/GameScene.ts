@@ -422,6 +422,9 @@ export class GameScene extends Phaser.Scene {
         event.preventDefault()
       }
 
+      // BENCHMARK: Activer les logs détaillés pour cette frame
+      ;(window as any).__debugMovement = true
+
       // BENCHMARK: Timestamp au moment de l'appui sur la touche
       const keyPressTime = performance.now()
       console.log(`⏱️ [1] Key pressed (${event.key}) at ${keyPressTime.toFixed(2)}ms`)
@@ -811,6 +814,9 @@ export class GameScene extends Phaser.Scene {
       console.log(`⏱️ [6] FOV update took ${(afterFOV - beforeFOV).toFixed(2)}ms`)
       console.log(`⏱️ [7] TOTAL update() took ${(afterFOV - updateStartTime).toFixed(2)}ms`)
       console.log(`⏱️ ========================================`)
+
+      // BENCHMARK: Désactiver les logs détaillés après ce mouvement
+      ;(window as any).__debugMovement = false
 
       this.lastPlayerPosition = {
         row: playerPosition.row,

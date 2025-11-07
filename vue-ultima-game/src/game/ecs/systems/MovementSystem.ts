@@ -59,7 +59,7 @@ export class MovementSystem {
     const movementsTime = performance.now() - beforeMovements
     const totalTime = spatialMapTime + movementsTime
 
-    if (totalTime > 50) {  // Log seulement si > 50ms
+    if (totalTime > 50 && (window as any).__debugMovement) {  // Log seulement si > 50ms ET debug activé
       console.log(`🔍 MovementSystem: spatial map ${spatialMapTime.toFixed(2)}ms, ${movingEntityCount} movements ${movementsTime.toFixed(2)}ms, total ${totalTime.toFixed(2)}ms`)
     }
   }

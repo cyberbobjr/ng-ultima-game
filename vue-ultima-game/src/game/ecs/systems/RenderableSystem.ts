@@ -38,7 +38,7 @@ export class RenderableSystem {
     })
 
     const loopTime = performance.now() - beforeLoop
-    if (loopTime > 50) {  // Log seulement si > 50ms
+    if (loopTime > 50 && (window as any).__debugMovement) {  // Log seulement si > 50ms ET debug activé
       console.log(`🔍 RenderableSystem: ${renderableEntityCount} entities, loop ${loopTime.toFixed(2)}ms, getBehavior ${getBehaviorTimeTotal.toFixed(2)}ms, tick total ${tickTimeTotal.toFixed(2)}ms`)
     }
   }

@@ -43,7 +43,7 @@ export class RenderableBehavior implements IBehavior {
         const t5 = performance.now()
 
         // Log si > 5ms
-        if (t5 - t4 > 5) {
+        if (t5 - t4 > 5 && (window as any).__debugMovement) {
           console.log(`🐛 RenderableBehavior._processNextFrame() took ${(t5 - t4).toFixed(2)}ms`)
         }
       }
@@ -53,7 +53,7 @@ export class RenderableBehavior implements IBehavior {
       const t7 = performance.now()
 
       const totalTime = t7 - t0
-      if (totalTime > 5) {
+      if (totalTime > 5 && (window as any).__debugMovement) {
         console.log(`🐛 RenderableBehavior.tick() breakdown:
   - shouldUpdate check: ${(t1 - t0).toFixed(2)}ms
   - isAnimated check: ${(t3 - t2).toFixed(2)}ms
