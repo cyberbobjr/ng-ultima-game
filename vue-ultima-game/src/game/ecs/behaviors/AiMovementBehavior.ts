@@ -26,17 +26,23 @@ export class AiMovementBehavior implements IBehavior {
   actor: Entity
   lastPerformanceNow: number = 0
   private _movementTypeBackup?: MovementType
+  private _movableBehavior: MovableBehavior | null = null  // Cache
+  private _positionBehavior: PositionBehavior | null = null  // Cache
 
   constructor(actor: Entity, movementType: number) {
     this.actor = actor
     this.movementType = movementType
+
+    // OPTIMISATION: Cacher les behaviors une fois au lieu de les récupérer à chaque tick
+    this._movableBehavior = this.actor.getBehavior('movable') as MovableBehavior || null
+    this._positionBehavior = this.actor.getBehavior('position') as PositionBehavior || null
   }
 
   tick(performanceNow: number): any {
     if (performanceNow - this.lastPerformanceNow > TIMER_INTERVAL_SECONDS) {
       if (
-        this.actor.hasBehavior('movable') &&
-        this.actor.hasBehavior('position') &&
+        this._movableBehavior &&
+        this._positionBehavior &&
         this.movementType === MovementType.Wander
       ) {
         this._randomMove()
@@ -49,14 +55,11 @@ export class AiMovementBehavior implements IBehavior {
    * Effectue un mouvement aléatoire
    */
   private _randomMove(): void {
-    const movementBehavior = this.actor.getBehavior('movable') as MovableBehavior
-    const positionBehavior = this.actor.getBehavior('position') as PositionBehavior
-
-    if (movementBehavior && positionBehavior) {
-      movementBehavior.vector = new Position(
+    if (this._movableBehavior && this._positionBehavior) {
+      this._movableBehavior.vector = new Position(
         this._random(-1, 1),
         this._random(-1, 1),
-        positionBehavior.position.mapId
+        this._positionBehavior.position.mapId
       )
     }
   }

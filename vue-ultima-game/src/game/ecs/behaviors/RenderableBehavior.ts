@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { toRaw } from 'vue'
 import type { IBehavior } from '../../models/interfaces/IBehavior'
 import type { ITile } from '../../models/interfaces/ITile'
 
@@ -13,12 +14,17 @@ export class RenderableBehavior implements IBehavior {
   tile: ITile
   lastPerformanceNow: number = 0
   private _isAnimated: boolean = false  // Cache pour éviter _.has() à chaque frame
+  private _maxFrames: number = 0  // Cache pour éviter parseInt() à chaque animation
 
   constructor(tile: ITile) {
-    this.tile = tile
+    // CRITIQUE: Utiliser toRaw() pour désactiver la réactivité Vue
+    // Sans ça, this.tile.currentFrame++ déclenche les watchers Vue (15ms par entity!)
+    this.tile = toRaw(tile)
     this.tile.currentFrame = 0
     // Cacher si la tile est animée une seule fois au lieu de vérifier à chaque frame
     this._isAnimated = !!(tile.frames && (tile as any).animation === 'frame')
+    // Cacher le nombre de frames pour éviter parseInt() à chaque animation
+    this._maxFrames = tile.frames ? parseInt(tile.frames, 10) : 0
   }
 
   tick(performanceNow: number): any {
@@ -51,8 +57,8 @@ export class RenderableBehavior implements IBehavior {
    * Passe à la frame suivante de l'animation
    */
   private _processNextFrame(): void {
-    if (this.tile.frames) {
-      if (this.tile.currentFrame < parseInt(this.tile.frames, 10) - 1) {
+    if (this._maxFrames > 0) {
+      if (this.tile.currentFrame < this._maxFrames - 1) {
         this.tile.currentFrame++
       } else {
         this.tile.currentFrame = 0
