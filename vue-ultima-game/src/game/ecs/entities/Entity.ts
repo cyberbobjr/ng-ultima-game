@@ -1,3 +1,4 @@
+import { markRaw } from 'vue'
 import type { IBehavior } from '../../models/interfaces/IBehavior'
 import { Position } from '../../models/Position'
 import type { ITile } from '../../models/interfaces/ITile'
@@ -30,7 +31,9 @@ export class Entity {
    * @param behavior Behavior à ajouter
    */
   addBehavior(behavior: IBehavior): void {
-    this._behaviors.set(behavior.name, behavior)
+    // CRITIQUE: Utiliser markRaw() pour empêcher Vue de rendre le behavior réactif
+    // Sans ça, this.lastPerformanceNow = value déclenche les watchers Vue (10ms per assignment!)
+    this._behaviors.set(behavior.name, markRaw(behavior))
   }
 
   /**
