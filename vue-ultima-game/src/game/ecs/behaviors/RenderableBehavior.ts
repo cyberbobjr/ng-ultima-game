@@ -28,38 +28,11 @@ export class RenderableBehavior implements IBehavior {
   }
 
   tick(performanceNow: number): any {
-    const t0 = performance.now()
-    const shouldUpdate = performanceNow - this.lastPerformanceNow > TIMER_INTERVAL_SECONDS
-    const t1 = performance.now()
-
-    if (shouldUpdate) {
-      const t2 = performance.now()
-      const isAnimated = this._isAnimatedTile()
-      const t3 = performance.now()
-
-      if (isAnimated) {
-        const t4 = performance.now()
+    if (performanceNow - this.lastPerformanceNow > TIMER_INTERVAL_SECONDS) {
+      if (this._isAnimatedTile()) {
         this._processNextFrame()
-        const t5 = performance.now()
-
-        // Log si > 5ms
-        if (t5 - t4 > 5 && (window as any).__debugMovement) {
-          console.log(`🐛 RenderableBehavior._processNextFrame() took ${(t5 - t4).toFixed(2)}ms`)
-        }
       }
-
-      const t6 = performance.now()
       this.lastPerformanceNow = performanceNow
-      const t7 = performance.now()
-
-      const totalTime = t7 - t0
-      if (totalTime > 5 && (window as any).__debugMovement) {
-        console.log(`🐛 RenderableBehavior.tick() breakdown:
-  - shouldUpdate check: ${(t1 - t0).toFixed(2)}ms
-  - isAnimated check: ${(t3 - t2).toFixed(2)}ms
-  - assignment: ${(t7 - t6).toFixed(2)}ms
-  - TOTAL: ${totalTime.toFixed(2)}ms`)
-      }
     }
     return null
   }

@@ -40,28 +40,13 @@ export class MovementSystem {
    * @param entities Liste des entités
    */
   processMovementsBehavior(entities: Entity[]): void {
-    // BENCHMARK: Mesurer le temps de construction de la spatial map
-    const beforeSpatialMap = performance.now()
     const spatialMap = this._buildSpatialMap(entities)
-    const spatialMapTime = performance.now() - beforeSpatialMap
-
-    // BENCHMARK: Mesurer le temps de traitement des mouvements
-    const beforeMovements = performance.now()
-    let movingEntityCount = 0
 
     entities.forEach((entity: Entity) => {
       if (entity.hasBehavior('movable') && this._isEntityMoving(entity)) {
-        movingEntityCount++
         this._processMovementsForEntity(entity, entities, spatialMap)
       }
     })
-
-    const movementsTime = performance.now() - beforeMovements
-    const totalTime = spatialMapTime + movementsTime
-
-    if (totalTime > 50 && (window as any).__debugMovement) {  // Log seulement si > 50ms ET debug activé
-      console.log(`🔍 MovementSystem: spatial map ${spatialMapTime.toFixed(2)}ms, ${movingEntityCount} movements ${movementsTime.toFixed(2)}ms, total ${totalTime.toFixed(2)}ms`)
-    }
   }
 
   /**
@@ -109,19 +94,10 @@ export class MovementSystem {
     allEntities: Entity[],
     spatialMap: Map<string, Entity[]>
   ): void {
-    // BENCHMARK: Seulement pour le joueur
-    const isPlayer = entity.name === 'Avatar'
-    const startTime = isPlayer ? performance.now() : 0
-
     const destinationPosition = this._getDestinationPositionForEntity(entity)
 
     if (this._canWalkAtDestinationPosition(entity, destinationPosition, allEntities, spatialMap)) {
       this._moveEntity(entity)
-
-      if (isPlayer) {
-        const afterMove = performance.now()
-        console.log(`⏱️ [3] Movement executed in ${(afterMove - startTime).toFixed(2)}ms`)
-      }
 
       // Auto-save après le mouvement
       this._autoSaveEntity(entity)

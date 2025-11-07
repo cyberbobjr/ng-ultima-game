@@ -39,39 +39,15 @@ export class AiMovementBehavior implements IBehavior {
   }
 
   tick(performanceNow: number): any {
-    const t0 = performance.now()
-    const shouldUpdate = performanceNow - this.lastPerformanceNow > TIMER_INTERVAL_SECONDS
-    const t1 = performance.now()
-
-    if (shouldUpdate) {
-      const t2 = performance.now()
-      const shouldWander = this._movableBehavior &&
+    if (performanceNow - this.lastPerformanceNow > TIMER_INTERVAL_SECONDS) {
+      if (
+        this._movableBehavior &&
         this._positionBehavior &&
         this.movementType === MovementType.Wander
-      const t3 = performance.now()
-
-      if (shouldWander) {
-        const t4 = performance.now()
+      ) {
         this._randomMove()
-        const t5 = performance.now()
-
-        if (t5 - t4 > 5 && (window as any).__debugMovement) {
-          console.log(`🐛 AiMovementBehavior._randomMove() took ${(t5 - t4).toFixed(2)}ms`)
-        }
       }
-
-      const t6 = performance.now()
       this.lastPerformanceNow = performanceNow
-      const t7 = performance.now()
-
-      const totalTime = t7 - t0
-      if (totalTime > 5 && (window as any).__debugMovement) {
-        console.log(`🐛 AiMovementBehavior.tick() breakdown:
-  - shouldUpdate check: ${(t1 - t0).toFixed(2)}ms
-  - shouldWander check: ${(t3 - t2).toFixed(2)}ms
-  - assignment: ${(t7 - t6).toFixed(2)}ms
-  - TOTAL: ${totalTime.toFixed(2)}ms`)
-      }
     }
   }
 
